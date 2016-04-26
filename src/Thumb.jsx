@@ -8,7 +8,6 @@ class Thumb extends Component {
     [
       'getDefaultThumb',
     ].forEach((method) => this[method] = this[method].bind(this));
-
   }
 
   getDefaultThumb() {

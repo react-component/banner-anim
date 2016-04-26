@@ -51,6 +51,7 @@ class BannerAnim extends Component {
       'timeoutRaf',
       'onMouseEnter',
       'onMouseLeave',
+      'getDomDataSetToState',
     ].forEach((method) => this[method] = this[method].bind(this));
     this.state = {
       wrapperHeight: null,
@@ -63,28 +64,7 @@ class BannerAnim extends Component {
   }
 
   componentDidMount() {
-    const dom = ReactDOM.findDOMNode(this);
-    const elemWidth = dom.getBoundingClientRect().width;
-    // 获取宽度与定位，setState刷新；
-    const wrapperHeight = this.getElementHeight();
-    const children = this.getShowChildren(this.state.currentShow);
-    this.setState({
-      wrapperHeight,
-      elemWidth,
-      children,
-    });
-
-    if (window.addEventListener) {
-      window.addEventListener('resize', this.onResize);
-    } else {
-      window.attachEvent('onresize', this.onResize);
-    }
-
-    if (this.props.autoPlay) {
-      this.startNow = Date.now();
-      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
-      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
-    }
+    this.getDomDataSetToState();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -107,62 +87,6 @@ class BannerAnim extends Component {
     document.removeEventListener(visibilityChange, this.handleVisibilityChange);
   }
 
-  replaceChildren(currentChildren, newChildren) {
-    return toArrayChildren(currentChildren).map(item => {
-      let _item;
-      switch (item.type) {
-        case Element:
-          _item = newChildren.elemWrapper.filter(elemItem => elemItem.key === item.key)[0];
-          const props = assign({}, _item.props);
-          // 这里避免再次触发动画，把动画组件转换成组件里的 component 属性
-          props.children = toArrayChildren(props.children).map(setAnimCompToTagComp);
-          _item = React.cloneElement(item, props);
-          break;
-        case Arrow:
-          _item = newChildren.arrowWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
-          break;
-        case Thumb:
-          _item = newChildren.thumbWrapper.filter(thumbItem => thumbItem.key === item.key)[0];
-          _item = this.setThumbActive(this.state.currentShow, _item);
-          break;
-        default:
-          _item = item;
-          break;
-      }
-      return _item;
-    });
-  }
-
-  handleVisibilityChange() {
-    if (document[hidden] && this.timeoutRafID !== -1) {
-      this.cancelRequestAnimationFrame();
-      this.rafHide = true;
-    } else if (this.timeoutRafID === -1 && this.rafHide) {
-      this.startNow = Date.now() - this.moment;
-      this.rafID = requestAnimationFrame(this.timeoutRaf);
-      this.rafHide = false;
-    }
-  }
-
-  timeoutRaf() {
-    const now = Date.now();
-    this.moment = now - this.startNow;
-    if (this.moment >= this.props.autoPlaySpeed) {
-      setTimeout(()=> {
-        // 跟 tween-one 的 raf 冲突，会闪一下；加 setTimeout 为 raf 彻底结束后再执行。
-        this.next();
-        this.startNow = Date.now();
-        this.timeoutRafID = requestAnimationFrame(this.timeoutRaf)
-      });
-    } else {
-      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
-    }
-  }
-
-  cancelRequestAnimationFrame() {
-    requestAnimationFrame.cancel(this.timeoutRafID);
-    this.timeoutRafID = -1;
-  }
 
   onMouseEnter() {
     this.cancelRequestAnimationFrame();
@@ -200,18 +124,9 @@ class BannerAnim extends Component {
   }
 
   setChildrenPropsDelay(children) {
-    return toArrayChildren(children).map((item, i) => {
-      const props = assign({}, item.props);
-      if (item.type === TweenOne) {
-        props.animation.delay = props.animation.delay >= this.props.duration ?
-          props.animation.delay : (props.animation.delay || 0) + this.props.duration;
-      } else {
-        props.delay = this.props.delay >= this.props.duration ?
-          this.props.delay : (props.delay || 0) + this.props.duration;
-      }
-      props.key = i;
-      return React.cloneElement(item, props);
-    });
+    return toArrayChildren(children).map((item, i) =>
+      React.cloneElement(item, { ...item.props, key: i }, null)
+    );
   }
 
   setThumbActive(newShow, item) {
@@ -220,41 +135,63 @@ class BannerAnim extends Component {
     return React.cloneElement(item, props);
   }
 
-  animToCurrentShow(newShow, type) {
-    const _animType = this.getAnimType(this.props.type);
-    const currentChild = toArrayChildren(this.state.children)
-      .filter(item => item.type === Element)[0];
-    const newChild = this.children.elemWrapper[newShow];
-    const currentProps = assign({}, currentChild.props);
-    currentProps.type = 'leave';
-    currentProps.direction = type;
-    currentProps.animType = _animType;
-    currentProps.duration = this.props.duration;
-    currentProps.ease = this.props.ease;
-    currentProps.width = this.state.elemWidth;
-    const newProps = assign({}, newChild.props);
-    newProps.type = 'enter';
-    newProps.direction = type;
-    newProps.animType = _animType;
-    newProps.duration = this.props.duration;
-    newProps.ease = this.props.ease;
-    // 挡截 newChild, 增加动画延时，与框架动画时间上冲突。导航看不到效果，增加标签上的动画时音作为延时。
-    newProps.children = this.setChildrenPropsDelay(newProps.children);
-    newProps.width = this.state.elemWidth;
-    this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
-    const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-    const children = [
-      React.cloneElement(currentChild, currentProps),
-      this.children.elemWrapper[newShow],
-    ].concat(this.children.arrowWrapper, thumbWrapper);
-    this.props.onChange('before', newShow);
-    this.setState({
-      children,
-      currentShow: newShow,
-    })
+  getElementHeight() {
+    let height = 0;
+    this.childrenHieght = {};
+    Object.keys(this.refs).filter(key =>
+      this.children.elemWrapper.filter(item => item.key === key).length
+    ).forEach(key => {
+      const dom = ReactDOM.findDOMNode(this.refs[key]);
+      const _height = dom.getBoundingClientRect().height;
+      this.childrenHieght[key] = _height;
+      height = height > _height ? height : _height;
+    });
+    return height;
   }
 
-  animEndSetState(type, toTagComp) {
+  getShowChildren(currentShow) {
+    const elem = this.children.elemWrapper[currentShow];
+    return [elem].concat(this.children.arrowWrapper, this.children.thumbWrapper);
+  }
+
+  setCurrentChildren(children) {
+    return toArrayChildren(children).map(item => {
+      const itemProps = assign({}, item.props);
+      const type = item.type;
+      if (type === Element) {
+        itemProps.ref = item.key;
+        return React.cloneElement(item, itemProps);
+      }
+      return item;
+    });
+  }
+
+  getDomDataSetToState() {
+    const dom = ReactDOM.findDOMNode(this);
+    const elemWidth = dom.getBoundingClientRect().width;
+    // 获取宽度与定位，setState刷新；
+    const wrapperHeight = this.getElementHeight();
+    const children = this.getShowChildren(this.state.currentShow);
+    this.setState({
+      wrapperHeight,
+      elemWidth,
+      children,
+    });
+
+    if (window.addEventListener) {
+      window.addEventListener('resize', this.onResize);
+    } else {
+      window.attachEvent('onresize', this.onResize);
+    }
+
+    if (this.props.autoPlay) {
+      this.startNow = Date.now();
+      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
+    }
+  }
+
+  animEndSetState(type) {
     if (type === 'enter') {
       this.children = this.saveChildren(this.props.children);
       const thumbWrapper = this.children.thumbWrapper.map(
@@ -262,10 +199,8 @@ class BannerAnim extends Component {
       );
       // 动画结束后， 再次刷新时把动画组件转换成组件里的 component 属性
       const _child = this.children.elemWrapper[this.state.currentShow];
-      const child = toTagComp ? toArrayChildren(_child.props.children).map(setAnimCompToTagComp)
-        : _child.props.children;
       const children = [
-        React.cloneElement(_child, _child.props, child),
+        _child,
       ].concat(this.children.arrowWrapper, thumbWrapper);
       this.props.onChange('after', this.state.currentShow);
       this.setState({
@@ -310,11 +245,6 @@ class BannerAnim extends Component {
     }
   }
 
-  getShowChildren(currentShow) {
-    const elem = this.children.elemWrapper[currentShow];
-    return [elem].concat(this.children.arrowWrapper, this.children.thumbWrapper);
-  }
-
   saveChildren(children) {
     const _children = {
       elemWrapper: [],
@@ -347,7 +277,7 @@ class BannerAnim extends Component {
           _children.thumbWrapper.push(React.cloneElement(item, itemProps));
           break;
         default:
-          break
+          break;
       }
     });
     if (this.props.arrow && !_children.arrowWrapper.length) {
@@ -358,7 +288,7 @@ class BannerAnim extends Component {
     }
     if (this.props.thumb && !_children.thumbWrapper.length) {
       _children.thumbWrapper.push(
-        <Thumb length={_children.elemWrapper.length} key='thumb'
+        <Thumb length={_children.elemWrapper.length} key="thumb"
           thumbClick={this.thumbClick}
           active={this.props.initShow}
           default
@@ -367,29 +297,94 @@ class BannerAnim extends Component {
     return _children;
   }
 
-  getElementHeight() {
-    let height = 0;
-    this.childrenHieght = {};
-    Object.keys(this.refs).filter(key =>
-      this.children.elemWrapper.filter(item => item.key === key).length
-    ).forEach(key => {
-      const dom = ReactDOM.findDOMNode(this.refs[key]);
-      const _height = dom.getBoundingClientRect().height;
-      this.childrenHieght[key] = _height;
-      height = height > _height ? height : _height;
+  animToCurrentShow(newShow, type) {
+    const _animType = this.getAnimType(this.props.type);
+    const currentChild = toArrayChildren(this.state.children)
+      .filter(item => item.type === Element)[0];
+    const newChild = this.children.elemWrapper[newShow];
+    const currentProps = assign({}, currentChild.props);
+    currentProps.type = 'leave';
+    currentProps.direction = type;
+    currentProps.animType = _animType;
+    currentProps.duration = this.props.duration;
+    currentProps.ease = this.props.ease;
+    currentProps.width = this.state.elemWidth;
+    const newProps = assign({}, newChild.props);
+    newProps.type = 'enter';
+    newProps.direction = type;
+    newProps.animType = _animType;
+    newProps.duration = this.props.duration;
+    newProps.ease = this.props.ease;
+    // 挡截 newChild, 动画的时候把子级全部去掉，只留 image
+    newProps.children = this.setChildrenPropsDelay(newProps.children);
+    newProps.width = this.state.elemWidth;
+    this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
+    const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
+    const children = [
+      React.cloneElement(currentChild, currentProps),
+      this.children.elemWrapper[newShow],
+    ].concat(this.children.arrowWrapper, thumbWrapper);
+    this.props.onChange('before', newShow);
+    this.setState({
+      children,
+      currentShow: newShow,
     });
-    return height;
   }
 
-  setCurrentChildren(children) {
-    return toArrayChildren(children).map(item => {
-      const itemProps = assign({}, item.props);
-      const type = item.type;
-      if (type === Element) {
-        itemProps.ref = item.key;
-        return React.cloneElement(item, itemProps);
+  cancelRequestAnimationFrame() {
+    requestAnimationFrame.cancel(this.timeoutRafID);
+    this.timeoutRafID = -1;
+  }
+
+  timeoutRaf() {
+    const now = Date.now();
+    this.moment = now - this.startNow;
+    if (this.moment >= this.props.autoPlaySpeed) {
+      setTimeout(()=> {
+        // 跟 tween-one 的 raf 冲突，会闪一下；加 setTimeout 为 raf 彻底结束后再执行。
+        this.next();
+        this.startNow = Date.now();
+        this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+      });
+    } else {
+      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+    }
+  }
+
+  handleVisibilityChange() {
+    if (document[hidden] && this.timeoutRafID !== -1) {
+      this.cancelRequestAnimationFrame();
+      this.rafHide = true;
+    } else if (this.timeoutRafID === -1 && this.rafHide) {
+      this.startNow = Date.now() - this.moment;
+      this.rafID = requestAnimationFrame(this.timeoutRaf);
+      this.rafHide = false;
+    }
+  }
+
+  replaceChildren(currentChildren, newChildren) {
+    return toArrayChildren(currentChildren).map(item => {
+      let _item;
+      switch (item.type) {
+        case Element:
+          _item = newChildren.elemWrapper.filter(elemItem => elemItem.key === item.key)[0];
+          const props = assign({}, _item.props);
+          // 这里避免再次触发动画，把动画组件转换成组件里的 component 属性
+          props.children = toArrayChildren(props.children).map(setAnimCompToTagComp);
+          _item = React.cloneElement(item, props);
+          break;
+        case Arrow:
+          _item = newChildren.arrowWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
+          break;
+        case Thumb:
+          _item = newChildren.thumbWrapper.filter(thumbItem => thumbItem.key === item.key)[0];
+          _item = this.setThumbActive(this.state.currentShow, _item);
+          break;
+        default:
+          _item = item;
+          break;
       }
-      return item;
+      return _item;
     });
   }
 

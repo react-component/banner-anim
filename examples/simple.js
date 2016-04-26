@@ -16,21 +16,21 @@ class Demo extends React.Component {
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
         >
-          <QueueAnim hideProps={{ child: null }}>
+          <QueueAnim hideProps={{ child: null }} name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }}>Ant Motion Demo.Ant Motion Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">Ant Motion Demo.Ant Motion Demo</TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"
         >
-          <QueueAnim hideProps={{ child: null }}>
+          <QueueAnim hideProps={{ child: null }} name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }}>Ant Motion Demo.Ant Motion Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">Ant Motion Demo.Ant Motion Demo</TweenOne>
         </Element>
       </BannerAnim>
     );

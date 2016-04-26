@@ -31,6 +31,9 @@ export function setAnimCompToTagComp(item, i) {
       || propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
       propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave &&
       propTypes.onEnd && propTypes.animation
+      || props.name === 'QueueAnim'
+      || props.name === 'TweenOne'
+      || props.name === 'Animate'
     )) {
     // queueAnim or tweeOne or animate;
 
@@ -41,3 +44,8 @@ export function setAnimCompToTagComp(item, i) {
   }
   return React.cloneElement(item, props, item.props.children);
 }
+setAnimCompToTagComp.propTypes = {
+  key: React.PropTypes.string,
+  style: React.PropTypes.object,
+  component: React.PropTypes.any,
+};

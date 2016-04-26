@@ -1,10 +1,9 @@
-import React, { cloneElement, createElement } from 'react';
+import React, { cloneElement } from 'react';
 import assign from 'object-assign';
-import TweenOne from 'rc-tween-one';
 import { toArrayChildren, setAnimCompToTagComp } from './utils';
 
 export default {
-  move(elem, type, direction, animData){
+  move(elem, type, direction, animData) {
     let _x;
     const props = assign({}, elem.props);
     let children = props.children;
@@ -20,10 +19,10 @@ export default {
         ...animData,
         x: _x,
         type: type === 'enter' ? 'from' : 'to',
-      }
+      },
     }, children);
   },
-  moveOverlay(elem, type, direction, animData){
+  moveOverlay(elem, type, direction, animData) {
     let _x;
     const props = assign({}, elem.props);
     let children = props.children;
@@ -39,10 +38,10 @@ export default {
         ...animData,
         x: _x,
         type: type === 'enter' ? 'from' : 'to',
-      }
+      },
     }, children);
   },
-  grid(elem, type, direction, animData, width){
+  grid(elem, type, direction, animData, width) {
     const props = assign({}, elem.props);
     const animChild = [];
     const girdNum = 10;
@@ -56,7 +55,6 @@ export default {
       _y = direction === 'next' ? '60%' : '-60%';
       children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
-    const callBack = animData.onComplete.bind(this, true);
     for (let i = 0; i < girdNum; i++) {
       const style = assign({}, props.style);
       style.width = `${girdSize}%`;
@@ -74,19 +72,19 @@ export default {
         y: _y,
         type: type === 'enter' ? 'from' : 'to',
         delay: i * 50 + (type === 'enter' ? 0 : 100),
-        onComplete: i === girdNum - 1 ? callBack : null,
+        onComplete: i === girdNum - 1 ? animData.onComplete : null,
       };
 
-      const mask = <div style={style} key={i}>
+      const mask = (<div style={style} key={i}>
         {cloneElement(elem, props, children)}
-      </div>;
+      </div>);
       animChild.push(mask);
     }
-    const animSlot = <div style={{ width: '100%', position: 'absolute', top: 0 }}>
+    const animSlot = (<div style={{ width: '100%', position: 'absolute', top: 0 }}>
       {animChild}
-    </div>;
+    </div>);
     const _props = assign({}, elem.props);
     _props.children = animSlot;
     return cloneElement(elem, _props);
-  }
+  },
 };

@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import assign from 'object-assign';
 import TweenOne from 'rc-tween-one';
 
 function noop() {
@@ -49,6 +48,7 @@ Element.propTypes = {
   img: PropTypes.string,
   ease: PropTypes.string,
   duration: PropTypes.number,
+  direction: PropTypes.string,
   next: PropTypes.func,
   prev: PropTypes.func,
   callBack: PropTypes.func,

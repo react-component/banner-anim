@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import './assets/index.less';
 import './assets/arrow.less';
 
-const { Element, Arrow, Thumb } = BannerAnim;
+const { Element, Arrow } = BannerAnim;
 class Demo extends React.Component {
   constructor() {
     super(...arguments);
@@ -30,28 +30,12 @@ class Demo extends React.Component {
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  prevEnter() {
-    this.setState({
-      prevEnter: true,
-    });
-  }
-
-  prevLeave() {
-    this.setState({
-      prevEnter: false,
-    })
-  }
-
-  nextEnter() {
-    this.setState({
-      nextEnter: true,
-    })
-  }
-
-  nextLeave() {
-    this.setState({
-      nextEnter: false,
-    })
+  onChange(type, int) {
+    if (type === 'before') {
+      this.setState({
+        intShow: int,
+      });
+    }
   }
 
   getNextPrevNumber() {
@@ -67,37 +51,53 @@ class Demo extends React.Component {
     return [prevInt, nextInt];
   }
 
-  onChange(type, int) {
-    if (type === 'before') {
-      this.setState({
-        intShow: int,
-      })
-    }
+  prevEnter() {
+    this.setState({
+      prevEnter: true,
+    });
+  }
+
+  prevLeave() {
+    this.setState({
+      prevEnter: false,
+    });
+  }
+
+  nextEnter() {
+    this.setState({
+      nextEnter: true,
+    });
+  }
+
+  nextLeave() {
+    this.setState({
+      nextEnter: false,
+    });
   }
 
   render() {
     const intArray = this.getNextPrevNumber();
     return (
-      <BannerAnim onChange={this.onChange} autoPlay>
+      <BannerAnim onChange={this.onChange}>
         <Element key="aaa"
           prefixCls="banner-user-elem"
           img={this.imgArray[0]}
         >
-          <QueueAnim hideProps={{ child: null }} key="1">
+          <QueueAnim hideProps={{ child: null }} key="1" name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2">Ant Motion Demo.Ant Motion Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">Ant Motion Demo.Ant Motion Demo</TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
           img={this.imgArray[1]}
         >
-          <QueueAnim hideProps={{ child: null }} key="1">
+          <QueueAnim hideProps={{ child: null }} key="1" name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2">Ant Motion Demo.Ant Motion Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">Ant Motion Demo.Ant Motion Demo</TweenOne>
         </Element>
         <Arrow arrowType="prev" key="prev" prefixCls="user-arrow" component={TweenOne}
           onMouseEnter={this.prevEnter}
