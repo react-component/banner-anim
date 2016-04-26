@@ -5,9 +5,27 @@ import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
 import TweenOne from 'rc-tween-one';
+import requestAnimationFrame from 'raf';
 import { toArrayChildren, dataToArray } from './utils';
 import animType from './anim';
 import '../assets/index.less';
+
+let hidden;
+let visibilityChange;
+if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
+  hidden = 'hidden';
+  visibilityChange = 'visibilitychange';
+} else if (typeof document.mozHidden !== 'undefined') {
+  hidden = 'mozHidden';
+  visibilityChange = 'mozvisibilitychange';
+} else if (typeof document.msHidden !== 'undefined') {
+  hidden = 'msHidden';
+  visibilityChange = 'msvisibilitychange';
+} else if (typeof document.webkitHidden !== 'undefined') {
+  hidden = 'webkitHidden';
+  visibilityChange = 'webkitvisibilitychange';
+}
+
 
 class BannerAnim extends Component {
   constructor() {
@@ -27,6 +45,11 @@ class BannerAnim extends Component {
       'animEndSetState',
       'setThumbActive',
       'onResize',
+      'handleVisibilityChange',
+      'cancelRequestAnimationFrame',
+      'timeoutRaf',
+      'onMouseEnter',
+      'onMouseLeave',
     ].forEach((method) => this[method] = this[method].bind(this));
     this.state = {
       wrapperHeight: null,
@@ -35,6 +58,7 @@ class BannerAnim extends Component {
       children: this.setCurrentChildren(this.props.children),
     };
     this.saveChildren(this.state.children);
+    this.timeoutRafID = -1;
   }
 
   componentDidMount() {
@@ -43,16 +67,74 @@ class BannerAnim extends Component {
     // 获取宽度与定位，setState刷新；
     const wrapperHeight = this.getElementHeight();
     const children = this.getShowChildren(this.state.currentShow);
-    window.addEventListener('resize', this.onResize);
     this.setState({
       wrapperHeight,
       elemWidth,
       children,
     });
+
+    if (window.addEventListener) {
+      window.addEventListener('resize', this.onResize);
+    } else {
+      window.attachEvent('onresize', this.onResize);
+    }
+
+    if (this.props.autoPlay) {
+      this.startNow = Date.now();
+      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
+    }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
+    if (window.addEventListener) {
+      window.removeEventListener('resize', this.onResize);
+    } else {
+      window.detachEvent('onresize', this.onResize);
+    }
+    requestAnimationFrame.cancel(this.timeoutRafID);
+    this.timeoutRafID = -1;
+    document.removeEventListener(visibilityChange, this.handleVisibilityChange);
+  }
+
+  handleVisibilityChange() {
+    if (document[hidden] && this.timeoutRafID !== -1) {
+      this.cancelRequestAnimationFrame();
+      this.rafHide = true;
+    } else if (this.timeoutRafID === -1 && this.rafHide) {
+      this.startNow = Date.now() - this.moment;
+      this.rafID = requestAnimationFrame(this.timeoutRaf);
+      this.rafHide = false;
+    }
+  }
+
+  timeoutRaf() {
+    const now = Date.now();
+    this.moment = now - this.startNow;
+    if (this.moment >= this.props.autoPlaySpeed) {
+      setTimeout(()=> {
+        // 跟 tween-one 的 raf 冲突，会闪一下；加 setTimeout 为 raf 彻底结束后再执行。
+        this.next();
+        this.startNow = Date.now();
+        this.timeoutRafID = requestAnimationFrame(this.timeoutRaf)
+      });
+    } else {
+      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+    }
+  }
+
+  cancelRequestAnimationFrame() {
+    requestAnimationFrame.cancel(this.timeoutRafID);
+    this.timeoutRafID = -1;
+  }
+
+  onMouseEnter() {
+    this.cancelRequestAnimationFrame();
+  }
+
+  onMouseLeave() {
+    this.startNow = Date.now() - this.moment;
+    this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
   }
 
   onResize() {
@@ -274,6 +356,8 @@ class BannerAnim extends Component {
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = props.style || {};
     props.style.height = this.state.wrapperHeight + 'px';
+    props.onMouseEnter = this.onMouseEnter;
+    props.onMouseLeave = this.onMouseLeave;
     return (React.createElement(this.props.component, props, this.state.children));
   }
 }
@@ -290,7 +374,8 @@ BannerAnim.propTypes = {
   type: stringOrArray,
   duration: PropTypes.number,
   ease: PropTypes.string,
-
+  autoPlay: PropTypes.bool,
+  autoPlaySpeed: PropTypes.number,
 };
 BannerAnim.defaultProps = {
   component: 'div',
@@ -299,6 +384,8 @@ BannerAnim.defaultProps = {
   duration: 550,
   ease: 'easeInOutQuad',
   arrow: true,
+  thumb: true,
+  autoPlaySpeed: 5000,
 };
 BannerAnim.Arrow = Arrow;
 BannerAnim.Element = Element;

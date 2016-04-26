@@ -11,7 +11,7 @@ const { Element } = BannerAnim;
 class Demo extends React.Component {
   render() {
     return (
-      <BannerAnim>
+      <BannerAnim autoPlay>
         <Element key="aaa"
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
