@@ -1,0 +1,95 @@
+@banner: banner-anim;
+.@{banner} {
+  position: relative;
+  overflow: hidden;
+  &-elem {
+    &-background {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-position: center;
+      background-size: cover;
+    }
+  }
+  &-arrow {
+    cursor: pointer;
+    &-default {
+      position: absolute;
+      top: 50%;
+      width: 20px;
+      height: 60px;
+      margin-top: -30px;
+      background: fade(#000, 30);
+      &.next, &.prev {
+        &:before, &:after {
+          width: 2px;
+          height: 15px;
+          background: #fff;
+          display: block;
+          content: ' ';
+          position: absolute;
+
+        }
+      }
+      &.next {
+        &:before {
+          transform: rotate(-40deg);
+          top: 18px;
+          left: 10px;
+        }
+        &:after {
+          transform: rotate(40deg);
+          bottom: 17px;
+          left: 10px;
+        }
+      }
+      &.prev {
+        &:before {
+          transform: rotate(40deg);
+          top: 18px;
+          left: 8px;
+        }
+        &:after {
+          transform: rotate(-40deg);
+          bottom: 17px;
+          left: 8px;
+        }
+      }
+    }
+    &.next {
+      right: 0;
+    }
+  }
+  &-thumb {
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    & li {
+      pointer-events: auto;
+      cursor: pointer;
+      display: inline-block;
+      list-style: none;
+    }
+    &-default {
+      bottom: 20px;
+      & li {
+        width: 8px;
+        height: 8px;
+        border-radius: 8px;
+        margin: 0 5px;
+        background: fade(#666, 35);
+        transition: background .3s;
+        box-shadow: 0 0 3px rgba(0, 0, 0, .25);
+        &:active, &.active {
+          background: #fff;
+        }
+      }
+    }
+  }
+}
