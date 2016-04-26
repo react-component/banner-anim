@@ -42,7 +42,6 @@ class BannerAnim extends Component {
       'getShowChildren',
       'animToCurrentShow',
       'getAnimType',
-      'setChildrenPropsDelay',
       'animEndSetState',
       'setThumbActive',
       'onResize',
@@ -121,12 +120,6 @@ class BannerAnim extends Component {
     const typeArray = type ? dataToArray(type) : Object.keys(animType);
     const random = Math.round(Math.random() * (typeArray.length - 1));
     return animType[typeArray[random]];
-  }
-
-  setChildrenPropsDelay(children) {
-    return toArrayChildren(children).map((item, i) =>
-      React.cloneElement(item, { ...item.props, key: i }, null)
-    );
   }
 
   setThumbActive(newShow, item) {
@@ -316,7 +309,9 @@ class BannerAnim extends Component {
     newProps.duration = this.props.duration;
     newProps.ease = this.props.ease;
     // 挡截 newChild, 动画的时候把子级全部去掉，只留 image
-    newProps.children = this.setChildrenPropsDelay(newProps.children);
+    newProps.children = toArrayChildren(newProps.children).map((item, i) =>
+      React.cloneElement(item, { ...item.props, key: i }, null)
+    );
     newProps.width = this.state.elemWidth;
     this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
