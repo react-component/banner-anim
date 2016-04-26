@@ -208,6 +208,7 @@ class BannerAnim extends Component {
       React.cloneElement(currentChild, currentProps),
       this.newChild,
     ].concat(this.children.arrowWrapper, thumbWrapper);
+    this.props.onChange('before', newShow);
     this.setState({
       children,
       currentShow: newShow,
@@ -222,6 +223,7 @@ class BannerAnim extends Component {
       const children = [
         this.newChild,
       ].concat(this.children.arrowWrapper, thumbWrapper);
+      this.props.onChange('after', this.state.currentShow);
       this.setState({
         children,
       }, () => {
@@ -376,6 +378,7 @@ BannerAnim.propTypes = {
   ease: PropTypes.string,
   autoPlay: PropTypes.bool,
   autoPlaySpeed: PropTypes.number,
+  onChange: PropTypes.func,
 };
 BannerAnim.defaultProps = {
   component: 'div',
@@ -386,6 +389,8 @@ BannerAnim.defaultProps = {
   arrow: true,
   thumb: true,
   autoPlaySpeed: 5000,
+  onChange: ()=> {
+  },
 };
 BannerAnim.Arrow = Arrow;
 BannerAnim.Element = Element;
