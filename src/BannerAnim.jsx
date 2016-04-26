@@ -6,7 +6,7 @@ import Element from './Element';
 import Thumb from './Thumb';
 import TweenOne from 'rc-tween-one';
 import requestAnimationFrame from 'raf';
-import { toArrayChildren, dataToArray } from './utils';
+import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
 import '../assets/index.less';
 
@@ -30,8 +30,9 @@ if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and 
 class BannerAnim extends Component {
   constructor() {
     super(...arguments);
-    this.tweenBool = true;
+    this.tweenBool = false;
     [
+      'replaceChildren',
       'setCurrentChildren',
       'next',
       'prev',
@@ -57,7 +58,7 @@ class BannerAnim extends Component {
       currentShow: this.props.initShow,
       children: this.setCurrentChildren(this.props.children),
     };
-    this.saveChildren(this.state.children);
+    this.children = this.saveChildren(this.state.children);
     this.timeoutRafID = -1;
   }
 
@@ -86,6 +87,15 @@ class BannerAnim extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.children = this.saveChildren(nextProps.children);
+    // 在动画时不刷新 children 会在结束后触发；
+    if (!this.tweenBool) {
+      const children = this.replaceChildren(this.state.children, this.children);
+      this.setState({ children });
+    }
+  }
+
   componentWillUnmount() {
     if (window.addEventListener) {
       window.removeEventListener('resize', this.onResize);
@@ -95,6 +105,32 @@ class BannerAnim extends Component {
     requestAnimationFrame.cancel(this.timeoutRafID);
     this.timeoutRafID = -1;
     document.removeEventListener(visibilityChange, this.handleVisibilityChange);
+  }
+
+  replaceChildren(currentChildren, newChildren) {
+    return toArrayChildren(currentChildren).map(item => {
+      let _item;
+      switch (item.type) {
+        case Element:
+          _item = newChildren.elemWrapper.filter(elemItem => elemItem.key === item.key)[0];
+          const props = assign({}, _item.props);
+          // 这里避免再次触发动画，把动画组件转换成组件里的 component 属性
+          props.children = toArrayChildren(props.children).map(setAnimCompToTagComp);
+          _item = React.cloneElement(item, props);
+          break;
+        case Arrow:
+          _item = newChildren.arrowWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
+          break;
+        case Thumb:
+          _item = newChildren.thumbWrapper.filter(thumbItem => thumbItem.key === item.key)[0];
+          _item = this.setThumbActive(this.state.currentShow, _item);
+          break;
+        default:
+          _item = item;
+          break;
+      }
+      return _item;
+    });
   }
 
   handleVisibilityChange() {
@@ -138,18 +174,23 @@ class BannerAnim extends Component {
   }
 
   onResize() {
-    const dom = ReactDOM.findDOMNode(this);
-    const elemWidth = dom.getBoundingClientRect().width;
-    const currentChild = this.newChild || this.children.elemWrapper[this.state.currentShow];
-    const props = assign({}, currentChild.props);
-    props.width = elemWidth;
-    const children = [
-      React.cloneElement(currentChild, props),
-    ].concat(this.children.arrowWrapper, this.children.thumbWrapper);
-    this.setState({
-      elemWidth,
-      children,
-    })
+    if (!this.tweenBool) {
+      const dom = ReactDOM.findDOMNode(this);
+      const elemWidth = dom.getBoundingClientRect().width;
+      const currentChild = this.children.elemWrapper[this.state.currentShow];
+      const props = assign({}, currentChild.props);
+      props.width = elemWidth;
+      const thumbWrapper = this.children.thumbWrapper.map(
+        this.setThumbActive.bind(this, this.state.currentShow)
+      );
+      const children = [
+        React.cloneElement(currentChild, props),
+      ].concat(this.children.arrowWrapper, thumbWrapper);
+      this.setState({
+        elemWidth,
+        children,
+      });
+    }
   }
 
   getAnimType(type) {
@@ -162,11 +203,11 @@ class BannerAnim extends Component {
     return toArrayChildren(children).map((item, i) => {
       const props = assign({}, item.props);
       if (item.type === TweenOne) {
-        props.animation.delay = props.animation.delay >= this.props.duration - 50 ?
-          props.animation.delay : (props.animation.delay || 0) + this.props.duration - 50;
+        props.animation.delay = props.animation.delay >= this.props.duration ?
+          props.animation.delay : (props.animation.delay || 0) + this.props.duration;
       } else {
-        props.delay = this.props.delay >= this.props.duration - 50 ?
-          this.props.delay : (props.delay || 0) + this.props.duration - 50;
+        props.delay = this.props.delay >= this.props.duration ?
+          this.props.delay : (props.delay || 0) + this.props.duration;
       }
       props.key = i;
       return React.cloneElement(item, props);
@@ -200,13 +241,11 @@ class BannerAnim extends Component {
     // 挡截 newChild, 增加动画延时，与框架动画时间上冲突。导航看不到效果，增加标签上的动画时音作为延时。
     newProps.children = this.setChildrenPropsDelay(newProps.children);
     newProps.width = this.state.elemWidth;
-    this.newChild = React.cloneElement(newChild, newProps);
-
+    this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-
     const children = [
       React.cloneElement(currentChild, currentProps),
-      this.newChild,
+      this.children.elemWrapper[newShow],
     ].concat(this.children.arrowWrapper, thumbWrapper);
     this.props.onChange('before', newShow);
     this.setState({
@@ -215,26 +254,31 @@ class BannerAnim extends Component {
     })
   }
 
-  animEndSetState(type) {
+  animEndSetState(type, toTagComp) {
     if (type === 'enter') {
+      this.children = this.saveChildren(this.props.children);
       const thumbWrapper = this.children.thumbWrapper.map(
         this.setThumbActive.bind(this, this.state.currentShow)
       );
+      // 动画结束后， 再次刷新时把动画组件转换成组件里的 component 属性
+      const _child = this.children.elemWrapper[this.state.currentShow];
+      const child = toTagComp ? toArrayChildren(_child.props.children).map(setAnimCompToTagComp)
+        : _child.props.children;
       const children = [
-        this.newChild,
+        React.cloneElement(_child, _child.props, child),
       ].concat(this.children.arrowWrapper, thumbWrapper);
       this.props.onChange('after', this.state.currentShow);
       this.setState({
         children,
       }, () => {
-        this.tweenBool = true;
+        this.tweenBool = false;
       });
     }
   }
 
   next() {
-    if (this.tweenBool) {
-      this.tweenBool = false;
+    if (!this.tweenBool) {
+      this.tweenBool = true;
       let newShow = this.state.currentShow;
       newShow++;
       if (newShow >= this.children.elemWrapper.length) {
@@ -245,8 +289,8 @@ class BannerAnim extends Component {
   }
 
   prev() {
-    if (this.tweenBool) {
-      this.tweenBool = false;
+    if (!this.tweenBool) {
+      this.tweenBool = true;
       let newShow = this.state.currentShow;
       newShow--;
       if (newShow < 0) {
@@ -257,8 +301,8 @@ class BannerAnim extends Component {
   }
 
   thumbClick(i) {
-    if (this.tweenBool) {
-      this.tweenBool = false;
+    if (!this.tweenBool) {
+      this.tweenBool = true;
       if (i !== this.state.currentShow) {
         const type = i > this.state.currentShow ? 'next' : 'prev';
         this.animToCurrentShow(i, type);
@@ -272,40 +316,55 @@ class BannerAnim extends Component {
   }
 
   saveChildren(children) {
-    this.children = {
+    const _children = {
       elemWrapper: [],
       arrowWrapper: [],
       thumbWrapper: [],
     };
-    toArrayChildren(children).forEach((item, i) => {
+    toArrayChildren(children).forEach(item => {
+      if (!item.key) {
+        throw new Error('Please add key, key is required');
+      }
+      const itemProps = assign({}, item.props);
       switch (item.type) {
         case Element:
-          this.children.elemWrapper.push(item);
+          itemProps.next = this.next;
+          itemProps.prev = this.prev;
+          itemProps.callBack = this.animEndSetState;
+          itemProps.style = {
+            position: 'absolute',
+            width: '100%',
+          };
+          _children.elemWrapper.push(React.cloneElement(item, itemProps));
           break;
         case Arrow:
-          this.children.arrowWrapper.push(item);
+          itemProps.next = this.next;
+          itemProps.prev = this.prev;
+          _children.arrowWrapper.push(React.cloneElement(item, itemProps));
           break;
         case Thumb:
-          this.children.thumbWrapper.push(item);
+          itemProps.thumbClick = this.thumbClick;
+          _children.thumbWrapper.push(React.cloneElement(item, itemProps));
           break;
         default:
           break
       }
     });
-    if (this.props.arrow && !this.children.arrowWrapper.length) {
-      this.children.arrowWrapper.push(
-        <Arrow type="prev" key="arrowPrev" next={this.next} prev={this.prev} default />,
-        <Arrow type="next" key="arrowNext" next={this.next} prev={this.prev} default />
+    if (this.props.arrow && !_children.arrowWrapper.length) {
+      _children.arrowWrapper.push(
+        <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default />,
+        <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default />
       );
     }
-    if (this.props.thumb && !this.children.thumbWrapper.length) {
-      this.children.thumbWrapper.push(
-        <Thumb length={this.children.elemWrapper.length} key='thumb'
+    if (this.props.thumb && !_children.thumbWrapper.length) {
+      _children.thumbWrapper.push(
+        <Thumb length={_children.elemWrapper.length} key='thumb'
           thumbClick={this.thumbClick}
           active={this.props.initShow}
           default
         />);
     }
+    return _children;
   }
 
   getElementHeight() {
@@ -323,32 +382,14 @@ class BannerAnim extends Component {
   }
 
   setCurrentChildren(children) {
-    return toArrayChildren(children).map((item, i) => {
+    return toArrayChildren(children).map(item => {
       const itemProps = assign({}, item.props);
       const type = item.type;
-      switch (type) {
-        case Element:
-          itemProps.next = this.next;
-          itemProps.prev = this.prev;
-          itemProps.callBack = this.animEndSetState;
-          itemProps.number = i;
-          itemProps.ref = item.key;
-          itemProps.style = {
-            position: 'absolute',
-            width: '100%',
-          };
-          break;
-        case Arrow:
-          itemProps.next = this.next;
-          itemProps.prev = this.prev;
-          break;
-        case Thumb:
-          itemProps.thumbClick = this.thumbClick;
-          break;
-        default:
-          break;
+      if (type === Element) {
+        itemProps.ref = item.key;
+        return React.cloneElement(item, itemProps);
       }
-      return React.cloneElement(item, itemProps);
+      return item;
     });
   }
 

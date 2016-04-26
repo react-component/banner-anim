@@ -1,28 +1,7 @@
 import React, { cloneElement, createElement } from 'react';
 import assign from 'object-assign';
 import TweenOne from 'rc-tween-one';
-import { toArrayChildren } from './utils';
-
-const setAnimPaused = (item, i)=> {
-  const props = assign({}, item.props);
-  props.key = item.key || i;
-  // 压缩后名称不一样了。
-  const propTypes = item.type.propTypes;
-  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse &&
-      propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration
-      || item.type === TweenOne
-      || propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
-      propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave &&
-      propTypes.onEnd && propTypes.animation
-    )) {
-    // queueAnim or tweeOne or animate;
-    const style = assign({}, props.style);
-    style.position = 'relative';
-    props.style = style;
-    return React.createElement(props.component, props);
-  }
-  return cloneElement(item, props, item.props.children);
-};
+import { toArrayChildren, setAnimCompToTagComp } from './utils';
 
 export default {
   move(elem, type, direction, animData){
@@ -33,7 +12,7 @@ export default {
       _x = direction === 'next' ? '100%' : '-100%';
     } else {
       _x = direction === 'next' ? '-80%' : '80%';
-      children = toArrayChildren(children).map(setAnimPaused);
+      children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
     return cloneElement(elem, {
       ...props,
@@ -52,7 +31,7 @@ export default {
       _x = direction === 'next' ? '100%' : '-100%';
     } else {
       _x = direction === 'next' ? '-10%' : '10%';
-      children = toArrayChildren(children).map(setAnimPaused);
+      children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
     return cloneElement(elem, {
       ...props,
@@ -68,14 +47,16 @@ export default {
     const animChild = [];
     const girdNum = 10;
     const girdSize = 100 / girdNum;
+
     let _y;
     let children = props.children;
     if (type === 'enter') {
       _y = direction === 'next' ? '-100%' : '100%';
     } else {
       _y = direction === 'next' ? '60%' : '-60%';
-      children = toArrayChildren(children).map(setAnimPaused);
+      children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
+    const callBack = animData.onComplete.bind(this, true);
     for (let i = 0; i < girdNum; i++) {
       const style = assign({}, props.style);
       style.width = `${girdSize}%`;
@@ -93,7 +74,7 @@ export default {
         y: _y,
         type: type === 'enter' ? 'from' : 'to',
         delay: i * 50 + (type === 'enter' ? 0 : 100),
-        onComplete: i === girdNum - 1 ? animData.onComplete : null,
+        onComplete: i === girdNum - 1 ? callBack : null,
       };
 
       const mask = <div style={style} key={i}>

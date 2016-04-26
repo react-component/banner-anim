@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import assign from 'object-assign';
 
 class Arrow extends Component {
   constructor() {
@@ -9,7 +10,7 @@ class Arrow extends Component {
   }
 
   onClick() {
-    this.props[this.props.type]();
+    this.props[this.props.arrowType]();
   }
 
   render() {
@@ -17,13 +18,12 @@ class Arrow extends Component {
     const defaultClass = `${className}-default`;
     className = `${className} ${this.props.prefixCls || ''}`.trim();
     className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
-    className = `${className} ${this.props.type}`;
-    return (<div
-      className={className}
-      onClick={this.onClick}
-    >
-      {this.props.children}
-    </div>);
+    className = `${className} ${this.props.arrowType}`;
+    const props = assign({}, this.props);
+    delete props.component;
+    props.className = className;
+    props.onClick = this.onClick;
+    return React.createElement(this.props.component, props, this.props.children);
   }
 }
 
@@ -33,7 +33,7 @@ Arrow.propTypes = {
   className: PropTypes.string,
   prefixCls: PropTypes.string,
   component: PropTypes.any,
-  type: PropTypes.string,
+  arrowType: PropTypes.string,
   default: PropTypes.bool,
   next: PropTypes.func,
   prev: PropTypes.func,

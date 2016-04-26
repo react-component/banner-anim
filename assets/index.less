@@ -15,6 +15,7 @@
   }
   &-arrow {
     cursor: pointer;
+    position: absolute;
     &-default {
       position: absolute;
       top: 50%;
@@ -22,6 +23,9 @@
       height: 60px;
       margin-top: -30px;
       background: fade(#000, 30);
+      &.next {
+        right: 0;
+      }
       &.next, &.prev {
         &:before, &:after {
           width: 2px;
@@ -58,9 +62,7 @@
         }
       }
     }
-    &.next {
-      right: 0;
-    }
+
   }
   &-thumb {
     position: absolute;
