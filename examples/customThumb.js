@@ -34,7 +34,7 @@ class Demo extends React.Component {
   onMouseLeave() {
     this.setState({
       enter: false,
-    })
+    });
   }
 
   render() {

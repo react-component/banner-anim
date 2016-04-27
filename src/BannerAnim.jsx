@@ -4,7 +4,6 @@ import assign from 'object-assign';
 import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
-import TweenOne from 'rc-tween-one';
 import requestAnimationFrame from 'raf';
 import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';

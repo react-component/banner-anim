@@ -48,4 +48,5 @@ setAnimCompToTagComp.propTypes = {
   key: React.PropTypes.string,
   style: React.PropTypes.object,
   component: React.PropTypes.any,
+  name: React.PropTypes.string,
 };
