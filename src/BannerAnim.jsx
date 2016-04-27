@@ -49,6 +49,9 @@ class BannerAnim extends Component {
       'timeoutRaf',
       'onMouseEnter',
       'onMouseLeave',
+      'onTouchStart',
+      'onTouchMove',
+      'onTouchEnd',
       'getDomDataSetToState',
     ].forEach((method) => this[method] = this[method].bind(this));
     this.state = {
@@ -98,6 +101,35 @@ class BannerAnim extends Component {
     this.props.onMouseLeave();
     this.startNow = Date.now() - this.moment;
     this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+  }
+
+  onTouchStart(e) {
+    this.mouseXY = {
+      startX: e.touches === undefined ? e.clientX : e.touches[0].clientX,
+      startY: e.touches === undefined ? e.clientY : e.touches[0].clientY,
+    };
+  }
+
+  onTouchMove(e) {
+    if (!this.mouseXY) {
+      return;
+    }
+    this.mouseXY.currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
+    this.mouseXY.currentY = e.touches === undefined ? e.clientY : e.touches[0].clientY;
+  }
+
+  onTouchEnd() {
+    const differX = this.mouseXY.currentX - this.mouseXY.startX;
+    const differY = this.mouseXY.currentY - this.mouseXY.startY;
+    const r = Math.atan2(differY, differX);
+    let angle = Math.round(r * 180 / Math.PI);
+    angle = angle < 0 ? 360 - Math.abs(angle) : angle;
+    if ((angle >= 0 && angle <= 45 || angle >= 315) && differX > this.state.elemWidth * 0.1) {
+      this.next();
+    } else if (angle >= 135 && angle <= 225 && differX < -this.state.elemWidth * 0.1) {
+      this.prev();
+    }
+    delete this.mouseXY;
   }
 
   onResize() {
@@ -263,8 +295,6 @@ class BannerAnim extends Component {
       const itemProps = assign({}, item.props);
       switch (item.type) {
         case Element:
-          itemProps.next = this.next;
-          itemProps.prev = this.prev;
           itemProps.callBack = this.animEndSetState;
           itemProps.style = {
             position: 'absolute',
@@ -415,6 +445,12 @@ class BannerAnim extends Component {
     props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
     props.onMouseEnter = this.onMouseEnter;
     props.onMouseLeave = this.onMouseLeave;
+    props.onTouchStart = this.onTouchStart;
+    props.onMouseDown = this.onTouchStart;
+    props.onTouchMove = this.onTouchMove;
+    props.onMouseMove = this.onTouchMove;
+    props.onTouchEnd = this.onTouchEnd;
+    props.onMouseUp = this.onTouchEnd;
     return (React.createElement(this.props.component, props, this.state.children));
   }
 }

@@ -49,8 +49,6 @@ Element.propTypes = {
   ease: PropTypes.string,
   duration: PropTypes.number,
   direction: PropTypes.string,
-  next: PropTypes.func,
-  prev: PropTypes.func,
   callBack: PropTypes.func,
 };
 Element.defaultProps = {
