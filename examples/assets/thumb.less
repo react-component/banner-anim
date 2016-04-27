@@ -1,0 +1,24 @@
+.user-thumb {
+  overflow: hidden;
+  background: fade(#fff, 15);
+  height: 70px;
+  & > span {
+    width: 80px;
+    height: 60px;
+    margin: 5px 5px;
+    box-shadow: 0 0 5px fade(#000, 15);
+    transition: background .3s;
+    background: transparent;
+    &.active {
+      background: fade(#fff, 45);
+    }
+    & i {
+      display: block;
+      width: 70px;
+      height: 50px;
+      margin: 5px;
+      background-size: cover;
+      background-position: center;
+    }
+  }
+}

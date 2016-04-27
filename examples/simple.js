@@ -16,7 +16,7 @@ class Demo extends React.Component {
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
         >
-          <QueueAnim hideProps={{ child: null }} name="QueueAnim">
+          <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
@@ -26,7 +26,7 @@ class Demo extends React.Component {
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"
         >
-          <QueueAnim hideProps={{ child: null }} name="QueueAnim">
+          <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>

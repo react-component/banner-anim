@@ -53,11 +53,13 @@ class BannerAnim extends Component {
       'getDomDataSetToState',
     ].forEach((method) => this[method] = this[method].bind(this));
     this.state = {
-      wrapperHeight: null,
+      wrapperHeight: 0,
+      thumbHeight: 0,
       elemWidth: null,
       currentShow: this.props.initShow,
       children: this.setCurrentChildren(this.props.children),
     };
+    this.thumbIsDefault = false;
     this.children = this.saveChildren(this.state.children);
     this.timeoutRafID = -1;
   }
@@ -67,6 +69,7 @@ class BannerAnim extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // banner 不作高度的响应，必须跟初次进入统一高度。
     this.children = this.saveChildren(nextProps.children);
     // 在动画时不刷新 children 会在结束后触发；
     if (!this.tweenBool) {
@@ -88,10 +91,12 @@ class BannerAnim extends Component {
 
 
   onMouseEnter() {
+    this.props.onMouseEnter();
     this.cancelRequestAnimationFrame();
   }
 
   onMouseLeave() {
+    this.props.onMouseLeave();
     this.startNow = Date.now() - this.moment;
     this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
   }
@@ -128,15 +133,15 @@ class BannerAnim extends Component {
     return React.cloneElement(item, props);
   }
 
-  getElementHeight() {
+  getElementHeight(elem) {
     let height = 0;
-    this.childrenHieght = {};
+    // this.childrenHieght = {};
     Object.keys(this.refs).filter(key =>
-      this.children.elemWrapper.filter(item => item.key === key).length
+      elem.filter(item => item.key === key).length
     ).forEach(key => {
       const dom = ReactDOM.findDOMNode(this.refs[key]);
       const _height = dom.getBoundingClientRect().height;
-      this.childrenHieght[key] = _height;
+      // this.childrenHieght[key] = _height;
       height = height > _height ? height : _height;
     });
     return height;
@@ -151,7 +156,7 @@ class BannerAnim extends Component {
     return toArrayChildren(children).map(item => {
       const itemProps = assign({}, item.props);
       const type = item.type;
-      if (type === Element) {
+      if (type === Element || type === Thumb) {
         itemProps.ref = item.key;
         return React.cloneElement(item, itemProps);
       }
@@ -163,10 +168,19 @@ class BannerAnim extends Component {
     const dom = ReactDOM.findDOMNode(this);
     const elemWidth = dom.getBoundingClientRect().width;
     // 获取宽度与定位，setState刷新；
-    const wrapperHeight = this.getElementHeight();
+    const wrapperHeight = this.getElementHeight(this.children.elemWrapper);
+    const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.children.thumbWrapper);
+    const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
+    // 更新 arrow 里的 elemHeight;
+    this.children.arrowWrapper = this.children.arrowWrapper.map(item => {
+      const props = assign({}, props);
+      props.elemHeight = wrapperHeight;
+      return React.cloneElement(item, props);
+    });
     const children = this.getShowChildren(this.state.currentShow);
     this.setState({
       wrapperHeight,
+      thumbHeight,
       elemWidth,
       children,
     });
@@ -196,10 +210,9 @@ class BannerAnim extends Component {
         _child,
       ].concat(this.children.arrowWrapper, thumbWrapper);
       this.props.onChange('after', this.state.currentShow);
+      this.tweenBool = false;
       this.setState({
         children,
-      }, () => {
-        this.tweenBool = false;
       });
     }
   }
@@ -263,6 +276,7 @@ class BannerAnim extends Component {
         case Arrow:
           itemProps.next = this.next;
           itemProps.prev = this.prev;
+          itemProps.elemHeight = this.state.wrapperHeight;
           _children.arrowWrapper.push(React.cloneElement(item, itemProps));
           break;
         case Thumb:
@@ -273,13 +287,24 @@ class BannerAnim extends Component {
           break;
       }
     });
+    _children.thumbWrapper = _children.thumbWrapper.length ?
+      _children.thumbWrapper.map(item =>
+        React.cloneElement(item, {
+          ...item.props,
+          length: _children.elemWrapper.length,
+          active: this.props.initShow,
+        })
+      ) : _children.thumbWrapper;
     if (this.props.arrow && !_children.arrowWrapper.length) {
       _children.arrowWrapper.push(
-        <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default />,
-        <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default />
+        <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default
+          elemHeight={this.state.wrapperHeight} />,
+        <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default
+          elemHeight={this.state.wrapperHeight} />
       );
     }
     if (this.props.thumb && !_children.thumbWrapper.length) {
+      this.thumbIsDefault = true;
       _children.thumbWrapper.push(
         <Thumb length={_children.elemWrapper.length} key="thumb"
           thumbClick={this.thumbClick}
@@ -388,7 +413,7 @@ class BannerAnim extends Component {
     const props = assign({}, this.props);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = props.style || {};
-    props.style.height = this.state.wrapperHeight + 'px';
+    props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
     props.onMouseEnter = this.onMouseEnter;
     props.onMouseLeave = this.onMouseLeave;
     return (React.createElement(this.props.component, props, this.state.children));
@@ -410,6 +435,9 @@ BannerAnim.propTypes = {
   autoPlay: PropTypes.bool,
   autoPlaySpeed: PropTypes.number,
   onChange: PropTypes.func,
+  thumbFloat: PropTypes.bool,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
 };
 BannerAnim.defaultProps = {
   component: 'div',
@@ -419,8 +447,13 @@ BannerAnim.defaultProps = {
   ease: 'easeInOutQuad',
   arrow: true,
   thumb: true,
+  thumbFloat: true,
   autoPlaySpeed: 5000,
   onChange: ()=> {
+  },
+  onMouseEnter: ()=> {
+  },
+  onMouseLeave: ()=> {
   },
 };
 BannerAnim.Arrow = Arrow;

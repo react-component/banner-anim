@@ -83,7 +83,7 @@ class Demo extends React.Component {
           prefixCls="banner-user-elem"
           img={this.imgArray[0]}
         >
-          <QueueAnim hideProps={{ child: null }} key="1" name="QueueAnim">
+          <QueueAnim key="1" name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
@@ -93,7 +93,7 @@ class Demo extends React.Component {
           prefixCls="banner-user-elem"
           img={this.imgArray[1]}
         >
-          <QueueAnim hideProps={{ child: null }} key="1" name="QueueAnim">
+          <QueueAnim key="1" name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>

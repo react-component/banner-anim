@@ -18,7 +18,6 @@
     position: absolute;
     &-default {
       position: absolute;
-      top: 50%;
       width: 20px;
       height: 60px;
       margin-top: -30px;
@@ -72,15 +71,16 @@
     width: 100%;
     text-align: center;
     pointer-events: none;
-    & li {
+    & > span {
       pointer-events: auto;
       cursor: pointer;
       display: inline-block;
       list-style: none;
     }
     &-default {
-      bottom: 20px;
-      & li {
+      height: 40px;
+      line-height: 40px;
+      & span{
         width: 8px;
         height: 8px;
         border-radius: 8px;
