@@ -30,12 +30,16 @@ class Thumb extends Component {
     const childToRender = toArrayChildren(children).map((item, i) => {
       const props = assign({}, item.props);
       props.onClick = this.props.thumbClick.bind(this, i);
-      props.className = `${props.className} ${this.props.active === i ? 'active' : ''}`.trim();
+      props.className = `${props.className || ''} ${this.props.active === i ? 'active' : ''}`.trim();
       return React.cloneElement(item, props);
     });
-    return (<ul className={className}>
-      {childToRender}
-    </ul>);
+    return React.createElement(this.props.component,
+      {
+        className: className,
+        style: this.props.style,
+      },
+      childToRender
+    );
   }
 }
 
@@ -51,7 +55,7 @@ Thumb.propTypes = {
   active: PropTypes.number,
 };
 Thumb.defaultProps = {
-  component: 'div',
+  component: 'ul',
   className: 'banner-anim-thumb',
 };
 
