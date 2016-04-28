@@ -72,6 +72,7 @@ class BannerAnim extends Component {
   componentWillReceiveProps(nextProps) {
     // banner 不作高度的响应，必须跟初次进入统一高度。
     this.children = this.saveChildren(nextProps.children);
+
     // 在动画时不刷新 children 会在结束后触发；
     if (!this.tweenBool) {
       const children = this.replaceChildren(this.state.children, this.children);
