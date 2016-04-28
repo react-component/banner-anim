@@ -85,7 +85,7 @@ React.render(<BannerAnim>
 | thumb    |      boolean    |      `true`    |  ^ |
 | autoPlay |      boolean    |      `false`  | auto play |
 | autoPlaySpeed |  number    |    5000       | auto play delay |
-| onChange |     func        |    -          | onChange(`before` || `after`, currentShowInt) |
+| onChange |     func        |    -          | onChange(`before` or `after`, currentShowInt) |
 | thumbFloat |   boolean     |   `true`      | `false` banner height and thumb height addition. |
 | prefixCls |    string      |   -           |  user class |
 | children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
