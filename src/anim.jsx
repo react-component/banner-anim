@@ -163,7 +163,6 @@ export default {
       const animation = {
         ...animData,
         opacity: 0,
-        duration: animData.duration / 2,
         type: 'from',
         delay: delay,
         onComplete: i === length ? animData.onComplete : null,
@@ -210,7 +209,6 @@ export default {
         ...animData,
         opacity: 0,
         scale: 0,
-        duration: animData.duration / 2,
         type: 'from',
         delay: delay,
         onComplete: i === length ? animData.onComplete : null,
@@ -257,7 +255,6 @@ export default {
         ...animData,
         opacity: 0,
         y: direction === 'next' ? '-50%' : '50%',
-        duration: animData.duration / 2,
         type: 'from',
         delay: delay,
         onComplete: i === length ? animData.onComplete : null,

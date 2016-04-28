@@ -484,7 +484,7 @@ BannerAnim.defaultProps = {
   component: 'div',
   className: 'banner-anim',
   initShow: 0,
-  duration: 550,
+  duration: 450,
   ease: 'easeInOutQuad',
   arrow: true,
   thumb: true,

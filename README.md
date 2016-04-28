@@ -54,13 +54,6 @@ http://localhost:8012/examples/
 online example: http://react-component.github.io/banner-anim/
 
 
-## Feature
-
-* support ie8,ie8+,chrome,firefox,safari
-
-### Keyboard
-
-
 ## install
 
 
@@ -69,44 +62,52 @@ online example: http://react-component.github.io/banner-anim/
 
 ## Usage
 
+> BannerAnim children length fewer than tow, please do not use;
+
 ```js
 var BannerAnim = require('rc-banner-anim');
 var React = require('react');
-React.render(<BannerAnim />, container);
+const { Element } = BannerAnim;
+React.render(<BannerAnim>
+  <Element img="img" key="aaa">
+    <TweenOne>test text</TweenOne>
+  </Element>
+  <Element img="img" key="bbb">
+      <TweenOne>test text</TweenOne>
+    </Element>
+</BannerAnim>, container);
 ```
 
 ## API
 
-### props
+### BannerAnim
 
-<table class="table table-bordered table-striped">
-    <thead>
-    <tr>
-        <th style="width: 100px;">name</th>
-        <th style="width: 50px;">type</th>
-        <th style="width: 50px;">default</th>
-        <th>description</th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>className</td>
-          <td>String</td>
-          <td></td>
-          <td>additional css class of root dom node</td>
-        </tr>
-    </tbody>
-</table>
+|   name   |      type       |   default    |        description    |
+|----------|-----------------|--------------|-----------------------|
+|   type   |  string / array | All animType | Provide `across`, `vertical`, `acrossOverlay`, `verticalOverlay`, (`gridBar`, `gridAlpha`, `gridScale`, `gridVerticalMove`), duration is a single block of animation time |
+| duration |      number     |      450     | Single switch time.   |
+| ease     |      string     | `easeInOutQuad` | easing.            |
+| initShow |      number     |    0         |  start show           |
+| arrow    |      boolean    |      `true`    |  `Arrow` is children, this is null and void. else is default arrow |
+| thumb    |      boolean    |      `true`    |  ^ |
+| autoPlay |      boolean    |      `false`  | auto play |
+| autoPlaySpeed |  number    |    5000       | auto play delay |
+| onChange |     func        |    -          | onChange(`before` || `after`, currentShowInt) |
+| thumbFloat |   boolean     |   `true`      | `false` banner height and thumb height addition. |
+| prefixCls |    string      |   -           |  user class |
+| children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
 
+### Element 
 
-## Test Case
+|   name   |      type       |   default    |        description    |
+|----------|-----------------|--------------|-----------------------|
+| key      |     string      |      -       |  must                 |
+| prefixCls |     string      |   -           |  user class |
+| img      |     string      |    null      |  bg image.            |
 
-http://localhost:8012/tests/runner.html?coverage
+### Arrow or Thumb
 
-## Coverage
-
-http://localhost:8012/node_modules/rc-server/node_modules/node-jscover/lib/front-end/jscoverage.html?w=http://localhost:8012/tests/runner.html?coverage
-
-## License
-
-rc-banner-anim is released under the MIT license.
+|   name   |      type       |   default    |        description    |
+|----------|-----------------|--------------|-----------------------|
+| key      |     string      |      -       |  must                 |
+| prefixCls |     string      |   -           |  user class |
