@@ -10,9 +10,6 @@ React BannerAnim Component
 [![gemnasium deps][gemnasium-image]][gemnasium-url]
 [![node version][node-image]][node-url]
 [![npm download][download-image]][download-url]
-[![Sauce Test Status](https://saucelabs.com/buildstatus/rc-banner-anim)](https://saucelabs.com/u/rc-banner-anim)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/rc-banner-anim.svg)](https://saucelabs.com/u/rc-banner-anim)
 
 [npm-image]: http://img.shields.io/npm/v/rc-banner-anim.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/rc-banner-anim
@@ -33,10 +30,6 @@ React BannerAnim Component
 |![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png) | ![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)|
 | --- | --- | --- | --- | --- |
 | IE 8+ ✔ | Chrome 31.0+ ✔ | Firefox 31.0+ ✔ | Opera 30.0+ ✔ | Safari 7.0+ ✔ |
-
-## Screenshots
-
-<img src="" width="288"/>
 
 
 ## Development
