@@ -1,0 +1,70 @@
+.user-arrow {
+  top: 50%;
+  margin-top: -40px;
+}
+.user-arrow .img-wrapper {
+  width: 120px;
+  height: 80px;
+  float: left;
+  position: relative;
+}
+.user-arrow .img-wrapper li {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+}
+.user-arrow .arrow {
+  width: 20px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+.user-arrow .arrow:before,
+.user-arrow .arrow:after {
+  width: 2px;
+  height: 15px;
+  background: #fff;
+  display: block;
+  content: ' ';
+  position: absolute;
+}
+.user-arrow.next {
+  right: -120px;
+}
+.user-arrow.next .arrow {
+  float: left;
+}
+.user-arrow.next .arrow:before {
+  -webkit-transform: rotate(-40deg);
+          transform: rotate(-40deg);
+  top: 28px;
+  left: 10px;
+}
+.user-arrow.next .arrow:after {
+  -webkit-transform: rotate(40deg);
+          transform: rotate(40deg);
+  bottom: 27px;
+  left: 10px;
+}
+.user-arrow.prev {
+  left: -120px;
+}
+.user-arrow.prev .arrow {
+  float: right;
+}
+.user-arrow.prev .arrow:before {
+  -webkit-transform: rotate(40deg);
+          transform: rotate(40deg);
+  top: 28px;
+  left: 8px;
+}
+.user-arrow.prev .arrow:after {
+  -webkit-transform: rotate(-40deg);
+          transform: rotate(-40deg);
+  bottom: 27px;
+  left: 8px;
+}
+
+/*# sourceMappingURL=customArrow.css.map*/
