@@ -106,7 +106,7 @@ class Demo extends React.Component {
         >
           <div className="arrow"></div>
           <QueueAnim type="alpha" className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[0]} />
+            <li style={{ backgroundImage: `url(${this.imgArray[intArray[0]]})`}} key={intArray[0]} />
           </QueueAnim>
         </Arrow>
         <Arrow arrowType="next" key="next" prefixCls="user-arrow" component={TweenOne}
