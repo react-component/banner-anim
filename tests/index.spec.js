@@ -62,7 +62,7 @@ describe('rc-banner-anim', function() {
       type: 'across',
     });
     const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
-    expect(children.getBoundingClientRect().height).to.be(440);
+    expect(children.getBoundingClientRect().height).to.be(140);
   });
 
   it('banner animation initShow', function() {
