@@ -30,7 +30,7 @@ class Element extends Component {
           duration: this.props.duration,
           onComplete: this.props.callBack.bind(this, this.props.type),
         },
-        this.props.width
+        this.props.elemOffset
       ) :
       childrenToRender);
   }
@@ -42,7 +42,7 @@ Element.propTypes = {
   className: PropTypes.string,
   prefixCls: PropTypes.string,
   component: PropTypes.any,
-  width: PropTypes.number,
+  elemOffset: PropTypes.object,
   type: PropTypes.string,
   animType: PropTypes.func,
   img: PropTypes.string,

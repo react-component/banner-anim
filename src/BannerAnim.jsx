@@ -136,6 +136,10 @@ class BannerAnim extends Component {
     if (!this.tweenBool) {
       const dom = ReactDOM.findDOMNode(this);
       const elemWidth = dom.getBoundingClientRect().width;
+      const wrapperHeight = this.getElementHeight(this.children.elemWrapper);
+      const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.children.thumbWrapper);
+      const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
+
       const currentChild = this.children.elemWrapper[this.state.currentShow];
       const props = assign({}, currentChild.props);
       props.width = elemWidth;
@@ -146,6 +150,8 @@ class BannerAnim extends Component {
         React.cloneElement(currentChild, props),
       ].concat(this.children.arrowWrapper, thumbWrapper);
       this.setState({
+        wrapperHeight,
+        thumbHeight,
         elemWidth,
         children,
       });
@@ -355,7 +361,7 @@ class BannerAnim extends Component {
     currentProps.animType = _animType;
     currentProps.duration = this.props.duration;
     currentProps.ease = this.props.ease;
-    currentProps.width = this.state.elemWidth;
+    currentProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
     const newProps = assign({}, newChild.props);
     newProps.type = 'enter';
     newProps.direction = type;
@@ -366,7 +372,7 @@ class BannerAnim extends Component {
     newProps.children = toArrayChildren(newProps.children).map((item, i) =>
       React.cloneElement(item, { ...item.props, key: i }, null)
     );
-    newProps.width = this.state.elemWidth;
+    newProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
     this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
     const children = [
@@ -494,4 +500,6 @@ BannerAnim.defaultProps = {
 BannerAnim.Arrow = Arrow;
 BannerAnim.Element = Element;
 BannerAnim.Thumb = Thumb;
+BannerAnim.animType = animType;
+BannerAnim.setAnimCompToTagComp = setAnimCompToTagComp;
 export default BannerAnim;
