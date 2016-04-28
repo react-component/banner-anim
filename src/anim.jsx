@@ -24,7 +24,7 @@ export default {
       },
     }, children);
   },
-  vertical(elem, type, direction, animData){
+  vertical(elem, type, direction, animData) {
     let _y;
     const props = assign({}, elem.props);
     let children = props.children;
@@ -131,17 +131,17 @@ export default {
     _props.children = animSlot;
     return cloneElement(elem, _props);
   },
-  gridAlpha(elem, type, direction, animData, elemOffset){
+  gridAlpha(elem, type, direction, animData, elemOffset) {
     if (type === 'leave') {
-      return elem
+      return elem;
     }
     const props = assign({}, elem.props);
     const animChild = [];
     const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
-    const gridNum_h = Math.ceil(elemOffset.height / gridWidth);
+    const gridNumH = Math.ceil(elemOffset.height / gridWidth);
     const children = toArrayChildren(props.children).map(setAnimCompToTagComp);
-    for (let i = 0; i < gridNum * gridNum_h; i++) {
+    for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
       const style = assign({}, props.style);
       style.position = 'absolute';
@@ -158,8 +158,8 @@ export default {
       _style.top = -Math.floor(i / gridNum) * gridWidth;
       props.style = _style;
       const delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
-      (gridNum - i % gridNum) * 50 + (gridNum_h - Math.floor(i / gridNum)) * 50;
-      const length = direction === 'next' ? gridNum * gridNum_h - 1 : 0;
+      (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+      const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
       const animation = {
         ...animData,
         opacity: 0,
@@ -176,17 +176,17 @@ export default {
     _props.children = animChild;
     return cloneElement(elem, _props);
   },
-  gridScale(elem, type, direction, animData, elemOffset){
+  gridScale(elem, type, direction, animData, elemOffset) {
     if (type === 'leave') {
-      return elem
+      return elem;
     }
     const props = assign({}, elem.props);
     const animChild = [];
     const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
-    const gridNum_h = Math.ceil(elemOffset.height / gridWidth);
+    const gridNumH = Math.ceil(elemOffset.height / gridWidth);
     const children = toArrayChildren(props.children).map(setAnimCompToTagComp);
-    for (let i = 0; i < gridNum * gridNum_h; i++) {
+    for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
       const style = assign({}, props.style);
       style.position = 'absolute';
@@ -203,8 +203,8 @@ export default {
       _style.top = -Math.floor(i / gridNum) * gridWidth;
       props.style = _style;
       const delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
-      (gridNum - i % gridNum) * 50 + (gridNum_h - Math.floor(i / gridNum)) * 50;
-      const length = direction === 'next' ? gridNum * gridNum_h - 1 : 0;
+      (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+      const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
       const animation = {
         ...animData,
         opacity: 0,
@@ -222,17 +222,17 @@ export default {
     _props.children = animChild;
     return cloneElement(elem, _props);
   },
-  gridVerticalMove(elem, type, direction, animData, elemOffset){
+  gridVerticalMove(elem, type, direction, animData, elemOffset) {
     if (type === 'leave') {
-      return elem
+      return elem;
     }
     const props = assign({}, elem.props);
     const animChild = [];
     const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
-    const gridNum_h = Math.ceil(elemOffset.height / gridWidth);
+    const gridNumH = Math.ceil(elemOffset.height / gridWidth);
     const children = toArrayChildren(props.children).map(setAnimCompToTagComp);
-    for (let i = 0; i < gridNum * gridNum_h; i++) {
+    for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
       const style = assign({}, props.style);
       style.position = 'absolute';
@@ -249,8 +249,8 @@ export default {
       _style.top = -Math.floor(i / gridNum) * gridWidth;
       props.style = _style;
       const delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
-      (gridNum - i % gridNum) * 50 + (gridNum_h - Math.floor(i / gridNum)) * 50;
-      const length = direction === 'next' ? gridNum * gridNum_h - 1 : 0;
+      (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+      const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
       props.animation = {
         ...animData,
         opacity: 0,

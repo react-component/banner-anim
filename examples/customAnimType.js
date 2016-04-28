@@ -9,7 +9,7 @@ import assign from 'object-assign';
 import './assets/index.less';
 const { animType, setAnimCompToTagComp } = BannerAnim;
 
-animType.custom = (elem, type, direction, animData, elemOffset)=> {
+animType.custom = (elem, type, direction, animData)=> {
   console.log(`custom animType, type:${type}`);
   let _y;
   const props = assign({}, elem.props);
@@ -30,7 +30,7 @@ animType.custom = (elem, type, direction, animData, elemOffset)=> {
       type: type === 'enter' ? 'from' : 'to',
     },
   }, children);
-}
+};
 
 const { Element } = BannerAnim;
 class Demo extends React.Component {
