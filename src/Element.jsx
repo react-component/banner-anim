@@ -13,7 +13,9 @@ class Element extends Component {
         key="imgElem"
       ></div> : null;
     const childrenToRender = (
-      <TweenOne style={this.props.style}
+      <TweenOne
+        {...this.props}
+        style={this.props.style}
         className={`banner-anim-elem ${this.props.prefixCls || ''}`.trim()}
         component={this.props.component}
       >
