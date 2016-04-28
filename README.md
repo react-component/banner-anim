@@ -66,8 +66,8 @@ React.render(<BannerAnim>
     <TweenOne>test text</TweenOne>
   </Element>
   <Element img="img" key="bbb">
-      <TweenOne>test text</TweenOne>
-    </Element>
+    <TweenOne>test text</TweenOne>
+  </Element>
 </BannerAnim>, container);
 ```
 
