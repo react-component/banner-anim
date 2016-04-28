@@ -62,11 +62,11 @@ var BannerAnim = require('rc-banner-anim');
 var React = require('react');
 const { Element } = BannerAnim;
 React.render(<BannerAnim>
-  <Element img="img" key="aaa">
-    <TweenOne>test text</TweenOne>
+  <Element img="img" key="a">
+    <TweenOne key='0'>test text</TweenOne>
   </Element>
-  <Element img="img" key="bbb">
-    <TweenOne>test text</TweenOne>
+  <Element img="img" key="b">
+    <TweenOne key='0'>test text</TweenOne>
   </Element>
 </BannerAnim>, container);
 ```

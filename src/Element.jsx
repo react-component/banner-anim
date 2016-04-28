@@ -8,13 +8,13 @@ class Element extends Component {
   render() {
     const imgElem = this.props.img ?
       <div
-        className={`${this.props.className}-background`}
+        className={`banner-anim-elem-background`}
         style={{ backgroundImage: `url(${this.props.img})`}}
         key="imgElem"
       ></div> : null;
     const childrenToRender = (
       <TweenOne style={this.props.style}
-        className={`${this.props.className} ${this.props.prefixCls || ''}`.trim()}
+        className={`banner-anim-elem ${this.props.prefixCls || ''}`.trim()}
         component={this.props.component}
       >
         {imgElem}
@@ -39,7 +39,6 @@ class Element extends Component {
 Element.propTypes = {
   children: PropTypes.any,
   style: PropTypes.object,
-  className: PropTypes.string,
   prefixCls: PropTypes.string,
   component: PropTypes.any,
   elemOffset: PropTypes.object,
@@ -53,7 +52,6 @@ Element.propTypes = {
 };
 Element.defaultProps = {
   component: 'div',
-  className: 'banner-anim-elem',
   callBack: noop,
 };
 

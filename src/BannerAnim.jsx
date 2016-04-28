@@ -32,7 +32,6 @@ class BannerAnim extends Component {
     this.tweenBool = false;
     [
       'replaceChildren',
-      'setCurrentChildren',
       'next',
       'prev',
       'thumbClick',
@@ -59,7 +58,7 @@ class BannerAnim extends Component {
       thumbHeight: 0,
       elemWidth: null,
       currentShow: this.props.initShow,
-      children: this.setCurrentChildren(this.props.children),
+      children: this.props.children,
     };
     this.thumbIsDefault = false;
     this.children = this.saveChildren(this.state.children);
@@ -136,8 +135,8 @@ class BannerAnim extends Component {
     if (!this.tweenBool) {
       const dom = ReactDOM.findDOMNode(this);
       const elemWidth = dom.getBoundingClientRect().width;
-      const wrapperHeight = this.getElementHeight(this.children.elemWrapper);
-      const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.children.thumbWrapper);
+      const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
+      const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
       const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
 
       const currentChild = this.children.elemWrapper[this.state.currentShow];
@@ -170,17 +169,13 @@ class BannerAnim extends Component {
     return React.cloneElement(item, props);
   }
 
-  getElementHeight(elem) {
+  getElementHeight(children) {
     let height = 0;
-    // this.childrenHieght = {};
-    Object.keys(this.refs).filter(key =>
-      elem.filter(item => item.key === key).length
-    ).forEach(key => {
-      const dom = ReactDOM.findDOMNode(this.refs[key]);
+    for (let i = 0; i < children.length; i++) {
+      const dom = children[i];
       const _height = dom.getBoundingClientRect().height;
-      // this.childrenHieght[key] = _height;
       height = height > _height ? height : _height;
-    });
+    }
     return height;
   }
 
@@ -189,24 +184,12 @@ class BannerAnim extends Component {
     return [elem].concat(this.children.arrowWrapper, this.children.thumbWrapper);
   }
 
-  setCurrentChildren(children) {
-    return toArrayChildren(children).map(item => {
-      const itemProps = assign({}, item.props);
-      const type = item.type;
-      if (type === Element || type === Thumb) {
-        itemProps.ref = item.key;
-        return React.cloneElement(item, itemProps);
-      }
-      return item;
-    });
-  }
-
   getDomDataSetToState() {
-    const dom = ReactDOM.findDOMNode(this);
-    const elemWidth = dom.getBoundingClientRect().width;
+    this.dom = ReactDOM.findDOMNode(this);
+    const elemWidth = this.dom.getBoundingClientRect().width;
     // 获取宽度与定位，setState刷新；
-    const wrapperHeight = this.getElementHeight(this.children.elemWrapper);
-    const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.children.thumbWrapper);
+    const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
+    const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
     const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
     // 更新 arrow 里的 elemHeight;
     this.children.arrowWrapper = this.children.arrowWrapper.map(item => {
@@ -362,6 +345,7 @@ class BannerAnim extends Component {
     currentProps.duration = this.props.duration;
     currentProps.ease = this.props.ease;
     currentProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
+    currentProps.children = toArrayChildren(currentChild.props.children).map(setAnimCompToTagComp);
     const newProps = assign({}, newChild.props);
     newProps.type = 'enter';
     newProps.direction = type;
@@ -375,10 +359,15 @@ class BannerAnim extends Component {
     newProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
     this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-    const children = [
-      React.cloneElement(currentChild, currentProps),
-      this.children.elemWrapper[newShow],
-    ].concat(this.children.arrowWrapper, thumbWrapper);
+    const mask = (<div className="banner-anim-elem-mask" key="elem-mask"
+      style={{
+        height: this.state.wrapperHeight,
+      }}
+    >
+      {React.cloneElement(currentChild, currentProps)}
+      {this.children.elemWrapper[newShow]}
+    </div>);
+    const children = [mask].concat(this.children.arrowWrapper, thumbWrapper);
     this.props.onChange('before', newShow);
     this.setState({
       children,

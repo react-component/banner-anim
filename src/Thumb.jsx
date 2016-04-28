@@ -19,7 +19,7 @@ class Thumb extends Component {
   }
 
   render() {
-    let className = this.props.className;
+    let className = 'banner-anim-thumb';
     const defaultClass = `${className}-default`;
     className = `${className} ${this.props.prefixCls || ''}`.trim();
     className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
@@ -46,7 +46,6 @@ class Thumb extends Component {
 Thumb.propTypes = {
   children: PropTypes.any,
   style: PropTypes.object,
-  className: PropTypes.string,
   prefixCls: PropTypes.string,
   component: PropTypes.any,
   thumbClick: PropTypes.func,
@@ -56,7 +55,6 @@ Thumb.propTypes = {
 };
 Thumb.defaultProps = {
   component: 'div',
-  className: 'banner-anim-thumb',
   thumbClick: ()=> {
   },
 };
