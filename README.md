@@ -87,6 +87,7 @@ React.render(<BannerAnim>
 | autoPlaySpeed |  number    |    5000       | auto play delay |
 | onChange |     func        |    -          | onChange(`before` or `after`, currentShowInt) |
 | thumbFloat |   boolean     |   `true`      | `false` banner height and thumb height addition. |
+| bgParallaxAll |  object    |   null        |  with `bgParallax`, All Element `bgParallax`  |
 | prefixCls |    string      |   -           |  user class |
 | children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
 
@@ -96,7 +97,9 @@ React.render(<BannerAnim>
 |----------|-----------------|--------------|-----------------------|
 | key      |     string      |      -       |  must                 |
 | prefixCls |     string      |   -           |  user class |
-| img      |     string      |    null      |  bg image.            |
+| bg      |     string      |    null      |  bg image or video src           |
+| bgType  |      string     |    `img`     |  img or video/xxx     |
+| bgParallax |  object      |   null       |   { y: [0, 300] },  [ scrollTop is 0, page to top ] |
 
 ### Arrow or Thumb
 

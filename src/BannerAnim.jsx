@@ -291,6 +291,10 @@ class BannerAnim extends Component {
             position: 'absolute',
             width: '100%',
           };
+          console.log(this.props.bgParallaxAll)
+          if (this.props.bgParallaxAll) {
+            itemProps.bgParallax = this.props.bgParallaxAll;
+          }
           _children.elemWrapper.push(React.cloneElement(item, itemProps));
           break;
         case Arrow:
@@ -361,15 +365,22 @@ class BannerAnim extends Component {
     newProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
     this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-    const mask = (<div className="banner-anim-elem-mask" key="elem-mask"
-      style={{
-        height: this.state.wrapperHeight,
-      }}
-    >
-      {React.cloneElement(currentChild, currentProps)}
-      {this.children.elemWrapper[newShow]}
-    </div>);
-    const children = [mask].concat(this.children.arrowWrapper, thumbWrapper);
+    /*
+     const mask = (<div className="banner-anim-elem-mask" key="elem-mask"
+     style={{
+     height: this.state.wrapperHeight,
+     }}
+     >
+     {React.cloneElement(currentChild, currentProps)}
+     {this.children.elemWrapper[newShow]}
+     </div>);
+     */
+    // 去掉 mask, thumbNoFloat false 时自已加底色遮挡，
+    // 加 mask 后，如果是 video 每个进出场都重加载；
+    const children = [
+      React.cloneElement(currentChild, currentProps),
+      this.children.elemWrapper[newShow],
+    ].concat(this.children.arrowWrapper, thumbWrapper);
     this.props.onChange('before', newShow);
     this.setState({
       children,
@@ -423,7 +434,7 @@ class BannerAnim extends Component {
     const prefixCls = this.props.prefixCls;
     const props = assign({}, this.props);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
-    props.style = props.style || {};
+    props.style = assign({}, props.style);
     props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
     props.onMouseEnter = this.onMouseEnter;
     props.onMouseLeave = this.onMouseLeave;
@@ -455,6 +466,7 @@ BannerAnim.propTypes = {
   thumbFloat: PropTypes.bool,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
+  bgParallaxAll: PropTypes.object,
 };
 BannerAnim.defaultProps = {
   component: 'div',
