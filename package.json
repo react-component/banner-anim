@@ -49,8 +49,7 @@
   },
   "dependencies": {
     "object-assign": "~4.0.1",
-    "rc-tween-one": "~0.3.0",
-    "raf": "3.x"
+    "rc-tween-one": "~0.3.0"
   },
   "pre-commit": [
     "lint"

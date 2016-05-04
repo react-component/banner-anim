@@ -171,5 +171,5 @@ export default {
     const _props = assign({}, elem.props);
     _props.children = animChild;
     return cloneElement(elem, _props);
-  }
+  },
 };

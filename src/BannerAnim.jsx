@@ -4,12 +4,10 @@ import assign from 'object-assign';
 import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
-import requestAnimationFrame from 'raf';
 import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
 import '../assets/index.less';
-console.log(ticker)
 
 
 class BannerAnim extends Component {
@@ -386,7 +384,6 @@ class BannerAnim extends Component {
 
   timeoutRaf() {
     this.moment = Math.round((ticker.frame - this.startFrame) * (1000 / 60)) + this.startMoment;
-    console.log(this.moment)
     if (this.moment >= this.props.autoPlaySpeed) {
       setTimeout(() => {
         this.next();
