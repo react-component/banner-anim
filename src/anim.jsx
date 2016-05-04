@@ -19,7 +19,6 @@ export default {
       animation: {
         ...animData,
         x: _x,
-        delay: type === 'enter' ? 0 : 50,
         type: type === 'enter' ? 'from' : 'to',
       },
     }, children);
@@ -40,7 +39,6 @@ export default {
       animation: {
         ...animData,
         y: _y,
-        delay: type === 'enter' ? 0 : 50,
         type: type === 'enter' ? 'from' : 'to',
       },
     }, children);
@@ -60,7 +58,6 @@ export default {
       animation: {
         ...animData,
         x: _x,
-        delay: type === 'enter' ? 0 : 50,
         type: type === 'enter' ? 'from' : 'to',
       },
     }, children);
@@ -80,7 +77,6 @@ export default {
       animation: {
         ...animData,
         y: _y,
-        delay: type === 'enter' ? 0 : 50,
         type: type === 'enter' ? 'from' : 'to',
       },
     }, children);
@@ -96,7 +92,7 @@ export default {
     if (type === 'enter') {
       _y = direction === 'next' ? '-100%' : '100%';
     } else {
-      _y = direction === 'next' ? '60%' : '-60%';
+      _y = direction === 'next' ? '100%' : '-100%';
       children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
     for (let i = 0; i < girdNum; i++) {
@@ -131,7 +127,7 @@ export default {
     _props.children = animSlot;
     return cloneElement(elem, _props);
   },
-  gridAlpha(elem, type, direction, animData, elemOffset) {
+  grid(elem, type, direction, animData, elemOffset) {
     if (type === 'leave') {
       return elem;
     }
@@ -175,97 +171,5 @@ export default {
     const _props = assign({}, elem.props);
     _props.children = animChild;
     return cloneElement(elem, _props);
-  },
-  gridScale(elem, type, direction, animData, elemOffset) {
-    if (type === 'leave') {
-      return elem;
-    }
-    const props = assign({}, elem.props);
-    const animChild = [];
-    const gridNum = 10;
-    const gridWidth = elemOffset.width / gridNum;
-    const gridNumH = Math.ceil(elemOffset.height / gridWidth);
-    const children = toArrayChildren(props.children).map(setAnimCompToTagComp);
-    for (let i = 0; i < gridNum * gridNumH; i++) {
-      // mask样式
-      const style = assign({}, props.style);
-      style.position = 'absolute';
-      style.overflow = 'hidden';
-      style.width = `${gridWidth}px`;
-      style.height = `${gridWidth}px`;
-      style.left = i % gridNum * gridWidth;
-      style.top = Math.floor(i / gridNum) * gridWidth;
-      // clone 的样式
-      const _style = assign({}, props.style);
-      _style.width = `${elemOffset.width}px`;
-      _style.position = 'relative';
-      _style.left = -i % gridNum * gridWidth;
-      _style.top = -Math.floor(i / gridNum) * gridWidth;
-      props.style = _style;
-      const delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
-      (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-      const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
-      const animation = {
-        ...animData,
-        opacity: 0,
-        scale: 0,
-        type: 'from',
-        delay: delay,
-        onComplete: i === length ? animData.onComplete : null,
-      };
-      const mask = (<elem.type style={style} key={ i } animation={animation}>
-        { cloneElement(elem, props, children) }
-      </elem.type>);
-      animChild.push(mask);
-    }
-    const _props = assign({}, elem.props);
-    _props.children = animChild;
-    return cloneElement(elem, _props);
-  },
-  gridVerticalMove(elem, type, direction, animData, elemOffset) {
-    if (type === 'leave') {
-      return elem;
-    }
-    const props = assign({}, elem.props);
-    const animChild = [];
-    const gridNum = 10;
-    const gridWidth = elemOffset.width / gridNum;
-    const gridNumH = Math.ceil(elemOffset.height / gridWidth);
-    const children = toArrayChildren(props.children).map(setAnimCompToTagComp);
-    for (let i = 0; i < gridNum * gridNumH; i++) {
-      // mask样式
-      const style = assign({}, props.style);
-      style.position = 'absolute';
-      style.overflow = 'hidden';
-      style.width = `${gridWidth}px`;
-      style.height = `${gridWidth}px`;
-      style.left = i % gridNum * gridWidth;
-      style.top = Math.floor(i / gridNum) * gridWidth;
-      // clone 的样式
-      const _style = assign({}, props.style);
-      _style.width = `${elemOffset.width}px`;
-      _style.position = 'relative';
-      _style.left = -i % gridNum * gridWidth;
-      _style.top = -Math.floor(i / gridNum) * gridWidth;
-      props.style = _style;
-      const delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
-      (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-      const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
-      props.animation = {
-        ...animData,
-        opacity: 0,
-        y: direction === 'next' ? '-50%' : '50%',
-        type: 'from',
-        delay: delay,
-        onComplete: i === length ? animData.onComplete : null,
-      };
-      const mask = (<div style={style} key={ i }>
-        { cloneElement(elem, props, children) }
-      </div>);
-      animChild.push(mask);
-    }
-    const _props = assign({}, elem.props);
-    _props.children = animChild;
-    return cloneElement(elem, _props);
-  },
+  }
 };

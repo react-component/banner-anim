@@ -5,25 +5,11 @@ import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
 import requestAnimationFrame from 'raf';
+import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
 import '../assets/index.less';
-
-let hidden;
-let visibilityChange;
-if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
-  hidden = 'hidden';
-  visibilityChange = 'visibilitychange';
-} else if (typeof document.mozHidden !== 'undefined') {
-  hidden = 'mozHidden';
-  visibilityChange = 'mozvisibilitychange';
-} else if (typeof document.msHidden !== 'undefined') {
-  hidden = 'msHidden';
-  visibilityChange = 'msvisibilitychange';
-} else if (typeof document.webkitHidden !== 'undefined') {
-  hidden = 'webkitHidden';
-  visibilityChange = 'webkitvisibilitychange';
-}
+console.log(ticker)
 
 
 class BannerAnim extends Component {
@@ -40,10 +26,10 @@ class BannerAnim extends Component {
       'getShowChildren',
       'animToCurrentShow',
       'getAnimType',
+      'autoPlay',
       'animEndSetState',
       'setThumbActive',
       'onResize',
-      'handleVisibilityChange',
       'cancelRequestAnimationFrame',
       'timeoutRaf',
       'onMouseEnter',
@@ -63,6 +49,8 @@ class BannerAnim extends Component {
     this.thumbIsDefault = false;
     this.children = this.saveChildren(this.state.children);
     this.timeoutRafID = -1;
+    this.startMoment = 0;
+    this.startFrame = 0;
   }
 
   componentDidMount() {
@@ -86,21 +74,23 @@ class BannerAnim extends Component {
     } else {
       window.detachEvent('onresize', this.onResize);
     }
-    requestAnimationFrame.cancel(this.timeoutRafID);
-    this.timeoutRafID = -1;
-    document.removeEventListener(visibilityChange, this.handleVisibilityChange);
+    this.cancelRequestAnimationFrame();
   }
 
 
   onMouseEnter() {
     this.props.onMouseEnter();
-    this.cancelRequestAnimationFrame();
+    if (this.props.autoPlay) {
+      this.startMoment = this.moment;
+      this.cancelRequestAnimationFrame();
+    }
   }
 
   onMouseLeave() {
     this.props.onMouseLeave();
-    this.startNow = Date.now() - this.moment;
-    this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+    if (this.props.autoPlay) {
+      this.autoPlay();
+    }
   }
 
   onTouchStart(e) {
@@ -213,10 +203,14 @@ class BannerAnim extends Component {
     }
 
     if (this.props.autoPlay) {
-      this.startNow = Date.now();
-      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
-      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
+      this.autoPlay();
     }
+  }
+
+  autoPlay() {
+    this.timeoutRafID = `bannerTicker${Date.now() + Math.random()}`;
+    this.startFrame = ticker.frame;
+    ticker.wake(this.timeoutRafID, this.timeoutRaf);
   }
 
   animEndSetState(type) {
@@ -247,6 +241,9 @@ class BannerAnim extends Component {
         newShow = 0;
       }
       this.animToCurrentShow(newShow, 'next');
+      if (this.props.autoPlay) {
+        this.startMoment = 0;
+      }
     }
   }
 
@@ -259,6 +256,9 @@ class BannerAnim extends Component {
         newShow = this.children.elemWrapper.length - 1;
       }
       this.animToCurrentShow(newShow, 'prev');
+      if (this.props.autoPlay) {
+        this.startMoment = 0;
+      }
     }
   }
 
@@ -268,6 +268,9 @@ class BannerAnim extends Component {
       if (i !== this.state.currentShow) {
         const type = i > this.state.currentShow ? 'next' : 'prev';
         this.animToCurrentShow(i, type);
+      }
+      if (this.props.autoPlay) {
+        this.startMoment = 0;
       }
     }
   }
@@ -377,33 +380,19 @@ class BannerAnim extends Component {
   }
 
   cancelRequestAnimationFrame() {
-    requestAnimationFrame.cancel(this.timeoutRafID);
+    ticker.clear(this.timeoutRafID);
     this.timeoutRafID = -1;
   }
 
   timeoutRaf() {
-    const now = Date.now();
-    this.moment = now - this.startNow;
+    this.moment = Math.round((ticker.frame - this.startFrame) * (1000 / 60)) + this.startMoment;
+    console.log(this.moment)
     if (this.moment >= this.props.autoPlaySpeed) {
-      setTimeout(()=> {
-        // 跟 tween-one 的 raf 冲突，会闪一下；加 setTimeout 为 raf 彻底结束后再执行。
+      setTimeout(() => {
         this.next();
-        this.startNow = Date.now();
-        this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
+        this.startMoment = 0;
+        this.startFrame = ticker.frame;
       });
-    } else {
-      this.timeoutRafID = requestAnimationFrame(this.timeoutRaf);
-    }
-  }
-
-  handleVisibilityChange() {
-    if (document[hidden] && this.timeoutRafID !== -1) {
-      this.cancelRequestAnimationFrame();
-      this.rafHide = true;
-    } else if (this.timeoutRafID === -1 && this.rafHide) {
-      this.startNow = Date.now() - this.moment;
-      this.rafID = requestAnimationFrame(this.timeoutRaf);
-      this.rafHide = false;
     }
   }
 

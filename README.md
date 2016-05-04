@@ -77,7 +77,7 @@ React.render(<BannerAnim>
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-|   type   |  string / array | All animType | Provide `across`, `vertical`, `acrossOverlay`, `verticalOverlay`, (`gridBar`, `gridAlpha`, `gridScale`, `gridVerticalMove`), duration is a single block of animation time |
+|   type   |  string / array | All animType | Provide `across`, `vertical`, `acrossOverlay`, `verticalOverlay`, (`gridBar`, `grid`), duration is a single block of animation time |
 | duration |      number     |      450     | Single switch time.   |
 | ease     |      string     | `easeInOutQuad` | easing.            |
 | initShow |      number     |    0         |  start show           |
