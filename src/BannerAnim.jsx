@@ -291,7 +291,6 @@ class BannerAnim extends Component {
             position: 'absolute',
             width: '100%',
           };
-          console.log(this.props.bgParallaxAll)
           if (this.props.bgParallaxAll) {
             itemProps.bgParallax = this.props.bgParallaxAll;
           }

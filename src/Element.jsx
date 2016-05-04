@@ -59,25 +59,6 @@ class Element extends Component {
     }
   }
 
-  addScrollEvent(props) {
-    this.onScroll();
-    this.isScroll = true;
-    if (window.addEventListener) {
-      window.addEventListener('scroll', this.onScroll);
-    } else {
-      window.attachEvent('onscroll', this.onScroll);
-    }
-  }
-
-  videoLoadedData() {
-    this.onResize();
-    if (window.addEventListener) {
-      window.addEventListener('resize', this.onResize);
-    } else {
-      window.attachEvent('onresize', this.onResize);
-    }
-  }
-
   onResize() {
     const domRect = this.dom.getBoundingClientRect();
     const videoDomRect = this.video.getBoundingClientRect();
@@ -121,7 +102,8 @@ class Element extends Component {
       const item = this.props.bgParallax[_key];
       const cssName = Css.isTransform(key);
       if (!Array.isArray(item)) {
-        return _css[cssName] = item;
+        _css[cssName] = item;
+        return;
       }
       const cssData = item[0] - scale * (item[0] - item[1]);
       if (cssName === 'transform') {
@@ -153,6 +135,25 @@ class Element extends Component {
         key="bgElem"
       ></div>);
     return dom;
+  }
+
+  videoLoadedData() {
+    this.onResize();
+    if (window.addEventListener) {
+      window.addEventListener('resize', this.onResize);
+    } else {
+      window.attachEvent('onresize', this.onResize);
+    }
+  }
+
+  addScrollEvent() {
+    this.onScroll();
+    this.isScroll = true;
+    if (window.addEventListener) {
+      window.addEventListener('scroll', this.onScroll);
+    } else {
+      window.attachEvent('onscroll', this.onScroll);
+    }
   }
 
   render() {
