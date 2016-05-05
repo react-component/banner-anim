@@ -100,6 +100,16 @@ React.render(<BannerAnim>
 | bg      |     string      |    null      |  bg image or video src           |
 | bgType  |      string     |    `img`     |  img or video/xxx     |
 | bgParallax |  object      |   null       |   { y: [0, 300] },  [ scrollTop is 0, page to top ] |
+| bgPrefixCls | string      |   -          | bg user class |
+| followParallax | object   |  null        | follow mouse anim  |
+
+#### followParallax is object
+|   name   |      type       |   default    |        description    |
+|----------|-----------------|--------------|-----------------------|
+| delay    |   number        |  null        | must, Delayed opening, best after the animation to open |
+| data     | array           |  null        | content: { key: string, scale: number, type: array or string }; key: dom key, banner bg key is `bgElem`, scale: Animation value = banner.width / 2 ＊ scale, type: style or `x` `y` |
+| transition | string        | null         | style transition  |
+
 
 ### Arrow or Thumb
 

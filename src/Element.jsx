@@ -1,10 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import TweenOne from 'rc-tween-one';
+import ticker from 'rc-tween-one/lib/ticker';
+import assign from 'object-assign';
 import Css from 'style-utils';
 import animType from './anim';
 import {
   currentScrollTop,
+  dataToArray,
+  toArrayChildren,
 } from './utils';
 
 function noop() {
@@ -14,20 +18,26 @@ class Element extends Component {
   constructor() {
     super(...arguments);
     this.state = {
-      bgAnim: null,
+      bgParallaxAnim: null,
       videoRect: {
         width: 'auto',
         height: 'auto',
         display: 'block',
       },
+      mouseXY: null,
+      domWH: null,
     };
     this.isScroll = false;
     [
       'onScroll',
       'onResize',
+      'onMouseMove',
       'getImgOrVideo',
       'videoLoadedData',
       'addScrollEvent',
+      'getFollowStyle',
+      'followAnalysisType',
+      'getChildren',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -40,6 +50,21 @@ class Element extends Component {
       delete animType.gridBar;
       this.video = this.dom.children[0].children[0];
     }
+    if (this.props.followParallax) {
+      this.timeoutID = `followTicker${Date.now() + Math.random()}`;
+      this.startFrame = ticker.frame;
+      ticker.wake(this.timeoutID, () => {
+        const moment = Math.round((ticker.frame - this.startFrame) * (1000 / 60));
+        if (moment >= this.props.followParallax.delay || 0) {
+          this.cancelRequestAnimationFrame();
+          if (window.addEventListener) {
+            this.dom.addEventListener('mousemove', this.onMouseMove);
+          } else {
+            this.dom.attachEvent('onmousemove', this.onMouseMove);
+          }
+        }
+      });
+    }
   }
 
   componentDidUpdate() {
@@ -50,13 +75,35 @@ class Element extends Component {
 
   componentWillUnmount() {
     this.isScroll = false;
+    this.cancelRequestAnimationFrame();
     if (window.addEventListener) {
       window.removeEventListener('resize', this.onResize);
       window.removeEventListener('scroll', this.onScroll);
+      this.dom.removeEventListener('mousemove', this.onMouseMove);
     } else {
       window.detachEvent('onresize', this.onResize);
       window.detachEvent('onscroll', this.onScroll);
+      this.dom.detachEvent('onmousemove', this.onMouseMove);
     }
+  }
+
+  onMouseMove(e) {
+    const domRect = this.dom.getBoundingClientRect();
+    const scrollTop = currentScrollTop();
+    const offsetTop = domRect.top + scrollTop;
+    const mouseXY = {
+      x: e.pageX - domRect.left,
+      y: e.pageY - offsetTop,
+    };
+    const domWH = {
+      w: domRect.width,
+      h: domRect.height,
+    };
+
+    this.setState({
+      mouseXY,
+      domWH,
+    });
   }
 
   onResize() {
@@ -115,13 +162,51 @@ class Element extends Component {
       }
     });
     this.setState({
-      bgAnim: _css,
+      bgParallaxAnim: _css,
     });
   }
 
+  getFollowStyle(type, value) {
+    let mouseData = this.state.mouseXY.x;
+    let domData = this.state.domWH.w;
+    if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
+      mouseData = this.state.mouseXY.y;
+      domData = this.state.domWH.h;
+    }
+    let d = -(mouseData - domData / 2) * value;
+    if (type === 'opacity') {
+      // 如果是透明度，，变换为value的区间，，最左边为 1 - value; 最右边为 1;
+      d = (mouseData / domData) * value + 1 - value;
+    }
+    const css = Css.getParam(type, d, d);
+    return type.indexOf('backgroundPosition') >= 0 ? `calc(50% + ${css}px )` : css;
+  }
+
   getImgOrVideo() {
+    const followObj = {};
+    if (this.props.followParallax) {
+      followObj.transition = this.props.followParallax.transition;
+    }
+    if (this.props.followParallax && this.state.domWH && this.state.mouseXY) {
+      this.props.followParallax.data.forEach(item => {
+        if (!item.key) {
+          return;
+        }
+        if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
+          dataToArray(item.type).map(this.followAnalysisType.bind(this, item.scale))
+            .forEach(_item => {
+              followObj[_item.cssName] = Css
+                .mergeStyle(followObj[_item.cssName], _item.data);
+            });
+        }
+      });
+    }
+    const className = `banner-anim-elem-background ${this.props.bgPrefixCls}`.trim();
     const dom = this.props.bgType.indexOf('video') >= 0 ?
-      (<div className={`banner-anim-elem-background`} style={this.state.bgAnim} key="bgElem">
+      (<div className={className}
+        style={{ ...this.state.bgParallaxAnim, ...followObj }}
+        key="bgElem"
+      >
         <video loop autoPlay
           style={this.state.videoRect}
           onLoadedData={this.videoLoadedData}
@@ -130,11 +215,41 @@ class Element extends Component {
         </video>
       </div>) :
       (<div
-        className={`banner-anim-elem-background`}
-        style={{ backgroundImage: `url(${this.props.bg || this.props.img})`, ...this.state.bgAnim }}
+        className={className}
+        style={{
+          backgroundImage: `url(${this.props.bg || this.props.img})`,
+          ...this.state.bgParallaxAnim,
+          ...followObj,
+        }}
         key="bgElem"
       ></div>);
     return dom;
+  }
+
+  getChildren() {
+    if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
+      return this.props.children;
+    }
+    const keys = this.props.followParallax.data.map(item => item.key);
+    const child = toArrayChildren(this.props.children).map(item => {
+      const num = keys.indexOf(item.key);
+      if (num >= 0) {
+        const props = assign({}, item.props);
+        const style = assign({}, props.style);
+        const data = this.props.followParallax.data[num];
+        if (this.props.followParallax.transition) {
+          style.transition = this.props.followParallax.transition;
+        }
+        dataToArray(data.type).map(this.followAnalysisType.bind(this, data.scale))
+          .forEach(_item => {
+            style[_item.cssName] = Css.mergeStyle(style[_item.cssName], _item.data);
+          });
+        props.style = style;
+        return React.cloneElement(item, props);
+      }
+      return item;
+    });
+    return child;
   }
 
   videoLoadedData() {
@@ -156,6 +271,23 @@ class Element extends Component {
     }
   }
 
+  followAnalysisType(scale, _type) {
+    const type = Css.getGsapType(_type);
+    const cssName = Css.isTransform(type);
+    // 把 bgParallax 的合进来；
+    const bgParallaxStyle = this.state.bgParallaxAnim || {};
+    return {
+      cssName: cssName,
+      data: Css.mergeStyle(bgParallaxStyle[cssName] || '',
+        this.getFollowStyle(type, scale)),
+    };
+  }
+
+  cancelRequestAnimationFrame() {
+    ticker.clear(this.timeoutID);
+    this.timeoutID = -1;
+  }
+
   render() {
     const bgElem = this.props.bg || this.props.img ?
       this.getImgOrVideo() : null;
@@ -167,7 +299,7 @@ class Element extends Component {
         component={this.props.component}
       >
         {bgElem}
-        {this.props.children}
+        {this.getChildren()}
       </TweenOne>
     );
     return (this.props.animType ?
@@ -189,6 +321,7 @@ Element.propTypes = {
   children: PropTypes.any,
   style: PropTypes.object,
   prefixCls: PropTypes.string,
+  bgPrefixCls: PropTypes.string,
   component: PropTypes.any,
   elemOffset: PropTypes.object,
   type: PropTypes.string,
@@ -201,6 +334,7 @@ Element.propTypes = {
   direction: PropTypes.string,
   callBack: PropTypes.func,
   bgParallax: PropTypes.object,
+  followParallax: PropTypes.object,
 };
 Element.defaultProps = {
   component: 'div',
