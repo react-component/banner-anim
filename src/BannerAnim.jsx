@@ -187,6 +187,7 @@ class BannerAnim extends Component {
       return React.cloneElement(item, props);
     });
     const children = this.getShowChildren(this.state.currentShow);
+
     this.setState({
       wrapperHeight,
       thumbHeight,
