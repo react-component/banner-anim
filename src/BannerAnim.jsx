@@ -7,7 +7,7 @@ import Thumb from './Thumb';
 import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
-import '../assets/index.less';
+import '../assets/index.css';
 
 
 class BannerAnim extends Component {
