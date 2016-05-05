@@ -11,7 +11,7 @@ const { Element } = BannerAnim;
 class Demo extends React.Component {
   render() {
     return (
-      <BannerAnim>
+      <BannerAnim type="across" bgParallaxAll={{ y: [0, 300] }}>
         <Element key="aaa"
           prefixCls="banner-user-elem"
           bgType="video/mp4"
