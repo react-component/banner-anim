@@ -55,8 +55,6 @@ online example: http://react-component.github.io/banner-anim/
 
 ## Usage
 
-> BannerAnim children length fewer than tow, please do not use;
-
 ```js
 var BannerAnim = require('rc-banner-anim');
 var React = require('react');

@@ -200,7 +200,7 @@ class BannerAnim extends Component {
       window.attachEvent('onresize', this.onResize);
     }
 
-    if (this.props.autoPlay) {
+    if (this.props.autoPlay && this.children.elemWrapper.length > 1) {
       this.autoPlay();
     }
   }
@@ -310,30 +310,32 @@ class BannerAnim extends Component {
           break;
       }
     });
-    _children.thumbWrapper = _children.thumbWrapper.length ?
-      _children.thumbWrapper.map(item =>
-        React.cloneElement(item, {
-          ...item.props,
-          length: _children.elemWrapper.length,
-          active: this.props.initShow,
-        })
-      ) : _children.thumbWrapper;
-    if (this.props.arrow && !_children.arrowWrapper.length) {
-      _children.arrowWrapper.push(
-        <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default
-          elemHeight={this.state.wrapperHeight} />,
-        <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default
-          elemHeight={this.state.wrapperHeight} />
-      );
-    }
-    if (this.props.thumb && !_children.thumbWrapper.length) {
-      this.thumbIsDefault = true;
-      _children.thumbWrapper.push(
-        <Thumb length={_children.elemWrapper.length} key="thumb"
-          thumbClick={this.thumbClick}
-          active={this.props.initShow}
-          default
-        />);
+    if (_children.elemWrapper.length > 1) {
+      _children.thumbWrapper = _children.thumbWrapper.length ?
+        _children.thumbWrapper.map(item =>
+          React.cloneElement(item, {
+            ...item.props,
+            length: _children.elemWrapper.length,
+            active: this.props.initShow,
+          })
+        ) : _children.thumbWrapper;
+      if (this.props.arrow && !_children.arrowWrapper.length) {
+        _children.arrowWrapper.push(
+          <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default
+            elemHeight={this.state.wrapperHeight} />,
+          <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default
+            elemHeight={this.state.wrapperHeight} />
+        );
+      }
+      if (this.props.thumb && !_children.thumbWrapper.length) {
+        this.thumbIsDefault = true;
+        _children.thumbWrapper.push(
+          <Thumb length={_children.elemWrapper.length} key="thumb"
+            thumbClick={this.thumbClick}
+            active={this.props.initShow}
+            default
+          />);
+      }
     }
     return _children;
   }
@@ -435,14 +437,16 @@ class BannerAnim extends Component {
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = assign({}, props.style);
     props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
-    props.onMouseEnter = this.onMouseEnter;
-    props.onMouseLeave = this.onMouseLeave;
-    props.onTouchStart = this.onTouchStart;
-    props.onMouseDown = this.onTouchStart;
-    props.onTouchMove = this.onTouchMove;
-    props.onMouseMove = this.onTouchMove;
-    props.onTouchEnd = this.onTouchEnd;
-    props.onMouseUp = this.onTouchEnd;
+    if (this.children.elemWrapper.length > 1) {
+      props.onMouseEnter = this.onMouseEnter;
+      props.onMouseLeave = this.onMouseLeave;
+      props.onTouchStart = this.onTouchStart;
+      props.onMouseDown = this.onTouchStart;
+      props.onTouchMove = this.onTouchMove;
+      props.onMouseMove = this.onTouchMove;
+      props.onTouchEnd = this.onTouchEnd;
+      props.onMouseUp = this.onTouchEnd;
+    }
     return (React.createElement(this.props.component, props, this.state.children));
   }
 }
