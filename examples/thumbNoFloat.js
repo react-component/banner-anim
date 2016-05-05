@@ -1,14 +1,14 @@
-webpackJsonp([5],{
+webpackJsonp([7],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(199);
+	module.exports = __webpack_require__(202);
 
 
 /***/ },
 
-/***/ 199:
+/***/ 202:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -29,7 +29,7 @@ webpackJsonp([5],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(186);
+	var _rcQueueAnim = __webpack_require__(187);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
@@ -45,7 +45,7 @@ webpackJsonp([5],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(192);
+	__webpack_require__(193);
 	
 	var Element = _rcBannerAnim2['default'].Element;
 	

@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		6:0
+/******/ 		9:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"autoplay","1":"customAnimType","2":"customArrow","3":"customThumb","4":"simple","5":"thumbNoFloat"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"autoplay","1":"bgParallax","2":"customAnimType","3":"customArrow","4":"customThumb","5":"followMouse","6":"simple","7":"thumbNoFloat","8":"videoBg"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -175,38 +175,21 @@
 	
 	var _Element2 = _interopRequireDefault(_Element);
 	
-	var _Thumb = __webpack_require__(181);
+	var _Thumb = __webpack_require__(185);
 	
 	var _Thumb2 = _interopRequireDefault(_Thumb);
 	
-	var _raf = __webpack_require__(183);
+	var _rcTweenOneLibTicker = __webpack_require__(179);
 	
-	var _raf2 = _interopRequireDefault(_raf);
+	var _rcTweenOneLibTicker2 = _interopRequireDefault(_rcTweenOneLibTicker);
 	
-	var _utils = __webpack_require__(182);
+	var _utils = __webpack_require__(184);
 	
-	var _anim = __webpack_require__(184);
+	var _anim = __webpack_require__(183);
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
-	__webpack_require__(185);
-	
-	var hidden = undefined;
-	var visibilityChange = undefined;
-	if (typeof document.hidden !== 'undefined') {
-	  // Opera 12.10 and Firefox 18 and later support
-	  hidden = 'hidden';
-	  visibilityChange = 'visibilitychange';
-	} else if (typeof document.mozHidden !== 'undefined') {
-	  hidden = 'mozHidden';
-	  visibilityChange = 'mozvisibilitychange';
-	} else if (typeof document.msHidden !== 'undefined') {
-	  hidden = 'msHidden';
-	  visibilityChange = 'msvisibilitychange';
-	} else if (typeof document.webkitHidden !== 'undefined') {
-	  hidden = 'webkitHidden';
-	  visibilityChange = 'webkitvisibilitychange';
-	}
+	__webpack_require__(186);
 	
 	var BannerAnim = (function (_Component) {
 	  _inherits(BannerAnim, _Component);
@@ -218,7 +201,7 @@
 	
 	    _get(Object.getPrototypeOf(BannerAnim.prototype), 'constructor', this).apply(this, arguments);
 	    this.tweenBool = false;
-	    ['replaceChildren', 'next', 'prev', 'thumbClick', 'getElementHeight', 'saveChildren', 'getShowChildren', 'animToCurrentShow', 'getAnimType', 'animEndSetState', 'setThumbActive', 'onResize', 'handleVisibilityChange', 'cancelRequestAnimationFrame', 'timeoutRaf', 'onMouseEnter', 'onMouseLeave', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'getDomDataSetToState'].forEach(function (method) {
+	    ['replaceChildren', 'next', 'prev', 'thumbClick', 'getElementHeight', 'saveChildren', 'getShowChildren', 'animToCurrentShow', 'getAnimType', 'autoPlay', 'animEndSetState', 'setThumbActive', 'onResize', 'cancelRequestAnimationFrame', 'timeoutRaf', 'onMouseEnter', 'onMouseLeave', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'getDomDataSetToState'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	    this.state = {
@@ -231,6 +214,8 @@
 	    this.thumbIsDefault = false;
 	    this.children = this.saveChildren(this.state.children);
 	    this.timeoutRafID = -1;
+	    this.startMoment = 0;
+	    this.startFrame = 0;
 	  }
 	
 	  _createClass(BannerAnim, [{
@@ -258,22 +243,24 @@
 	      } else {
 	        window.detachEvent('onresize', this.onResize);
 	      }
-	      _raf2['default'].cancel(this.timeoutRafID);
-	      this.timeoutRafID = -1;
-	      document.removeEventListener(visibilityChange, this.handleVisibilityChange);
+	      this.cancelRequestAnimationFrame();
 	    }
 	  }, {
 	    key: 'onMouseEnter',
 	    value: function onMouseEnter() {
 	      this.props.onMouseEnter();
-	      this.cancelRequestAnimationFrame();
+	      if (this.props.autoPlay) {
+	        this.startMoment = this.moment;
+	        this.cancelRequestAnimationFrame();
+	      }
 	    }
 	  }, {
 	    key: 'onMouseLeave',
 	    value: function onMouseLeave() {
 	      this.props.onMouseLeave();
-	      this.startNow = Date.now() - this.moment;
-	      this.timeoutRafID = (0, _raf2['default'])(this.timeoutRaf);
+	      if (this.props.autoPlay) {
+	        this.autoPlay();
+	      }
 	    }
 	  }, {
 	    key: 'onTouchStart',
@@ -377,6 +364,7 @@
 	        return _react2['default'].cloneElement(item, props);
 	      });
 	      var children = this.getShowChildren(this.state.currentShow);
+	
 	      this.setState({
 	        wrapperHeight: wrapperHeight,
 	        thumbHeight: thumbHeight,
@@ -390,11 +378,16 @@
 	        window.attachEvent('onresize', this.onResize);
 	      }
 	
-	      if (this.props.autoPlay) {
-	        this.startNow = Date.now();
-	        this.timeoutRafID = (0, _raf2['default'])(this.timeoutRaf);
-	        document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
+	      if (this.props.autoPlay && this.children.elemWrapper.length > 1) {
+	        this.autoPlay();
 	      }
+	    }
+	  }, {
+	    key: 'autoPlay',
+	    value: function autoPlay() {
+	      this.timeoutRafID = 'bannerTicker' + (Date.now() + Math.random());
+	      this.startFrame = _rcTweenOneLibTicker2['default'].frame;
+	      _rcTweenOneLibTicker2['default'].wake(this.timeoutRafID, this.timeoutRaf);
 	    }
 	  }, {
 	    key: 'animEndSetState',
@@ -423,6 +416,9 @@
 	          newShow = 0;
 	        }
 	        this.animToCurrentShow(newShow, 'next');
+	        if (this.props.autoPlay) {
+	          this.startMoment = 0;
+	        }
 	      }
 	    }
 	  }, {
@@ -436,6 +432,9 @@
 	          newShow = this.children.elemWrapper.length - 1;
 	        }
 	        this.animToCurrentShow(newShow, 'prev');
+	        if (this.props.autoPlay) {
+	          this.startMoment = 0;
+	        }
 	      }
 	    }
 	  }, {
@@ -446,6 +445,9 @@
 	        if (i !== this.state.currentShow) {
 	          var type = i > this.state.currentShow ? 'next' : 'prev';
 	          this.animToCurrentShow(i, type);
+	        }
+	        if (this.props.autoPlay) {
+	          this.startMoment = 0;
 	        }
 	      }
 	    }
@@ -471,6 +473,9 @@
 	              position: 'absolute',
 	              width: '100%'
 	            };
+	            if (_this2.props.bgParallaxAll) {
+	              itemProps.bgParallax = _this2.props.bgParallaxAll;
+	            }
 	            _children.elemWrapper.push(_react2['default'].cloneElement(item, itemProps));
 	            break;
 	          case _Arrow2['default']:
@@ -487,24 +492,26 @@
 	            break;
 	        }
 	      });
-	      _children.thumbWrapper = _children.thumbWrapper.length ? _children.thumbWrapper.map(function (item) {
-	        return _react2['default'].cloneElement(item, _extends({}, item.props, {
-	          length: _children.elemWrapper.length,
-	          active: _this2.props.initShow
-	        }));
-	      }) : _children.thumbWrapper;
-	      if (this.props.arrow && !_children.arrowWrapper.length) {
-	        _children.arrowWrapper.push(_react2['default'].createElement(_Arrow2['default'], { arrowType: 'prev', key: 'arrowPrev', next: this.next, prev: this.prev, 'default': true,
-	          elemHeight: this.state.wrapperHeight }), _react2['default'].createElement(_Arrow2['default'], { arrowType: 'next', key: 'arrowNext', next: this.next, prev: this.prev, 'default': true,
-	          elemHeight: this.state.wrapperHeight }));
-	      }
-	      if (this.props.thumb && !_children.thumbWrapper.length) {
-	        this.thumbIsDefault = true;
-	        _children.thumbWrapper.push(_react2['default'].createElement(_Thumb2['default'], { length: _children.elemWrapper.length, key: 'thumb',
-	          thumbClick: this.thumbClick,
-	          active: this.props.initShow,
-	          'default': true
-	        }));
+	      if (_children.elemWrapper.length > 1) {
+	        _children.thumbWrapper = _children.thumbWrapper.length ? _children.thumbWrapper.map(function (item) {
+	          return _react2['default'].cloneElement(item, _extends({}, item.props, {
+	            length: _children.elemWrapper.length,
+	            active: _this2.props.initShow
+	          }));
+	        }) : _children.thumbWrapper;
+	        if (this.props.arrow && !_children.arrowWrapper.length) {
+	          _children.arrowWrapper.push(_react2['default'].createElement(_Arrow2['default'], { arrowType: 'prev', key: 'arrowPrev', next: this.next, prev: this.prev, 'default': true,
+	            elemHeight: this.state.wrapperHeight }), _react2['default'].createElement(_Arrow2['default'], { arrowType: 'next', key: 'arrowNext', next: this.next, prev: this.prev, 'default': true,
+	            elemHeight: this.state.wrapperHeight }));
+	        }
+	        if (this.props.thumb && !_children.thumbWrapper.length) {
+	          this.thumbIsDefault = true;
+	          _children.thumbWrapper.push(_react2['default'].createElement(_Thumb2['default'], { length: _children.elemWrapper.length, key: 'thumb',
+	            thumbClick: this.thumbClick,
+	            active: this.props.initShow,
+	            'default': true
+	          }));
+	        }
 	      }
 	      return _children;
 	    }
@@ -537,17 +544,19 @@
 	      newProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
 	      this.children.elemWrapper[newShow] = _react2['default'].cloneElement(newChild, newProps);
 	      var thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-	      var mask = _react2['default'].createElement(
-	        'div',
-	        { className: 'banner-anim-elem-mask', key: 'elem-mask',
-	          style: {
-	            height: this.state.wrapperHeight
-	          }
-	        },
-	        _react2['default'].cloneElement(currentChild, currentProps),
-	        this.children.elemWrapper[newShow]
-	      );
-	      var children = [mask].concat(this.children.arrowWrapper, thumbWrapper);
+	      /*
+	       const mask = (<div className="banner-anim-elem-mask" key="elem-mask"
+	       style={{
+	       height: this.state.wrapperHeight,
+	       }}
+	       >
+	       {React.cloneElement(currentChild, currentProps)}
+	       {this.children.elemWrapper[newShow]}
+	       </div>);
+	       */
+	      // 去掉 mask, thumbNoFloat false 时自已加底色遮挡，
+	      // 加 mask 后，如果是 video 每个进出场都重加载；
+	      var children = [_react2['default'].cloneElement(currentChild, currentProps), this.children.elemWrapper[newShow]].concat(this.children.arrowWrapper, thumbWrapper);
 	      this.props.onChange('before', newShow);
 	      this.setState({
 	        children: children,
@@ -557,7 +566,7 @@
 	  }, {
 	    key: 'cancelRequestAnimationFrame',
 	    value: function cancelRequestAnimationFrame() {
-	      _raf2['default'].cancel(this.timeoutRafID);
+	      _rcTweenOneLibTicker2['default'].clear(this.timeoutRafID);
 	      this.timeoutRafID = -1;
 	    }
 	  }, {
@@ -565,29 +574,13 @@
 	    value: function timeoutRaf() {
 	      var _this3 = this;
 	
-	      var now = Date.now();
-	      this.moment = now - this.startNow;
+	      this.moment = Math.round((_rcTweenOneLibTicker2['default'].frame - this.startFrame) * (1000 / 60)) + this.startMoment;
 	      if (this.moment >= this.props.autoPlaySpeed) {
 	        setTimeout(function () {
-	          // 跟 tween-one 的 raf 冲突，会闪一下；加 setTimeout 为 raf 彻底结束后再执行。
 	          _this3.next();
-	          _this3.startNow = Date.now();
-	          _this3.timeoutRafID = (0, _raf2['default'])(_this3.timeoutRaf);
+	          _this3.startMoment = 0;
+	          _this3.startFrame = _rcTweenOneLibTicker2['default'].frame;
 	        });
-	      } else {
-	        this.timeoutRafID = (0, _raf2['default'])(this.timeoutRaf);
-	      }
-	    }
-	  }, {
-	    key: 'handleVisibilityChange',
-	    value: function handleVisibilityChange() {
-	      if (document[hidden] && this.timeoutRafID !== -1) {
-	        this.cancelRequestAnimationFrame();
-	        this.rafHide = true;
-	      } else if (this.timeoutRafID === -1 && this.rafHide) {
-	        this.startNow = Date.now() - this.moment;
-	        this.rafID = (0, _raf2['default'])(this.timeoutRaf);
-	        this.rafHide = false;
 	      }
 	    }
 	  }, {
@@ -631,16 +624,18 @@
 	      var prefixCls = this.props.prefixCls;
 	      var props = (0, _objectAssign2['default'])({}, this.props);
 	      props.className = (props.className + ' ' + (prefixCls || '')).trim();
-	      props.style = props.style || {};
+	      props.style = (0, _objectAssign2['default'])({}, props.style);
 	      props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
-	      props.onMouseEnter = this.onMouseEnter;
-	      props.onMouseLeave = this.onMouseLeave;
-	      props.onTouchStart = this.onTouchStart;
-	      props.onMouseDown = this.onTouchStart;
-	      props.onTouchMove = this.onTouchMove;
-	      props.onMouseMove = this.onTouchMove;
-	      props.onTouchEnd = this.onTouchEnd;
-	      props.onMouseUp = this.onTouchEnd;
+	      if (this.children.elemWrapper.length > 1) {
+	        props.onMouseEnter = this.onMouseEnter;
+	        props.onMouseLeave = this.onMouseLeave;
+	        props.onTouchStart = this.onTouchStart;
+	        props.onMouseDown = this.onTouchStart;
+	        props.onTouchMove = this.onTouchMove;
+	        props.onMouseMove = this.onTouchMove;
+	        props.onTouchEnd = this.onTouchEnd;
+	        props.onMouseUp = this.onTouchEnd;
+	      }
 	      return _react2['default'].createElement(this.props.component, props, this.state.children);
 	    }
 	  }]);
@@ -666,7 +661,8 @@
 	  onChange: _react.PropTypes.func,
 	  thumbFloat: _react.PropTypes.bool,
 	  onMouseEnter: _react.PropTypes.func,
-	  onMouseLeave: _react.PropTypes.func
+	  onMouseLeave: _react.PropTypes.func,
+	  bgParallaxAll: _react.PropTypes.object
 	};
 	BannerAnim.defaultProps = {
 	  component: 'div',
@@ -20759,9 +20755,31 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactDom = __webpack_require__(36);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
 	var _rcTweenOne = __webpack_require__(172);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
+	
+	var _rcTweenOneLibTicker = __webpack_require__(179);
+	
+	var _rcTweenOneLibTicker2 = _interopRequireDefault(_rcTweenOneLibTicker);
+	
+	var _objectAssign = __webpack_require__(8);
+	
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
+	var _styleUtils = __webpack_require__(177);
+	
+	var _styleUtils2 = _interopRequireDefault(_styleUtils);
+	
+	var _anim = __webpack_require__(183);
+	
+	var _anim2 = _interopRequireDefault(_anim);
+	
+	var _utils = __webpack_require__(184);
 	
 	function noop() {}
 	
@@ -20769,19 +20787,303 @@
 	  _inherits(Element, _Component);
 	
 	  function Element() {
+	    var _this = this;
+	
 	    _classCallCheck(this, Element);
 	
 	    _get(Object.getPrototypeOf(Element.prototype), 'constructor', this).apply(this, arguments);
+	    this.state = {
+	      bgParallaxAnim: null,
+	      videoRect: {
+	        width: 'auto',
+	        height: 'auto',
+	        display: 'block'
+	      },
+	      mouseXY: null,
+	      domWH: null
+	    };
+	    this.isScroll = false;
+	    ['onScroll', 'onResize', 'onMouseMove', 'getImgOrVideo', 'videoLoadedData', 'addScrollEvent', 'getFollowStyle', 'followAnalysisType', 'getChildren'].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
 	  }
 	
 	  _createClass(Element, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      this.dom = _reactDom2['default'].findDOMNode(this);
+	      this.componentDidUpdate();
+	      if (this.props.bgType.indexOf('video') >= 0) {
+	        // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
+	        delete _anim2['default'].grid;
+	        delete _anim2['default'].gridBar;
+	        this.video = this.dom.children[0].children[0];
+	      }
+	      if (this.props.followParallax) {
+	        this.timeoutID = 'followTicker' + (Date.now() + Math.random());
+	        this.startFrame = _rcTweenOneLibTicker2['default'].frame;
+	        _rcTweenOneLibTicker2['default'].wake(this.timeoutID, function () {
+	          var moment = Math.round((_rcTweenOneLibTicker2['default'].frame - _this2.startFrame) * (1000 / 60));
+	          if (moment >= _this2.props.followParallax.delay || 0) {
+	            _this2.cancelRequestAnimationFrame();
+	            if (window.addEventListener) {
+	              _this2.dom.addEventListener('mousemove', _this2.onMouseMove);
+	            } else {
+	              _this2.dom.attachEvent('onmousemove', _this2.onMouseMove);
+	            }
+	          }
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      if (this.props.bgParallax && !this.isScroll) {
+	        this.addScrollEvent(this.props);
+	      }
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.isScroll = false;
+	      this.cancelRequestAnimationFrame();
+	      if (window.addEventListener) {
+	        window.removeEventListener('resize', this.onResize);
+	        window.removeEventListener('scroll', this.onScroll);
+	        this.dom.removeEventListener('mousemove', this.onMouseMove);
+	      } else {
+	        window.detachEvent('onresize', this.onResize);
+	        window.detachEvent('onscroll', this.onScroll);
+	        this.dom.detachEvent('onmousemove', this.onMouseMove);
+	      }
+	    }
+	  }, {
+	    key: 'onMouseMove',
+	    value: function onMouseMove(e) {
+	      var domRect = this.dom.getBoundingClientRect();
+	      var scrollTop = (0, _utils.currentScrollTop)();
+	      var offsetTop = domRect.top + scrollTop;
+	      var mouseXY = {
+	        x: e.pageX - domRect.left,
+	        y: e.pageY - offsetTop
+	      };
+	      var domWH = {
+	        w: domRect.width,
+	        h: domRect.height
+	      };
+	
+	      this.setState({
+	        mouseXY: mouseXY,
+	        domWH: domWH
+	      });
+	    }
+	  }, {
+	    key: 'onResize',
+	    value: function onResize() {
+	      var domRect = this.dom.getBoundingClientRect();
+	      var videoDomRect = this.video.getBoundingClientRect();
+	      var scale = undefined;
+	      var videoRect = {
+	        display: 'block',
+	        position: 'relative',
+	        top: 0,
+	        left: 0
+	      };
+	      if (domRect.width / domRect.height > videoDomRect.width / videoDomRect.height) {
+	        scale = domRect.width / videoDomRect.width;
+	        videoRect.width = domRect.width;
+	        videoRect.height = videoDomRect.height * scale;
+	        videoRect.top = -(videoRect.height - domRect.height) / 2;
+	      } else {
+	        scale = domRect.height / videoDomRect.height;
+	        videoRect.height = domRect.height;
+	        videoRect.width = videoDomRect.width * scale;
+	        videoRect.left = -(videoRect.width - domRect.width) / 2;
+	      }
+	      this.setState({
+	        videoRect: videoRect
+	      });
+	    }
+	  }, {
+	    key: 'onScroll',
+	    value: function onScroll() {
+	      var _this3 = this;
+	
+	      // const clientHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	      var scrollTop = (0, _utils.currentScrollTop)();
+	      var domRect = this.dom.getBoundingClientRect();
+	      var domHeight = domRect.height;
+	      var offsetTop = domRect.top + scrollTop;
+	      // const elementShowHeight = scrollTop - offsetTop + clientHeight;
+	      // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
+	      var scale = scrollTop / (domHeight + offsetTop); // elementShowHeight / (clientHeight + domHeight);
+	      scale = scale >= 1 ? 1 : scale;
+	      // scale = scale <=0 ? 0 : scale;
+	      var _css = {};
+	      Object.keys(this.props.bgParallax).forEach(function (_key) {
+	        var key = _styleUtils2['default'].getGsapType(_key);
+	        var item = _this3.props.bgParallax[_key];
+	        var cssName = _styleUtils2['default'].isTransform(key);
+	        if (!Array.isArray(item)) {
+	          _css[cssName] = item;
+	          return;
+	        }
+	        var cssData = item[0] - scale * (item[0] - item[1]);
+	        if (cssName === 'transform') {
+	          _css[cssName] = _styleUtils2['default'].mergeStyle(_css[cssName] || '', _styleUtils2['default'].getParam(key, cssData, cssData));
+	        } else if (cssName === 'filter') {
+	          _css[cssName] = _styleUtils2['default'].mergeStyle(_css[cssName] || '', _styleUtils2['default'].getFilterParam(key, cssData, cssData));
+	        } else {
+	          _css[cssName] = _styleUtils2['default'].getParam(key, cssData, cssData);
+	        }
+	      });
+	      this.setState({
+	        bgParallaxAnim: _css
+	      });
+	    }
+	  }, {
+	    key: 'getFollowStyle',
+	    value: function getFollowStyle(type, value) {
+	      var mouseData = this.state.mouseXY.x;
+	      var domData = this.state.domWH.w;
+	      if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
+	        mouseData = this.state.mouseXY.y;
+	        domData = this.state.domWH.h;
+	      }
+	      var d = -(mouseData - domData / 2) * value;
+	      if (type === 'opacity') {
+	        // 如果是透明度，，变换为value的区间，，最左边为 1 - value; 最右边为 1;
+	        d = mouseData / domData * value + 1 - value;
+	      }
+	      var css = _styleUtils2['default'].getParam(type, d, d);
+	      return type.indexOf('backgroundPosition') >= 0 ? 'calc(50% + ' + css + 'px )' : css;
+	    }
+	  }, {
+	    key: 'getImgOrVideo',
+	    value: function getImgOrVideo() {
+	      var _this4 = this;
+	
+	      var followObj = {};
+	      if (this.props.followParallax) {
+	        followObj.transition = this.props.followParallax.transition;
+	      }
+	      if (this.props.followParallax && this.state.domWH && this.state.mouseXY) {
+	        this.props.followParallax.data.forEach(function (item) {
+	          if (!item.key) {
+	            return;
+	          }
+	          if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
+	            (0, _utils.dataToArray)(item.type).map(_this4.followAnalysisType.bind(_this4, item.scale)).forEach(function (_item) {
+	              followObj[_item.cssName] = _styleUtils2['default'].mergeStyle(followObj[_item.cssName], _item.data);
+	            });
+	          }
+	        });
+	      }
+	      var className = ('banner-anim-elem-background ' + this.props.bgPrefixCls).trim();
+	      var dom = this.props.bgType.indexOf('video') >= 0 ? _react2['default'].createElement(
+	        'div',
+	        { className: className,
+	          style: _extends({}, this.state.bgParallaxAnim, followObj),
+	          key: 'bgElem'
+	        },
+	        _react2['default'].createElement(
+	          'video',
+	          { loop: true, autoPlay: true,
+	            style: this.state.videoRect,
+	            onLoadedData: this.videoLoadedData
+	          },
+	          _react2['default'].createElement('source', { src: this.props.bg || this.props.img, type: this.props.bgType })
+	        )
+	      ) : _react2['default'].createElement('div', {
+	        className: className,
+	        style: _extends({
+	          backgroundImage: 'url(' + (this.props.bg || this.props.img) + ')'
+	        }, this.state.bgParallaxAnim, followObj),
+	        key: 'bgElem'
+	      });
+	      return dom;
+	    }
+	  }, {
+	    key: 'getChildren',
+	    value: function getChildren() {
+	      var _this5 = this;
+	
+	      if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
+	        return this.props.children;
+	      }
+	      var keys = this.props.followParallax.data.map(function (item) {
+	        return item.key;
+	      });
+	      var child = (0, _utils.toArrayChildren)(this.props.children).map(function (item) {
+	        var num = keys.indexOf(item.key);
+	        if (num >= 0) {
+	          var _ret = (function () {
+	            var props = (0, _objectAssign2['default'])({}, item.props);
+	            var style = (0, _objectAssign2['default'])({}, props.style);
+	            var data = _this5.props.followParallax.data[num];
+	            if (_this5.props.followParallax.transition) {
+	              style.transition = _this5.props.followParallax.transition;
+	            }
+	            (0, _utils.dataToArray)(data.type).map(_this5.followAnalysisType.bind(_this5, data.scale)).forEach(function (_item) {
+	              style[_item.cssName] = _styleUtils2['default'].mergeStyle(style[_item.cssName], _item.data);
+	            });
+	            props.style = style;
+	            return {
+	              v: _react2['default'].cloneElement(item, props)
+	            };
+	          })();
+	
+	          if (typeof _ret === 'object') return _ret.v;
+	        }
+	        return item;
+	      });
+	      return child;
+	    }
+	  }, {
+	    key: 'videoLoadedData',
+	    value: function videoLoadedData() {
+	      this.onResize();
+	      if (window.addEventListener) {
+	        window.addEventListener('resize', this.onResize);
+	      } else {
+	        window.attachEvent('onresize', this.onResize);
+	      }
+	    }
+	  }, {
+	    key: 'addScrollEvent',
+	    value: function addScrollEvent() {
+	      this.onScroll();
+	      this.isScroll = true;
+	      if (window.addEventListener) {
+	        window.addEventListener('scroll', this.onScroll);
+	      } else {
+	        window.attachEvent('onscroll', this.onScroll);
+	      }
+	    }
+	  }, {
+	    key: 'followAnalysisType',
+	    value: function followAnalysisType(scale, _type) {
+	      var type = _styleUtils2['default'].getGsapType(_type);
+	      var cssName = _styleUtils2['default'].isTransform(type);
+	      // 把 bgParallax 的合进来；
+	      var bgParallaxStyle = this.state.bgParallaxAnim || {};
+	      return {
+	        cssName: cssName,
+	        data: _styleUtils2['default'].mergeStyle(bgParallaxStyle[cssName] || '', this.getFollowStyle(type, scale))
+	      };
+	    }
+	  }, {
+	    key: 'cancelRequestAnimationFrame',
+	    value: function cancelRequestAnimationFrame() {
+	      _rcTweenOneLibTicker2['default'].clear(this.timeoutID);
+	      this.timeoutID = -1;
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var imgElem = this.props.img ? _react2['default'].createElement('div', {
-	        className: 'banner-anim-elem-background',
-	        style: { backgroundImage: 'url(' + this.props.img + ')' },
-	        key: 'imgElem'
-	      }) : null;
+	      var bgElem = this.props.bg || this.props.img ? this.getImgOrVideo() : null;
 	      var childrenToRender = _react2['default'].createElement(
 	        _rcTweenOne2['default'],
 	        _extends({}, this.props, {
@@ -20789,8 +21091,8 @@
 	          className: ('banner-anim-elem ' + (this.props.prefixCls || '')).trim(),
 	          component: this.props.component
 	        }),
-	        imgElem,
-	        this.props.children
+	        bgElem,
+	        this.getChildren()
 	      );
 	      return this.props.animType ? this.props.animType(childrenToRender, this.props.type, this.props.direction, {
 	        ease: this.props.ease,
@@ -20807,18 +21109,24 @@
 	  children: _react.PropTypes.any,
 	  style: _react.PropTypes.object,
 	  prefixCls: _react.PropTypes.string,
+	  bgPrefixCls: _react.PropTypes.string,
 	  component: _react.PropTypes.any,
 	  elemOffset: _react.PropTypes.object,
 	  type: _react.PropTypes.string,
 	  animType: _react.PropTypes.func,
 	  img: _react.PropTypes.string,
+	  bg: _react.PropTypes.string,
+	  bgType: _react.PropTypes.string,
 	  ease: _react.PropTypes.string,
 	  duration: _react.PropTypes.number,
 	  direction: _react.PropTypes.string,
-	  callBack: _react.PropTypes.func
+	  callBack: _react.PropTypes.func,
+	  bgParallax: _react.PropTypes.object,
+	  followParallax: _react.PropTypes.object
 	};
 	Element.defaultProps = {
 	  component: 'div',
+	  bgType: 'img',
 	  callBack: noop
 	};
 	
@@ -20831,7 +21139,9 @@
 
 	'use strict';
 	
-	module.exports = __webpack_require__(173);
+	var TweenOne = __webpack_require__(173);
+	TweenOne.TweenOneGroup = __webpack_require__(182);
+	module.exports = TweenOne;
 
 /***/ },
 /* 173 */
@@ -20865,34 +21175,19 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _raf = __webpack_require__(174);
+	var _util = __webpack_require__(174);
 	
-	var _raf2 = _interopRequireDefault(_raf);
-	
-	var _util = __webpack_require__(176);
-	
-	var _TimeLine = __webpack_require__(177);
+	var _TimeLine = __webpack_require__(175);
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
+	var _ticker = __webpack_require__(179);
+	
+	var _ticker2 = _interopRequireDefault(_ticker);
+	
 	function noop() {}
 	
-	var hidden = undefined;
-	var visibilityChange = undefined;
-	if (typeof document.hidden !== 'undefined') {
-	  // Opera 12.10 and Firefox 18 and later support
-	  hidden = 'hidden';
-	  visibilityChange = 'visibilitychange';
-	} else if (typeof document.mozHidden !== 'undefined') {
-	  hidden = 'mozHidden';
-	  visibilityChange = 'mozvisibilitychange';
-	} else if (typeof document.msHidden !== 'undefined') {
-	  hidden = 'msHidden';
-	  visibilityChange = 'msvisibilitychange';
-	} else if (typeof document.webkitHidden !== 'undefined') {
-	  hidden = 'webkitHidden';
-	  visibilityChange = 'webkitvisibilitychange';
-	}
+	var _fps = Math.round(1000 / 60);
 	
 	var TweenOne = (function (_Component) {
 	  _inherits(TweenOne, _Component);
@@ -20908,12 +21203,14 @@
 	    this.propsStyle = this.props.style ? (0, _objectAssign2['default'])({}, this.props.style) : this.props.style;
 	    this.startStyle = this.props.style || {};
 	    this.startAnimation = this.props.animation ? (0, _objectAssign2['default'])({}, this.props.animation) : this.props.animation;
-	    this.startMoment = this.props.moment;
 	    this.moment = this.props.moment || 0;
 	    this.state = {
-	      style: this.props.style || {}
+	      style: this.props.style || {},
+	      startMoment: this.props.moment,
+	      startFrame: _ticker2['default'].frame,
+	      paused: this.props.paused
 	    };
-	    ['raf', 'handleVisibilityChange', 'setCurrentDate', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
+	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	  }
@@ -20924,11 +21221,12 @@
 	      var dom = _reactDom2['default'].findDOMNode(this);
 	      this.computedStyle = (0, _objectAssign2['default'])({}, document.defaultView.getComputedStyle(dom));
 	      this.start(this.props);
-	      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
+	      var _this2 = this;
+	
 	      var newStyle = nextProps.style;
 	      var styleEqual = (0, _util.objectEqual)(this.propsStyle, newStyle);
 	      // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
@@ -20949,7 +21247,6 @@
 	      // 跳帧事件 moment;
 	      var newMoment = nextProps.moment;
 	      if (typeof newMoment === 'number') {
-	        this.startMoment = newMoment;
 	        if (nextProps.paused) {
 	          this.oneMoment = true;
 	          this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(nextProps.animation));
@@ -20959,6 +21256,10 @@
 	          this.state.style = {};
 	          this.start(nextProps);
 	        }
+	        this.setState({
+	          startMoment: newMoment,
+	          startFrame: _ticker2['default'].frame
+	        });
 	      }
 	      // 动画处理
 	      var newAnimation = nextProps.animation;
@@ -20971,29 +21272,53 @@
 	          this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animData.tween);
 	        }
 	        this.startAnimation = newAnimation;
-	        this.start(nextProps);
+	        this.setState({
+	          startFrame: _ticker2['default'].frame
+	        }, function () {
+	          _this2.start(nextProps);
+	        });
 	      }
 	      // 暂停倒放
 	      if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-	        this.restart();
+	        if (nextProps.paused) {
+	          this.cancelRequestAnimationFrame();
+	        } else {
+	          if (nextProps.reverse && nextProps.reverseDelay) {
+	            (function () {
+	              _this2.cancelRequestAnimationFrame();
+	              var startFrame = _ticker2['default'].frame;
+	              var timeoutKey = 'delay' + (Date.now() + Math.random());
+	              _ticker2['default'].wake(timeoutKey, function () {
+	                var _frame = _ticker2['default'].frame - startFrame;
+	                var time = _frame * _fps;
+	                if (time >= nextProps.reverseDelay) {
+	                  _ticker2['default'].clear(timeoutKey);
+	                  _this2.restart();
+	                }
+	              });
+	            })();
+	          } else {
+	            this.restart();
+	          }
+	        }
 	      }
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      this.cancelRequestAnimationFram();
-	    }
-	  }, {
-	    key: 'setCurrentDate',
-	    value: function setCurrentDate() {
-	      this.currentNow = Date.now();
+	      this.cancelRequestAnimationFrame();
 	    }
 	  }, {
 	    key: 'restart',
 	    value: function restart() {
-	      this.startMoment = this.timeLine.progressTime;
-	      this.setCurrentDate();
-	      this.play();
+	      var _this3 = this;
+	
+	      this.setState({
+	        startMoment: this.timeLine.progressTime,
+	        startFrame: _ticker2['default'].frame
+	      }, function () {
+	        _this3.play();
+	      });
 	    }
 	  }, {
 	    key: 'start',
@@ -21001,37 +21326,22 @@
 	      this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(props.animation));
 	      if (this.timeLine.defaultData.length && props.animation) {
 	        // 开始动画
-	        this.setCurrentDate();
 	        this.play();
 	      }
 	    }
 	  }, {
 	    key: 'play',
 	    value: function play() {
-	      this.cancelRequestAnimationFram();
-	      this.rafID = (0, _raf2['default'])(this.raf);
-	    }
-	  }, {
-	    key: 'handleVisibilityChange',
-	    value: function handleVisibilityChange() {
-	      // 不在当前窗口时
-	      if (document[hidden] && this.rafID !== -1) {
-	        this.startMoment = this.timeLine.progressTime;
-	        this.cancelRequestAnimationFram();
-	        this.rafHide = true;
-	      } else if (this.rafID === -1 && this.rafHide) {
-	        this.setCurrentDate();
-	        this.rafID = (0, _raf2['default'])(this.raf);
-	        this.rafHide = false;
-	      }
+	      this.cancelRequestAnimationFrame();
+	      this.rafID = Date.now() + Math.random();
+	      _ticker2['default'].wake(this.rafID, this.raf);
 	    }
 	  }, {
 	    key: 'frame',
 	    value: function frame() {
-	      var now = Date.now() + (this.startMoment || 0);
-	      var moment = now - this.currentNow;
+	      var moment = (_ticker2['default'].frame - this.state.startFrame) * _fps + (this.state.startMoment || 0);
 	      if (this.props.reverse) {
-	        moment = (this.startMoment || 0) - Date.now() + this.currentNow;
+	        moment = (this.state.startMoment || 0) - (_ticker2['default'].frame - this.state.startFrame) * _fps;
 	      }
 	      moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
 	      moment = moment <= 0 ? 0 : moment;
@@ -21045,21 +21355,15 @@
 	  }, {
 	    key: 'raf',
 	    value: function raf() {
-	      if (this.rafID === -1 || this.props.paused) {
-	        this.rafID = -1;
-	        return;
-	      }
 	      this.frame();
 	      if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
-	        this.cancelRequestAnimationFram();
-	      } else {
-	        this.rafID = (0, _raf2['default'])(this.raf);
+	        return this.cancelRequestAnimationFrame();
 	      }
 	    }
 	  }, {
-	    key: 'cancelRequestAnimationFram',
-	    value: function cancelRequestAnimationFram() {
-	      _raf2['default'].cancel(this.rafID);
+	    key: 'cancelRequestAnimationFrame',
+	    value: function cancelRequestAnimationFrame() {
+	      _ticker2['default'].clear(this.rafID);
 	      this.rafID = -1;
 	    }
 	  }, {
@@ -21087,25 +21391,24 @@
 	})(_react.Component);
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
-	var objectOrArrayOrString = _react.PropTypes.oneOfType([_react.PropTypes.string, objectOrArray]);
-	var stringOrFunc = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.func]);
 	
 	TweenOne.propTypes = {
-	  component: stringOrFunc,
+	  component: _react.PropTypes.any,
 	  animation: objectOrArray,
-	  children: objectOrArrayOrString,
+	  children: _react.PropTypes.any,
 	  style: _react.PropTypes.object,
 	  paused: _react.PropTypes.bool,
 	  reverse: _react.PropTypes.bool,
+	  reverseDelay: _react.PropTypes.number,
 	  moment: _react.PropTypes.number,
 	  onChange: _react.PropTypes.func
 	};
 	
 	TweenOne.defaultProps = {
 	  component: 'div',
+	  reverseDelay: 0,
 	  onChange: noop
 	};
-	
 	exports['default'] = TweenOne;
 	module.exports = exports['default'];
 
@@ -21113,126 +21416,32 @@
 /* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var now = __webpack_require__(175)
-	  , global = typeof window === 'undefined' ? {} : window
-	  , vendors = ['moz', 'webkit']
-	  , suffix = 'AnimationFrame'
-	  , raf = global['request' + suffix]
-	  , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
-	
-	for(var i = 0; i < vendors.length && !raf; i++) {
-	  raf = global[vendors[i] + 'Request' + suffix]
-	  caf = global[vendors[i] + 'Cancel' + suffix]
-	      || global[vendors[i] + 'CancelRequest' + suffix]
-	}
-	
-	// Some versions of FF have rAF but not cAF
-	if(!raf || !caf) {
-	  var last = 0
-	    , id = 0
-	    , queue = []
-	    , frameDuration = 1000 / 60
-	
-	  raf = function(callback) {
-	    if(queue.length === 0) {
-	      var _now = now()
-	        , next = Math.max(0, frameDuration - (_now - last))
-	      last = next + _now
-	      setTimeout(function() {
-	        var cp = queue.slice(0)
-	        // Clear queue here to prevent
-	        // callbacks from appending listeners
-	        // to the current frame's queue
-	        queue.length = 0
-	        for(var i = 0; i < cp.length; i++) {
-	          if(!cp[i].cancelled) {
-	            try{
-	              cp[i].callback(last)
-	            } catch(e) {
-	              setTimeout(function() { throw e }, 0)
-	            }
-	          }
-	        }
-	      }, Math.round(next))
-	    }
-	    queue.push({
-	      handle: ++id,
-	      callback: callback,
-	      cancelled: false
-	    })
-	    return id
-	  }
-	
-	  caf = function(handle) {
-	    for(var i = 0; i < queue.length; i++) {
-	      if(queue[i].handle === handle) {
-	        queue[i].cancelled = true
-	      }
-	    }
-	  }
-	}
-	
-	module.exports = function(fn) {
-	  // Wrap in a new function to prevent
-	  // `cancel` potentially being assigned
-	  // to the native rAF function
-	  return raf.call(global, fn)
-	}
-	module.exports.cancel = function() {
-	  caf.apply(global, arguments)
-	}
-
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
-	(function() {
-	  var getNanoSeconds, hrtime, loadTime;
-	
-	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
-	    module.exports = function() {
-	      return performance.now();
-	    };
-	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
-	    module.exports = function() {
-	      return (getNanoSeconds() - loadTime) / 1e6;
-	    };
-	    hrtime = process.hrtime;
-	    getNanoSeconds = function() {
-	      var hr;
-	      hr = hrtime();
-	      return hr[0] * 1e9 + hr[1];
-	    };
-	    loadTime = getNanoSeconds();
-	  } else if (Date.now) {
-	    module.exports = function() {
-	      return Date.now() - loadTime;
-	    };
-	    loadTime = Date.now();
-	  } else {
-	    module.exports = function() {
-	      return new Date().getTime() - loadTime;
-	    };
-	    loadTime = new Date().getTime();
-	  }
-	
-	}).call(this);
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ },
-/* 176 */
-/***/ function(module, exports) {
-
 	'use strict';
 	
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
+	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
 	exports.objectEqual = objectEqual;
+	exports.findChildInChildrenByKey = findChildInChildrenByKey;
+	exports.mergeChildren = mergeChildren;
+	exports.transformArguments = transformArguments;
+	exports.getChildrenFromProps = getChildrenFromProps;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function toArrayChildren(children) {
+	  var ret = [];
+	  _react2['default'].Children.forEach(children, function (c) {
+	    ret.push(c);
+	  });
+	  return ret;
+	}
 	
 	function dataToArray(vars) {
 	  if (!vars && vars !== 0) {
@@ -21304,9 +21513,82 @@
 	
 	  return equalBool;
 	}
+	
+	function findChildInChildrenByKey(children, key) {
+	  var ret = null;
+	  if (children) {
+	    children.forEach(function (c) {
+	      if (ret || !c) {
+	        return;
+	      }
+	      if (c.key === key) {
+	        ret = c;
+	      }
+	    });
+	  }
+	  return ret;
+	}
+	
+	function mergeChildren(prev, next) {
+	  var ret = [];
+	  // For each key of `next`, the list of keys to insert before that key in
+	  // the combined list
+	  var nextChildrenPending = {};
+	  var pendingChildren = [];
+	  prev.forEach(function (c) {
+	    if (!c) {
+	      return;
+	    }
+	    if (findChildInChildrenByKey(next, c.key)) {
+	      if (pendingChildren.length) {
+	        nextChildrenPending[c.key] = pendingChildren;
+	        pendingChildren = [];
+	      }
+	    } else if (c.key) {
+	      pendingChildren.push(c);
+	    }
+	  });
+	
+	  next.forEach(function (c) {
+	    if (!c) {
+	      return;
+	    }
+	    if (nextChildrenPending.hasOwnProperty(c.key)) {
+	      ret = ret.concat(nextChildrenPending[c.key]);
+	    }
+	    ret.push(c);
+	  });
+	
+	  // 保持原有的顺序
+	  pendingChildren.forEach(function (c) {
+	    var originIndex = prev.indexOf(c);
+	    if (originIndex >= 0) {
+	      ret.splice(originIndex, 0, c);
+	    }
+	  });
+	
+	  return ret;
+	}
+	
+	function transformArguments(arg, key, i) {
+	  var result = undefined;
+	  if (typeof arg === 'function') {
+	    result = arg({
+	      key: key,
+	      index: i
+	    });
+	  } else {
+	    result = arg;
+	  }
+	  return result;
+	}
+	
+	function getChildrenFromProps(props) {
+	  return props && props.children;
+	}
 
 /***/ },
-/* 177 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21324,15 +21606,15 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _tweenFunctions = __webpack_require__(178);
+	var _tweenFunctions = __webpack_require__(176);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _styleUtils = __webpack_require__(179);
+	var _styleUtils = __webpack_require__(177);
 	
 	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
-	var _BezierPlugin = __webpack_require__(180);
+	var _BezierPlugin = __webpack_require__(178);
 	
 	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
 	
@@ -21372,7 +21654,7 @@
 	    tween: {}
 	  };
 	  // 1秒时间;
-	  this.oneSecond = 1000 / 60;
+	  this._fps = Math.round(1000 / 60);
 	  // 设置默认动画数据;
 	  this.setDefaultData(startData, toData);
 	};
@@ -21538,19 +21820,19 @@
 	    }
 	    var progressTime = _this5.progressTime - initTime;
 	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime < _this5.oneSecond) {
+	    if (item.repeat && repeatNum > 0 && progressTime < _this5._fps) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
 	    // 状态
 	    var mode = 'onUpdate';
 	    // 开始 onStart
-	    if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < _this5.oneSecond) {
+	    if (i === 0 && progressTime < _this5._fps || i !== 0 && progressTime > 0 && progressTime < _this5._fps) {
 	      item.onStart();
 	      mode = 'onStart';
 	      _this5.animData.start = (0, _objectAssign2['default'])({}, _this5.animData.start, _this5.animData.tween);
 	    }
-	    if (progressTime > -_this5.oneSecond) {
+	    if (progressTime >= 0) {
 	      // 设置 animData
 	      _this5.animData.start[i] = _this5.animData.start[i] || _this5.setAnimStartData(item);
 	    }
@@ -21558,7 +21840,7 @@
 	      _this5.setNewStyle(0, _this5.animData.start[i], item.data, i);
 	      _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	    }
-	    if (progressTime > -_this5.oneSecond && progressTime < item.duration + _this5.oneSecond) {
+	    if (progressTime >= 0 && progressTime < item.duration + _this5._fps) {
 	      (function () {
 	        _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	        progressTime = progressTime < 0 ? 0 : progressTime;
@@ -21613,7 +21895,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 178 */
+/* 176 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21702,25 +21984,19 @@
 	  },
 	  easeInExpo: function(t, b, _c, d) {
 	    var c = _c - b;
-	    var _ref;
-	    return (_ref = t === 0) !== null ? _ref : {
-	      b: c * Math.pow(2, 10 * (t / d - 1)) + b
-	    };
+	    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
 	  },
 	  easeOutExpo: function(t, b, _c, d) {
 	    var c = _c - b;
-	    var _ref;
-	    return (_ref = t === d) !== null ? _ref : b + {
-	      c: c * (-Math.pow(2, -10 * t / d) + 1) + b
-	    };
+	    return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
 	  },
 	  easeInOutExpo: function(t, b, _c, d) {
 	    var c = _c - b;
 	    if (t === 0) {
-	      b;
+	      return b;
 	    }
 	    if (t === d) {
-	      b + c;
+	      return b + c;
 	    }
 	    if ((t /= d / 2) < 1) {
 	      return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
@@ -21751,9 +22027,9 @@
 	    p = 0;
 	    a = c;
 	    if (t === 0) {
-	      b;
+	      return b;
 	    } else if ((t /= d) === 1) {
-	      b + c;
+	      return b + c;
 	    }
 	    if (!p) {
 	      p = d * 0.3;
@@ -21773,9 +22049,9 @@
 	    p = 0;
 	    a = c;
 	    if (t === 0) {
-	      b;
+	      return b;
 	    } else if ((t /= d) === 1) {
-	      b + c;
+	      return b + c;
 	    }
 	    if (!p) {
 	      p = d * 0.3;
@@ -21795,9 +22071,9 @@
 	    p = 0;
 	    a = c;
 	    if (t === 0) {
-	      b;
+	      return b;
 	    } else if ((t /= d / 2) === 2) {
-	      b + c;
+	      return b + c;
 	    }
 	    if (!p) {
 	      p = d * (0.3 * 1.5);
@@ -21874,7 +22150,7 @@
 
 
 /***/ },
-/* 179 */
+/* 177 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22286,7 +22562,7 @@
 
 
 /***/ },
-/* 180 */
+/* 178 */
 /***/ function(module, exports) {
 
 	/**
@@ -22303,7 +22579,7 @@
 	var _r2 = [];
 	var _r3 = [];
 	var _corProps = {};
-	// const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
+	var _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
 	function createMatrix(style) {
 	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || {};
 	}
@@ -22449,10 +22725,10 @@
 	    a[i] = new this.Segment(values[i][p], 0, 0, values[i + 1][p]);
 	    return a;
 	  },
-	  bezierThrough: function bezierThrough(_values, _curviness, quadratic, basic, _correlate, _prepend) {
+	  bezierThrough: function bezierThrough(_values, _curviness, quadratic, basic, __correlate, _prepend) {
 	    var values = _values;
 	    var curviness = _curviness;
-	    var correlate = _correlate;
+	    var correlate = __correlate;
 	    var prepend = _prepend;
 	    var obj = {};
 	    var props = [];
@@ -22553,10 +22829,6 @@
 	    var tmp = undefined;
 	    if (soft) {
 	      values.splice(0, 0, prepend);
-	    }
-	
-	    if (type === 'cubic' && values.length > 3) {
-	      return console.error('Type cubic, the array length is 3');
 	    }
 	
 	    if (values === null || values.length < inc + 1) {
@@ -22802,7 +23074,644 @@
 	module.exports = exports['default'];
 
 /***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _raf = __webpack_require__(180);
+	
+	var _raf2 = _interopRequireDefault(_raf);
+	
+	var Ticker = function Ticker() {};
+	var p = Ticker.prototype = {
+	  tickFnObject: {},
+	  id: -1,
+	  autoSleep: 120,
+	  frame: 0,
+	  autoSleepFrame: 2
+	};
+	p.wake = function (key, fn) {
+	  this.tickFnObject[key] = fn;
+	  if (this.id === -1) {
+	    this.tick();
+	  }
+	};
+	p.clear = function (key) {
+	  delete this.tickFnObject[key];
+	};
+	p.sleep = function () {
+	  _raf2['default'].cancel(this.id);
+	  this.id = -1;
+	};
+	var ticker = new Ticker();
+	p.tick = function (a) {
+	  var obj = ticker.tickFnObject;
+	  Object.keys(obj).forEach(function (key) {
+	    if (obj[key]) {
+	      obj[key](a);
+	    }
+	  });
+	  // 如果 object 里没对象了，两秒种后自动睡眠；
+	  if (!Object.keys(obj).length) {
+	    if (ticker.frame >= ticker.autoSleepFrame) {
+	      return ticker.sleep();
+	    }
+	  } else {
+	    ticker.autoSleepFrame = ticker.frame + ticker.autoSleep;
+	  }
+	  ticker.frame++;
+	  ticker.id = (0, _raf2['default'])(ticker.tick);
+	};
+	exports['default'] = ticker;
+	module.exports = exports['default'];
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(181)
+	  , root = typeof window === 'undefined' ? global : window
+	  , vendors = ['moz', 'webkit']
+	  , suffix = 'AnimationFrame'
+	  , raf = root['request' + suffix]
+	  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
+	
+	for(var i = 0; !raf && i < vendors.length; i++) {
+	  raf = root[vendors[i] + 'Request' + suffix]
+	  caf = root[vendors[i] + 'Cancel' + suffix]
+	      || root[vendors[i] + 'CancelRequest' + suffix]
+	}
+	
+	// Some versions of FF have rAF but not cAF
+	if(!raf || !caf) {
+	  var last = 0
+	    , id = 0
+	    , queue = []
+	    , frameDuration = 1000 / 60
+	
+	  raf = function(callback) {
+	    if(queue.length === 0) {
+	      var _now = now()
+	        , next = Math.max(0, frameDuration - (_now - last))
+	      last = next + _now
+	      setTimeout(function() {
+	        var cp = queue.slice(0)
+	        // Clear queue here to prevent
+	        // callbacks from appending listeners
+	        // to the current frame's queue
+	        queue.length = 0
+	        for(var i = 0; i < cp.length; i++) {
+	          if(!cp[i].cancelled) {
+	            try{
+	              cp[i].callback(last)
+	            } catch(e) {
+	              setTimeout(function() { throw e }, 0)
+	            }
+	          }
+	        }
+	      }, Math.round(next))
+	    }
+	    queue.push({
+	      handle: ++id,
+	      callback: callback,
+	      cancelled: false
+	    })
+	    return id
+	  }
+	
+	  caf = function(handle) {
+	    for(var i = 0; i < queue.length; i++) {
+	      if(queue[i].handle === handle) {
+	        queue[i].cancelled = true
+	      }
+	    }
+	  }
+	}
+	
+	module.exports = function(fn) {
+	  // Wrap in a new function to prevent
+	  // `cancel` potentially being assigned
+	  // to the native rAF function
+	  return raf.call(root, fn)
+	}
+	module.exports.cancel = function() {
+	  caf.apply(root, arguments)
+	}
+	module.exports.polyfill = function() {
+	  root.requestAnimationFrame = raf
+	  root.cancelAnimationFrame = caf
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
 /* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
+	(function() {
+	  var getNanoSeconds, hrtime, loadTime;
+	
+	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
+	    module.exports = function() {
+	      return performance.now();
+	    };
+	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
+	    module.exports = function() {
+	      return (getNanoSeconds() - loadTime) / 1e6;
+	    };
+	    hrtime = process.hrtime;
+	    getNanoSeconds = function() {
+	      var hr;
+	      hr = hrtime();
+	      return hr[0] * 1e9 + hr[1];
+	    };
+	    loadTime = getNanoSeconds();
+	  } else if (Date.now) {
+	    module.exports = function() {
+	      return Date.now() - loadTime;
+	    };
+	    loadTime = Date.now();
+	  } else {
+	    module.exports = function() {
+	      return new Date().getTime() - loadTime;
+	    };
+	    loadTime = new Date().getTime();
+	  }
+	
+	}).call(this);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _TweenOne = __webpack_require__(173);
+	
+	var _TweenOne2 = _interopRequireDefault(_TweenOne);
+	
+	var _util = __webpack_require__(174);
+	
+	function noop() {}
+	
+	var TweenOneGroup = (function (_Component) {
+	  _inherits(TweenOneGroup, _Component);
+	
+	  function TweenOneGroup() {
+	    var _this = this;
+	
+	    _classCallCheck(this, TweenOneGroup);
+	
+	    _get(Object.getPrototypeOf(TweenOneGroup.prototype), 'constructor', this).apply(this, arguments);
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	    this.onEnterBool = false;
+	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
+	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	    children.forEach(function (child) {
+	      if (!child || !child.key) {
+	        return;
+	      }
+	      _this.keysToEnter.push(child.key);
+	    });
+	    this.originalChildren = children;
+	    this.state = {
+	      children: children
+	    };
+	    ['getChildrenToRender', 'getCoverAnimation', 'onChange'].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
+	  }
+	
+	  _createClass(TweenOneGroup, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.onEnterBool = true;
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      var _this2 = this;
+	
+	      var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
+	      var currentChildren = this.originalChildren;
+	      var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
+	
+	      this.keysToEnter = [];
+	      this.keysToLeave = [];
+	      nextChildren.forEach(function (c) {
+	        if (!c) {
+	          return;
+	        }
+	        var key = c.key;
+	        var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
+	        if (!hasPrev && key) {
+	          _this2.keysToEnter.push(key);
+	        }
+	      });
+	
+	      currentChildren.forEach(function (c) {
+	        if (!c) {
+	          return;
+	        }
+	        var key = c.key;
+	        var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
+	        if (!hasNext && key) {
+	          _this2.keysToLeave.push(key);
+	        }
+	      });
+	      this.setState({
+	        children: newChildren
+	      });
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	    }
+	  }, {
+	    key: 'onChange',
+	    value: function onChange(animation, key, type, obj) {
+	      var length = (0, _util.dataToArray)(animation).length;
+	      if (obj.index === length - 1 && obj.mode === 'onComplete') {
+	        if (type === 'leave') {
+	          var children = this.state.children.filter(function (child) {
+	            return child.key !== key;
+	          });
+	          this.setState({
+	            children: children
+	          });
+	        }
+	        var _obj = { key: key, type: type };
+	        this.props.onEnd(_obj);
+	      }
+	    }
+	  }, {
+	    key: 'getCoverAnimation',
+	    value: function getCoverAnimation(child, i, type) {
+	      var animation = type === 'leave' ? this.props.leave : this.props.enter;
+	      var onChange = this.onChange.bind(this, animation, child.key, type);
+	      return _react2['default'].createElement(_TweenOne2['default'], _extends({}, child.props, {
+	        key: child.key,
+	        component: child.type,
+	        animation: (0, _util.transformArguments)(animation, child.key, i),
+	        onChange: onChange
+	      }));
+	    }
+	  }, {
+	    key: 'getChildrenToRender',
+	    value: function getChildrenToRender(children) {
+	      var _this3 = this;
+	
+	      return children.map(function (child, i) {
+	        if (!child || !child.key) {
+	          return child;
+	        }
+	        var key = child.key;
+	        if (_this3.keysToLeave.indexOf(key) >= 0) {
+	          return _this3.getCoverAnimation(child, i, 'leave');
+	        }
+	        var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
+	        if (appear || _this3.onEnterBool) {
+	          return _this3.getCoverAnimation(child, i, 'enter');
+	        }
+	        return child.type === _TweenOne2['default'] ? (0, _react.createElement)(child.props.component, _extends({}, child.props, { key: child.key })) : child;
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var childrenToRender = this.getChildrenToRender(this.state.children);
+	      return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
+	    }
+	  }]);
+	
+	  return TweenOneGroup;
+	})(_react.Component);
+	
+	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
+	var objectOrArrayOrFunc = _react.PropTypes.oneOfType([objectOrArray, _react.PropTypes.func]);
+	
+	TweenOneGroup.propTypes = {
+	  component: _react.PropTypes.any,
+	  children: _react.PropTypes.any,
+	  style: _react.PropTypes.object,
+	  appear: _react.PropTypes.bool,
+	  enter: objectOrArrayOrFunc,
+	  leave: objectOrArrayOrFunc,
+	  onEnd: _react.PropTypes.func
+	};
+	
+	TweenOneGroup.defaultProps = {
+	  component: 'div',
+	  appear: true,
+	  enter: { x: 50, opacity: 0, type: 'from' },
+	  leave: { x: -50, opacity: 0 },
+	  onEnd: noop
+	};
+	exports['default'] = TweenOneGroup;
+	module.exports = exports['default'];
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _objectAssign = __webpack_require__(8);
+	
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
+	var _utils = __webpack_require__(184);
+	
+	exports['default'] = {
+	  across: function across(elem, type, direction, animData) {
+	    var _x = undefined;
+	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _x = direction === 'next' ? '100%' : '-100%';
+	    } else {
+	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
+	      _x = direction === 'next' ? '-100%' : '100%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        x: _x,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  vertical: function vertical(elem, type, direction, animData) {
+	    var _y = undefined;
+	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _y = direction === 'next' ? '-100%' : '100%';
+	    } else {
+	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
+	      _y = direction === 'next' ? '100%' : '-100%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        y: _y,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  acrossOverlay: function acrossOverlay(elem, type, direction, animData) {
+	    var _x = undefined;
+	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _x = direction === 'next' ? '100%' : '-100%';
+	    } else {
+	      _x = direction === 'next' ? '-20%' : '20%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        x: _x,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  verticalOverlay: function verticalOverlay(elem, type, direction, animData) {
+	    var _y = undefined;
+	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _y = direction === 'next' ? '-100%' : '100%';
+	    } else {
+	      _y = direction === 'next' ? '20%' : '-20%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        y: _y,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  gridBar: function gridBar(elem, type, direction, animData, elemOffset) {
+	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var animChild = [];
+	    var girdNum = 10;
+	    var girdSize = 100 / girdNum;
+	
+	    var _y = undefined;
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _y = direction === 'next' ? '-100%' : '100%';
+	    } else {
+	      _y = direction === 'next' ? '100%' : '-100%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	    }
+	    for (var i = 0; i < girdNum; i++) {
+	      var style = (0, _objectAssign2['default'])({}, props.style);
+	      style.width = girdSize + '%';
+	      style.left = i * girdSize + '%';
+	      style.position = 'absolute';
+	      style.overflow = 'hidden';
+	      var _style = (0, _objectAssign2['default'])({}, props.style);
+	      _style.width = elemOffset.width + 'px';
+	      _style.float = 'left';
+	      _style.position = 'relative';
+	      _style.left = -i * girdSize / 100 * elemOffset.width + 'px';
+	      props.style = _style;
+	      props.animation = _extends({}, animData, {
+	        y: _y,
+	        type: type === 'enter' ? 'from' : 'to',
+	        delay: i * 50 + (type === 'enter' ? 0 : 50),
+	        onComplete: i === girdNum - 1 ? animData.onComplete : null
+	      });
+	
+	      var mask = _react2['default'].createElement(
+	        'div',
+	        { style: style, key: i },
+	        (0, _react.cloneElement)(elem, props, children)
+	      );
+	      animChild.push(mask);
+	    }
+	    var animSlot = _react2['default'].createElement(
+	      'div',
+	      { style: { width: '100%', position: 'absolute', top: 0 } },
+	      animChild
+	    );
+	    var _props = (0, _objectAssign2['default'])({}, elem.props);
+	    _props.children = animSlot;
+	    return (0, _react.cloneElement)(elem, _props);
+	  },
+	  grid: function grid(elem, type, direction, animData, elemOffset) {
+	    if (type === 'leave') {
+	      return elem;
+	    }
+	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var animChild = [];
+	    var gridNum = 10;
+	    var gridWidth = elemOffset.width / gridNum;
+	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
+	    var children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
+	    for (var i = 0; i < gridNum * gridNumH; i++) {
+	      // mask样式
+	      var style = (0, _objectAssign2['default'])({}, props.style);
+	      style.position = 'absolute';
+	      style.overflow = 'hidden';
+	      style.width = gridWidth + 'px';
+	      style.height = gridWidth + 'px';
+	      style.left = i % gridNum * gridWidth;
+	      style.top = Math.floor(i / gridNum) * gridWidth;
+	      // clone 的样式
+	      var _style = (0, _objectAssign2['default'])({}, props.style);
+	      _style.width = elemOffset.width + 'px';
+	      _style.position = 'relative';
+	      _style.left = -i % gridNum * gridWidth;
+	      _style.top = -Math.floor(i / gridNum) * gridWidth;
+	      props.style = _style;
+	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+	      var _length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
+	      var animation = _extends({}, animData, {
+	        opacity: 0,
+	        type: 'from',
+	        delay: delay,
+	        onComplete: i === _length ? animData.onComplete : null
+	      });
+	      var mask = _react2['default'].createElement(
+	        elem.type,
+	        { style: style, key: i, animation: animation },
+	        (0, _react.cloneElement)(elem, props, children)
+	      );
+	      animChild.push(mask);
+	    }
+	    var _props = (0, _objectAssign2['default'])({}, elem.props);
+	    _props.children = animChild;
+	    return (0, _react.cloneElement)(elem, _props);
+	  }
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.toArrayChildren = toArrayChildren;
+	exports.dataToArray = dataToArray;
+	exports.setAnimCompToTagComp = setAnimCompToTagComp;
+	exports.currentScrollTop = currentScrollTop;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _rcTweenOne = __webpack_require__(172);
+	
+	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
+	
+	var _objectAssign = __webpack_require__(8);
+	
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
+	function toArrayChildren(children) {
+	  var ret = [];
+	  _react2['default'].Children.forEach(children, function (c) {
+	    ret.push(c);
+	  });
+	  return ret;
+	}
+	
+	function dataToArray(vars) {
+	  if (!vars && vars !== 0) {
+	    return [];
+	  }
+	  if (Array.isArray(vars)) {
+	    return vars;
+	  }
+	  return [vars];
+	}
+	
+	function setAnimCompToTagComp(item, i) {
+	  var props = (0, _objectAssign2['default'])({}, item.props);
+	  props.key = item.key || i;
+	  // 压缩后名称不一样了。
+	  var propTypes = item.type.propTypes;
+	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || item.type === _rcTweenOne2['default'] || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation || props.name === 'QueueAnim' || props.name === 'TweenOne' || props.name === 'Animate')) {
+	    // queueAnim or tweeOne or animate;
+	
+	    var style = (0, _objectAssign2['default'])({}, props.style);
+	    style.position = 'relative';
+	    props.style = style;
+	    return _react2['default'].createElement(props.component, props);
+	  }
+	  return _react2['default'].cloneElement(item, props, item.props.children);
+	}
+	
+	setAnimCompToTagComp.propTypes = {
+	  key: _react2['default'].PropTypes.string,
+	  style: _react2['default'].PropTypes.object,
+	  component: _react2['default'].PropTypes.any,
+	  name: _react2['default'].PropTypes.string
+	};
+	
+	function currentScrollTop() {
+	  var supportPageOffset = window.pageXOffset !== undefined;
+	  var isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
+	  var isCSS1ScrollTop = isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+	  return supportPageOffset ? window.pageYOffset : isCSS1ScrollTop;
+	}
+
+/***/ },
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22825,7 +23734,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _utils = __webpack_require__(182);
+	var _utils = __webpack_require__(184);
 	
 	var _objectAssign = __webpack_require__(8);
 	
@@ -22902,448 +23811,13 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 182 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.toArrayChildren = toArrayChildren;
-	exports.dataToArray = dataToArray;
-	exports.setAnimCompToTagComp = setAnimCompToTagComp;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _react = __webpack_require__(5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _rcTweenOne = __webpack_require__(172);
-	
-	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
-	
-	var _objectAssign = __webpack_require__(8);
-	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-	
-	function toArrayChildren(children) {
-	  var ret = [];
-	  _react2['default'].Children.forEach(children, function (c) {
-	    ret.push(c);
-	  });
-	  return ret;
-	}
-	
-	function dataToArray(vars) {
-	  if (!vars && vars !== 0) {
-	    return [];
-	  }
-	  if (Array.isArray(vars)) {
-	    return vars;
-	  }
-	  return [vars];
-	}
-	
-	function setAnimCompToTagComp(item, i) {
-	  var props = (0, _objectAssign2['default'])({}, item.props);
-	  props.key = item.key || i;
-	  // 压缩后名称不一样了。
-	  var propTypes = item.type.propTypes;
-	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || item.type === _rcTweenOne2['default'] || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation || props.name === 'QueueAnim' || props.name === 'TweenOne' || props.name === 'Animate')) {
-	    // queueAnim or tweeOne or animate;
-	
-	    var style = (0, _objectAssign2['default'])({}, props.style);
-	    style.position = 'relative';
-	    props.style = style;
-	    return _react2['default'].createElement(props.component, props);
-	  }
-	  return _react2['default'].cloneElement(item, props, item.props.children);
-	}
-	
-	setAnimCompToTagComp.propTypes = {
-	  key: _react2['default'].PropTypes.string,
-	  style: _react2['default'].PropTypes.object,
-	  component: _react2['default'].PropTypes.any,
-	  name: _react2['default'].PropTypes.string
-	};
-
-/***/ },
-/* 183 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(175)
-	  , root = typeof window === 'undefined' ? global : window
-	  , vendors = ['moz', 'webkit']
-	  , suffix = 'AnimationFrame'
-	  , raf = root['request' + suffix]
-	  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
-	
-	for(var i = 0; !raf && i < vendors.length; i++) {
-	  raf = root[vendors[i] + 'Request' + suffix]
-	  caf = root[vendors[i] + 'Cancel' + suffix]
-	      || root[vendors[i] + 'CancelRequest' + suffix]
-	}
-	
-	// Some versions of FF have rAF but not cAF
-	if(!raf || !caf) {
-	  var last = 0
-	    , id = 0
-	    , queue = []
-	    , frameDuration = 1000 / 60
-	
-	  raf = function(callback) {
-	    if(queue.length === 0) {
-	      var _now = now()
-	        , next = Math.max(0, frameDuration - (_now - last))
-	      last = next + _now
-	      setTimeout(function() {
-	        var cp = queue.slice(0)
-	        // Clear queue here to prevent
-	        // callbacks from appending listeners
-	        // to the current frame's queue
-	        queue.length = 0
-	        for(var i = 0; i < cp.length; i++) {
-	          if(!cp[i].cancelled) {
-	            try{
-	              cp[i].callback(last)
-	            } catch(e) {
-	              setTimeout(function() { throw e }, 0)
-	            }
-	          }
-	        }
-	      }, Math.round(next))
-	    }
-	    queue.push({
-	      handle: ++id,
-	      callback: callback,
-	      cancelled: false
-	    })
-	    return id
-	  }
-	
-	  caf = function(handle) {
-	    for(var i = 0; i < queue.length; i++) {
-	      if(queue[i].handle === handle) {
-	        queue[i].cancelled = true
-	      }
-	    }
-	  }
-	}
-	
-	module.exports = function(fn) {
-	  // Wrap in a new function to prevent
-	  // `cancel` potentially being assigned
-	  // to the native rAF function
-	  return raf.call(root, fn)
-	}
-	module.exports.cancel = function() {
-	  caf.apply(root, arguments)
-	}
-	module.exports.polyfill = function() {
-	  root.requestAnimationFrame = raf
-	  root.cancelAnimationFrame = caf
-	}
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _react = __webpack_require__(5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _objectAssign = __webpack_require__(8);
-	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-	
-	var _utils = __webpack_require__(182);
-	
-	exports['default'] = {
-	  across: function across(elem, type, direction, animData) {
-	    var _x = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _x = direction === 'next' ? '100%' : '-100%';
-	    } else {
-	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
-	      _x = direction === 'next' ? '-100%' : '100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        x: _x,
-	        delay: type === 'enter' ? 0 : 50,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  vertical: function vertical(elem, type, direction, animData) {
-	    var _y = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _y = direction === 'next' ? '-100%' : '100%';
-	    } else {
-	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
-	      _y = direction === 'next' ? '100%' : '-100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        y: _y,
-	        delay: type === 'enter' ? 0 : 50,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  acrossOverlay: function acrossOverlay(elem, type, direction, animData) {
-	    var _x = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _x = direction === 'next' ? '100%' : '-100%';
-	    } else {
-	      _x = direction === 'next' ? '-20%' : '20%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        x: _x,
-	        delay: type === 'enter' ? 0 : 50,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  verticalOverlay: function verticalOverlay(elem, type, direction, animData) {
-	    var _y = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _y = direction === 'next' ? '-100%' : '100%';
-	    } else {
-	      _y = direction === 'next' ? '20%' : '-20%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        y: _y,
-	        delay: type === 'enter' ? 0 : 50,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  gridBar: function gridBar(elem, type, direction, animData, elemOffset) {
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var animChild = [];
-	    var girdNum = 10;
-	    var girdSize = 100 / girdNum;
-	
-	    var _y = undefined;
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _y = direction === 'next' ? '-100%' : '100%';
-	    } else {
-	      _y = direction === 'next' ? '60%' : '-60%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
-	    }
-	    for (var i = 0; i < girdNum; i++) {
-	      var style = (0, _objectAssign2['default'])({}, props.style);
-	      style.width = girdSize + '%';
-	      style.left = i * girdSize + '%';
-	      style.position = 'absolute';
-	      style.overflow = 'hidden';
-	      var _style = (0, _objectAssign2['default'])({}, props.style);
-	      _style.width = elemOffset.width + 'px';
-	      _style.float = 'left';
-	      _style.position = 'relative';
-	      _style.left = -i * girdSize / 100 * elemOffset.width + 'px';
-	      props.style = _style;
-	      props.animation = _extends({}, animData, {
-	        y: _y,
-	        type: type === 'enter' ? 'from' : 'to',
-	        delay: i * 50 + (type === 'enter' ? 0 : 50),
-	        onComplete: i === girdNum - 1 ? animData.onComplete : null
-	      });
-	
-	      var mask = _react2['default'].createElement(
-	        'div',
-	        { style: style, key: i },
-	        (0, _react.cloneElement)(elem, props, children)
-	      );
-	      animChild.push(mask);
-	    }
-	    var animSlot = _react2['default'].createElement(
-	      'div',
-	      { style: { width: '100%', position: 'absolute', top: 0 } },
-	      animChild
-	    );
-	    var _props = (0, _objectAssign2['default'])({}, elem.props);
-	    _props.children = animSlot;
-	    return (0, _react.cloneElement)(elem, _props);
-	  },
-	  gridAlpha: function gridAlpha(elem, type, direction, animData, elemOffset) {
-	    if (type === 'leave') {
-	      return elem;
-	    }
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var animChild = [];
-	    var gridNum = 10;
-	    var gridWidth = elemOffset.width / gridNum;
-	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
-	    var children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
-	    for (var i = 0; i < gridNum * gridNumH; i++) {
-	      // mask样式
-	      var style = (0, _objectAssign2['default'])({}, props.style);
-	      style.position = 'absolute';
-	      style.overflow = 'hidden';
-	      style.width = gridWidth + 'px';
-	      style.height = gridWidth + 'px';
-	      style.left = i % gridNum * gridWidth;
-	      style.top = Math.floor(i / gridNum) * gridWidth;
-	      // clone 的样式
-	      var _style = (0, _objectAssign2['default'])({}, props.style);
-	      _style.width = elemOffset.width + 'px';
-	      _style.position = 'relative';
-	      _style.left = -i % gridNum * gridWidth;
-	      _style.top = -Math.floor(i / gridNum) * gridWidth;
-	      props.style = _style;
-	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-	      var _length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
-	      var animation = _extends({}, animData, {
-	        opacity: 0,
-	        type: 'from',
-	        delay: delay,
-	        onComplete: i === _length ? animData.onComplete : null
-	      });
-	      var mask = _react2['default'].createElement(
-	        elem.type,
-	        { style: style, key: i, animation: animation },
-	        (0, _react.cloneElement)(elem, props, children)
-	      );
-	      animChild.push(mask);
-	    }
-	    var _props = (0, _objectAssign2['default'])({}, elem.props);
-	    _props.children = animChild;
-	    return (0, _react.cloneElement)(elem, _props);
-	  },
-	  gridScale: function gridScale(elem, type, direction, animData, elemOffset) {
-	    if (type === 'leave') {
-	      return elem;
-	    }
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var animChild = [];
-	    var gridNum = 10;
-	    var gridWidth = elemOffset.width / gridNum;
-	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
-	    var children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
-	    for (var i = 0; i < gridNum * gridNumH; i++) {
-	      // mask样式
-	      var style = (0, _objectAssign2['default'])({}, props.style);
-	      style.position = 'absolute';
-	      style.overflow = 'hidden';
-	      style.width = gridWidth + 'px';
-	      style.height = gridWidth + 'px';
-	      style.left = i % gridNum * gridWidth;
-	      style.top = Math.floor(i / gridNum) * gridWidth;
-	      // clone 的样式
-	      var _style = (0, _objectAssign2['default'])({}, props.style);
-	      _style.width = elemOffset.width + 'px';
-	      _style.position = 'relative';
-	      _style.left = -i % gridNum * gridWidth;
-	      _style.top = -Math.floor(i / gridNum) * gridWidth;
-	      props.style = _style;
-	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-	      var _length2 = direction === 'next' ? gridNum * gridNumH - 1 : 0;
-	      var animation = _extends({}, animData, {
-	        opacity: 0,
-	        scale: 0,
-	        type: 'from',
-	        delay: delay,
-	        onComplete: i === _length2 ? animData.onComplete : null
-	      });
-	      var mask = _react2['default'].createElement(
-	        elem.type,
-	        { style: style, key: i, animation: animation },
-	        (0, _react.cloneElement)(elem, props, children)
-	      );
-	      animChild.push(mask);
-	    }
-	    var _props = (0, _objectAssign2['default'])({}, elem.props);
-	    _props.children = animChild;
-	    return (0, _react.cloneElement)(elem, _props);
-	  },
-	  gridVerticalMove: function gridVerticalMove(elem, type, direction, animData, elemOffset) {
-	    if (type === 'leave') {
-	      return elem;
-	    }
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
-	    var animChild = [];
-	    var gridNum = 10;
-	    var gridWidth = elemOffset.width / gridNum;
-	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
-	    var children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
-	    for (var i = 0; i < gridNum * gridNumH; i++) {
-	      // mask样式
-	      var style = (0, _objectAssign2['default'])({}, props.style);
-	      style.position = 'absolute';
-	      style.overflow = 'hidden';
-	      style.width = gridWidth + 'px';
-	      style.height = gridWidth + 'px';
-	      style.left = i % gridNum * gridWidth;
-	      style.top = Math.floor(i / gridNum) * gridWidth;
-	      // clone 的样式
-	      var _style = (0, _objectAssign2['default'])({}, props.style);
-	      _style.width = elemOffset.width + 'px';
-	      _style.position = 'relative';
-	      _style.left = -i % gridNum * gridWidth;
-	      _style.top = -Math.floor(i / gridNum) * gridWidth;
-	      props.style = _style;
-	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-	      var _length3 = direction === 'next' ? gridNum * gridNumH - 1 : 0;
-	      props.animation = _extends({}, animData, {
-	        opacity: 0,
-	        y: direction === 'next' ? '-50%' : '50%',
-	        type: 'from',
-	        delay: delay,
-	        onComplete: i === _length3 ? animData.onComplete : null
-	      });
-	      var mask = _react2['default'].createElement(
-	        'div',
-	        { style: style, key: i },
-	        (0, _react.cloneElement)(elem, props, children)
-	      );
-	      animChild.push(mask);
-	    }
-	    var _props = (0, _objectAssign2['default'])({}, elem.props);
-	    _props.children = animChild;
-	    return (0, _react.cloneElement)(elem, _props);
-	  }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// export this package's api
@@ -23355,7 +23829,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _QueueAnim = __webpack_require__(187);
+	var _QueueAnim = __webpack_require__(188);
 	
 	var _QueueAnim2 = _interopRequireDefault(_QueueAnim);
 	
@@ -23363,7 +23837,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate) {'use strict';
@@ -23388,9 +23862,9 @@
 	
 	var _reactDom = __webpack_require__(36);
 	
-	var _utils = __webpack_require__(189);
+	var _utils = __webpack_require__(190);
 	
-	var _animTypes = __webpack_require__(190);
+	var _animTypes = __webpack_require__(191);
 	
 	var _animTypes2 = _interopRequireDefault(_animTypes);
 	
@@ -23463,7 +23937,7 @@
 	var velocity = undefined;
 	if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 	  // only load velocity on the client
-	  velocity = __webpack_require__(191);
+	  velocity = __webpack_require__(192);
 	  Object.keys(_ease).forEach(function (key) {
 	    if (velocity.Easings) {
 	      velocity.Easings[key] = _ease[key];
@@ -23831,10 +24305,10 @@
 	
 	exports['default'] = QueueAnim;
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(188).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(189).setImmediate))
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(7).nextTick;
@@ -23913,10 +24387,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(188).setImmediate, __webpack_require__(188).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(189).setImmediate, __webpack_require__(189).clearImmediate))
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24021,7 +24495,7 @@
 	}
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24069,7 +24543,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! VelocityJS.org (1.2.3). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
@@ -27960,7 +28434,7 @@
 	will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

@@ -8,7 +8,7 @@
 .banner-anim-elem > * {
   position: relative;
 }
-.banner-anim-elem .banner-anim-elem-background {
+.banner-anim-elem-background {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -16,6 +16,7 @@
   left: 0;
   background-position: center;
   background-size: cover;
+  overflow: hidden;
 }
 .banner-anim-elem-mask {
   position: relative;
@@ -104,9 +105,12 @@
 .banner-anim-thumb-default span.active {
   background: #fff;
 }
-.banner-user-elem {
+.banner-anim-elem.banner-user-elem {
   height: 600px;
   color: #fff;
+}
+.banner-anim-elem.banner-user-elem .banner-user-bg {
+  background-size: 110%;
 }
 ul,
 li {

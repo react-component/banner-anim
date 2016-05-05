@@ -1,14 +1,14 @@
-webpackJsonp([4],{
+webpackJsonp([1],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(198);
+	module.exports = __webpack_require__(194);
 
 
 /***/ },
 
-/***/ 198:
+/***/ 194:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -47,65 +47,33 @@ webpackJsonp([4],{
 	
 	__webpack_require__(193);
 	
-	__webpack_require__(199);
-	
 	var Element = _rcBannerAnim2['default'].Element;
-	var Thumb = _rcBannerAnim2['default'].Thumb;
 	
 	var Demo = (function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
-	    var _this = this;
-	
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
-	    this.imgArray = ['https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg', 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'];
-	    this.state = {
-	      enter: false
-	    };
-	    ['onMouseEnter', 'onMouseLeave'].forEach(function (method) {
-	      return _this[method] = _this[method].bind(_this);
-	    });
 	  }
 	
 	  _createClass(Demo, [{
-	    key: 'onMouseEnter',
-	    value: function onMouseEnter() {
-	      this.setState({
-	        enter: true
-	      });
-	    }
-	  }, {
-	    key: 'onMouseLeave',
-	    value: function onMouseLeave() {
-	      this.setState({
-	        enter: false
-	      });
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var thumbChildren = this.imgArray.map(function (img, i) {
-	        return _react2['default'].createElement(
-	          'span',
-	          { key: i },
-	          _react2['default'].createElement('i', { style: { backgroundImage: 'url(' + img + ')' } })
-	        );
-	      });
 	      return _react2['default'].createElement(
 	        _rcBannerAnim2['default'],
-	        { onMouseEnter: this.onMouseEnter, onMouseLeave: this.onMouseLeave },
+	        { type: 'across', bgParallaxAll: { y: [0, 300] } },
 	        _react2['default'].createElement(
 	          Element,
 	          { key: 'aaa',
 	            prefixCls: 'banner-user-elem',
-	            img: this.imgArray[0]
+	            bgType: 'video/mp4',
+	            bg: 'https://os.alipayobjects.com/rmsportal/CoDFvoxaQpTnLOM.mp4'
 	          },
 	          _react2['default'].createElement(
 	            _rcQueueAnim2['default'],
-	            { key: '1', name: 'QueueAnim' },
+	            { name: 'QueueAnim' },
 	            _react2['default'].createElement(
 	              'h1',
 	              { key: 'h1' },
@@ -119,7 +87,7 @@ webpackJsonp([4],{
 	          ),
 	          _react2['default'].createElement(
 	            _rcTweenOne2['default'],
-	            { animation: { y: 50, opacity: 0, type: 'from' }, key: '2', name: 'TweenOne' },
+	            { animation: { y: 50, opacity: 0, type: 'from' }, name: 'TweenOne' },
 	            'Ant Motion Demo.Ant Motion Demo'
 	          )
 	        ),
@@ -127,11 +95,11 @@ webpackJsonp([4],{
 	          Element,
 	          { key: 'bbb',
 	            prefixCls: 'banner-user-elem',
-	            img: this.imgArray[1]
+	            bg: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
 	          },
 	          _react2['default'].createElement(
 	            _rcQueueAnim2['default'],
-	            { key: '1', name: 'QueueAnim' },
+	            { name: 'QueueAnim' },
 	            _react2['default'].createElement(
 	              'h1',
 	              { key: 'h1' },
@@ -145,16 +113,9 @@ webpackJsonp([4],{
 	          ),
 	          _react2['default'].createElement(
 	            _rcTweenOne2['default'],
-	            { animation: { y: 50, opacity: 0, type: 'from' }, key: '2', name: 'TweenOne' },
+	            { animation: { y: 50, opacity: 0, type: 'from' }, name: 'TweenOne' },
 	            'Ant Motion Demo.Ant Motion Demo'
 	          )
-	        ),
-	        _react2['default'].createElement(
-	          Thumb,
-	          { prefixCls: 'user-thumb', key: 'thumb', component: _rcTweenOne2['default'],
-	            animation: { bottom: this.state.enter ? 0 : -70 }
-	          },
-	          thumbChildren
 	        )
 	      );
 	    }
@@ -165,14 +126,7 @@ webpackJsonp([4],{
 	
 	_reactDom2['default'].render(_react2['default'].createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ },
-
-/***/ 199:
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
 /***/ }
 
 });
-//# sourceMappingURL=customThumb.js.map
+//# sourceMappingURL=bgParallax.js.map
