@@ -349,7 +349,7 @@ class BannerAnim extends Component {
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
     const children = this.children.elemWrapper.map((item, i) => {
       if (i !== this.state.currentShow && i !== newShow) {
-        return item
+        return item;
       }
       const props = assign({}, item.props);
       props.type = i === newShow ? 'enter' : 'leave';
@@ -360,8 +360,8 @@ class BannerAnim extends Component {
       props.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
       // 挡截 newChild, 动画的时候把子级全部去掉，只留 image, currentChild 的子级去除动画效果
       props.children = i === newShow ?
-        toArrayChildren(props.children).map((item, i) =>
-          React.cloneElement(item, { ...item.props, key: i }, null)
+        toArrayChildren(props.children).map((_item, ii) =>
+          React.cloneElement(_item, { ..._item.props, key: ii }, null)
         ) : toArrayChildren(props.children).map(setAnimCompToTagComp);
       if (i === newShow) {
         const newStyle = assign({}, props.style);

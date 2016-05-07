@@ -51,7 +51,7 @@ describe('rc-banner-anim', function() {
     const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
     const childrenSpan = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'span');
     // banner-anim elem bg prev next thumb 6个；
-    expect(children.length).to.be(6);
+    expect(children.length).to.be(8);
     // test text 两个点是 span
     expect(childrenSpan.length).to.be(3);
   });
@@ -70,8 +70,10 @@ describe('rc-banner-anim', function() {
       initShow: 1,
       type: 'across',
     });
-    const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem')[0];
-    expect(children.id).to.be('b');
+    const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
+    console.log(children[1].style.display)
+    expect(children[0].style.display).to.be('none');
+    expect(children[1].style.display).to.not.be.ok();
   });
 
   it('banner animation autoplay', function(done) {
@@ -80,11 +82,10 @@ describe('rc-banner-anim', function() {
       autoPlaySpeed: 1000,
       type: 'across',
     });
-    let children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem')[0];
-    expect(children.id).to.be('a');
+    let children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
+    expect(children[0].style.display).to.not.be.ok();
     setTimeout(()=> {
-      children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem')[0];
-      expect(children.id).to.be('b');
+      expect(children[1].style.display).to.not.be.ok();
       done();
     }, 1650);
   });
