@@ -95,6 +95,32 @@ webpackJsonp([8],{
 	          Element,
 	          { key: 'bbb',
 	            prefixCls: 'banner-user-elem',
+	            bg: 'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg'
+	          },
+	          _react2['default'].createElement(
+	            _rcQueueAnim2['default'],
+	            { name: 'QueueAnim' },
+	            _react2['default'].createElement(
+	              'h1',
+	              { key: 'h1' },
+	              'Ant Motion Demo'
+	            ),
+	            _react2['default'].createElement(
+	              'p',
+	              { key: 'p' },
+	              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	            )
+	          ),
+	          _react2['default'].createElement(
+	            _rcTweenOne2['default'],
+	            { animation: { y: 50, opacity: 0, type: 'from' }, name: 'TweenOne' },
+	            'Ant Motion Demo.Ant Motion Demo'
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          Element,
+	          { key: 'ccc',
+	            prefixCls: 'banner-user-elem',
 	            bg: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
 	          },
 	          _react2['default'].createElement(

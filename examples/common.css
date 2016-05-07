@@ -26,6 +26,7 @@
 .banner-anim-arrow {
   cursor: pointer;
   position: absolute;
+  z-index: 10;
 }
 .banner-anim-arrow-default {
   position: absolute;
@@ -80,6 +81,7 @@
   width: 100%;
   text-align: center;
   pointer-events: none;
+  z-index: 10;
 }
 .banner-anim-thumb > span {
   pointer-events: auto;

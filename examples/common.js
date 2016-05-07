@@ -303,12 +303,7 @@
 	        var wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
 	        var _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
 	        var thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
-	
-	        var currentChild = this.children.elemWrapper[this.state.currentShow];
-	        var props = (0, _objectAssign2['default'])({}, currentChild.props);
-	        props.width = elemWidth;
-	        var thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, this.state.currentShow));
-	        var children = [_react2['default'].cloneElement(currentChild, props)].concat(this.children.arrowWrapper, thumbWrapper);
+	        var children = this.getShowChildren(this.state.currentShow);
 	        this.setState({
 	          wrapperHeight: wrapperHeight,
 	          thumbHeight: thumbHeight,
@@ -345,8 +340,24 @@
 	  }, {
 	    key: 'getShowChildren',
 	    value: function getShowChildren(currentShow) {
-	      var elem = this.children.elemWrapper[currentShow];
-	      return [elem].concat(this.children.arrowWrapper, this.children.thumbWrapper);
+	      // video 时重复加载，所以把子级归位，加 none;
+	      var elem = this.children.elemWrapper.map(function (item, i) {
+	        var props = (0, _objectAssign2['default'])({}, item.props);
+	        var style = (0, _objectAssign2['default'])({}, props.style);
+	        style.zIndex = null;
+	        // 预防预设了 transform 的值；
+	        style.transform = style.transform || null;
+	        if (i !== currentShow) {
+	          style.display = 'none';
+	          props.style = style;
+	          return _react2['default'].cloneElement(item, props, null);
+	        }
+	        delete style.display;
+	        props.style = style;
+	        return _react2['default'].cloneElement(item, props);
+	      });
+	      var thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, currentShow));
+	      return elem.concat(this.children.arrowWrapper, thumbWrapper);
 	    }
 	  }, {
 	    key: 'getDomDataSetToState',
@@ -394,10 +405,7 @@
 	    value: function animEndSetState(type) {
 	      if (type === 'enter') {
 	        this.children = this.saveChildren(this.props.children);
-	        var thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, this.state.currentShow));
-	        // 动画结束后， 再次刷新时把动画组件转换成组件里的 component 属性
-	        var _child = this.children.elemWrapper[this.state.currentShow];
-	        var children = [_child].concat(this.children.arrowWrapper, thumbWrapper);
+	        var children = this.getShowChildren(this.state.currentShow);
 	        this.props.onChange('after', this.state.currentShow);
 	        this.tweenBool = false;
 	        this.setState({
@@ -518,45 +526,33 @@
 	  }, {
 	    key: 'animToCurrentShow',
 	    value: function animToCurrentShow(newShow, type) {
+	      var _this3 = this;
+	
 	      var _animType = this.getAnimType(this.props.type);
-	      var currentChild = (0, _utils.toArrayChildren)(this.state.children).filter(function (item) {
-	        return item.type === _Element2['default'];
-	      })[0];
-	      var newChild = this.children.elemWrapper[newShow];
-	      var currentProps = (0, _objectAssign2['default'])({}, currentChild.props);
-	      currentProps.type = 'leave';
-	      currentProps.direction = type;
-	      currentProps.animType = _animType;
-	      currentProps.duration = this.props.duration;
-	      currentProps.ease = this.props.ease;
-	      currentProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
-	      currentProps.children = (0, _utils.toArrayChildren)(currentChild.props.children).map(_utils.setAnimCompToTagComp);
-	      var newProps = (0, _objectAssign2['default'])({}, newChild.props);
-	      newProps.type = 'enter';
-	      newProps.direction = type;
-	      newProps.animType = _animType;
-	      newProps.duration = this.props.duration;
-	      newProps.ease = this.props.ease;
-	      // 挡截 newChild, 动画的时候把子级全部去掉，只留 image
-	      newProps.children = (0, _utils.toArrayChildren)(newProps.children).map(function (item, i) {
-	        return _react2['default'].cloneElement(item, _extends({}, item.props, { key: i }), null);
-	      });
-	      newProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
-	      this.children.elemWrapper[newShow] = _react2['default'].cloneElement(newChild, newProps);
 	      var thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-	      /*
-	       const mask = (<div className="banner-anim-elem-mask" key="elem-mask"
-	       style={{
-	       height: this.state.wrapperHeight,
-	       }}
-	       >
-	       {React.cloneElement(currentChild, currentProps)}
-	       {this.children.elemWrapper[newShow]}
-	       </div>);
-	       */
-	      // 去掉 mask, thumbNoFloat false 时自已加底色遮挡，
-	      // 加 mask 后，如果是 video 每个进出场都重加载；
-	      var children = [_react2['default'].cloneElement(currentChild, currentProps), this.children.elemWrapper[newShow]].concat(this.children.arrowWrapper, thumbWrapper);
+	      var children = this.children.elemWrapper.map(function (item, i) {
+	        if (i !== _this3.state.currentShow && i !== newShow) {
+	          return item;
+	        }
+	        var props = (0, _objectAssign2['default'])({}, item.props);
+	        props.type = i === newShow ? 'enter' : 'leave';
+	        props.direction = type;
+	        props.animType = _animType;
+	        props.duration = _this3.props.duration;
+	        props.ease = _this3.props.ease;
+	        props.elemOffset = { width: _this3.state.elemWidth, height: _this3.state.wrapperHeight };
+	        // 挡截 newChild, 动画的时候把子级全部去掉，只留 image, currentChild 的子级去除动画效果
+	        props.children = i === newShow ? (0, _utils.toArrayChildren)(props.children).map(function (_item, ii) {
+	          return _react2['default'].cloneElement(_item, _extends({}, _item.props, { key: ii }), null);
+	        }) : (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
+	        if (i === newShow) {
+	          var newStyle = (0, _objectAssign2['default'])({}, props.style);
+	          newStyle.display = null;
+	          newStyle.zIndex = 1;
+	          props.style = newStyle;
+	        }
+	        return _react2['default'].cloneElement(item, props);
+	      }).concat(this.children.arrowWrapper, thumbWrapper);
 	      this.props.onChange('before', newShow);
 	      this.setState({
 	        children: children,
@@ -572,21 +568,21 @@
 	  }, {
 	    key: 'timeoutRaf',
 	    value: function timeoutRaf() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      this.moment = Math.round((_rcTweenOneLibTicker2['default'].frame - this.startFrame) * (1000 / 60)) + this.startMoment;
 	      if (this.moment >= this.props.autoPlaySpeed) {
 	        setTimeout(function () {
-	          _this3.next();
-	          _this3.startMoment = 0;
-	          _this3.startFrame = _rcTweenOneLibTicker2['default'].frame;
+	          _this4.next();
+	          _this4.startMoment = 0;
+	          _this4.startFrame = _rcTweenOneLibTicker2['default'].frame;
 	        });
 	      }
 	    }
 	  }, {
 	    key: 'replaceChildren',
 	    value: function replaceChildren(currentChildren, newChildren) {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      return (0, _utils.toArrayChildren)(currentChildren).map(function (item) {
 	        var _item = undefined;
@@ -609,7 +605,7 @@
 	            _item = newChildren.thumbWrapper.filter(function (thumbItem) {
 	              return thumbItem.key === item.key;
 	            })[0];
-	            _item = _this4.setThumbActive(_this4.state.currentShow, _item);
+	            _item = _this5.setThumbActive(_this5.state.currentShow, _item);
 	            break;
 	          default:
 	            _item = item;
@@ -20981,7 +20977,7 @@
 	          }
 	        });
 	      }
-	      var className = ('banner-anim-elem-background ' + this.props.bgPrefixCls).trim();
+	      var className = ('banner-anim-elem-background ' + (this.props.bgPrefixCls || '')).trim();
 	      var dom = this.props.bgType.indexOf('video') >= 0 ? _react2['default'].createElement(
 	        'div',
 	        { className: className,
