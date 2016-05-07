@@ -26,6 +26,17 @@ class Demo extends React.Component {
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
+          bg="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
+        >
+          <QueueAnim name="QueueAnim">
+            <h1 key="h1">Ant Motion Demo</h1>
+            <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
+          </QueueAnim>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">Ant Motion Demo.Ant Motion
+            Demo</TweenOne>
+        </Element>
+        <Element key="ccc"
+          prefixCls="banner-user-elem"
           bg="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"
         >
           <QueueAnim name="QueueAnim">

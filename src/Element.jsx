@@ -201,7 +201,7 @@ class Element extends Component {
         }
       });
     }
-    const className = `banner-anim-elem-background ${this.props.bgPrefixCls}`.trim();
+    const className = `banner-anim-elem-background ${this.props.bgPrefixCls || ''}`.trim();
     const dom = this.props.bgType.indexOf('video') >= 0 ?
       (<div className={className}
         style={{ ...this.state.bgParallaxAnim, ...followObj }}

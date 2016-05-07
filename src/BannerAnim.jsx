@@ -127,16 +127,7 @@ class BannerAnim extends Component {
       const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
       const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
       const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
-
-      const currentChild = this.children.elemWrapper[this.state.currentShow];
-      const props = assign({}, currentChild.props);
-      props.width = elemWidth;
-      const thumbWrapper = this.children.thumbWrapper.map(
-        this.setThumbActive.bind(this, this.state.currentShow)
-      );
-      const children = [
-        React.cloneElement(currentChild, props),
-      ].concat(this.children.arrowWrapper, thumbWrapper);
+      const children = this.getShowChildren(this.state.currentShow);
       this.setState({
         wrapperHeight,
         thumbHeight,
@@ -169,8 +160,26 @@ class BannerAnim extends Component {
   }
 
   getShowChildren(currentShow) {
-    const elem = this.children.elemWrapper[currentShow];
-    return [elem].concat(this.children.arrowWrapper, this.children.thumbWrapper);
+    // video 时重复加载，所以把子级归位，加 none;
+    const elem = this.children.elemWrapper.map((item, i) => {
+      const props = assign({}, item.props);
+      const style = assign({}, props.style);
+      style.zIndex = null;
+      // 预防预设了 transform 的值；
+      style.transform = style.transform || null;
+      if (i !== currentShow) {
+        style.display = 'none';
+        props.style = style;
+        return React.cloneElement(item, props, null);
+      }
+      delete style.display;
+      props.style = style;
+      return React.cloneElement(item, props);
+    });
+    const thumbWrapper = this.children.thumbWrapper.map(
+      this.setThumbActive.bind(this, currentShow)
+    );
+    return elem.concat(this.children.arrowWrapper, thumbWrapper);
   }
 
   getDomDataSetToState() {
@@ -178,7 +187,8 @@ class BannerAnim extends Component {
     const elemWidth = this.dom.getBoundingClientRect().width;
     // 获取宽度与定位，setState刷新；
     const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
-    const _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
+    const _tHeight = this.thumbIsDefault ? 40 :
+      this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
     const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
     // 更新 arrow 里的 elemHeight;
     this.children.arrowWrapper = this.children.arrowWrapper.map(item => {
@@ -215,14 +225,7 @@ class BannerAnim extends Component {
   animEndSetState(type) {
     if (type === 'enter') {
       this.children = this.saveChildren(this.props.children);
-      const thumbWrapper = this.children.thumbWrapper.map(
-        this.setThumbActive.bind(this, this.state.currentShow)
-      );
-      // 动画结束后， 再次刷新时把动画组件转换成组件里的 component 属性
-      const _child = this.children.elemWrapper[this.state.currentShow];
-      const children = [
-        _child,
-      ].concat(this.children.arrowWrapper, thumbWrapper);
+      const children = this.getShowChildren(this.state.currentShow);
       this.props.onChange('after', this.state.currentShow);
       this.tweenBool = false;
       this.setState({
@@ -343,46 +346,31 @@ class BannerAnim extends Component {
 
   animToCurrentShow(newShow, type) {
     const _animType = this.getAnimType(this.props.type);
-    const currentChild = toArrayChildren(this.state.children)
-      .filter(item => item.type === Element)[0];
-    const newChild = this.children.elemWrapper[newShow];
-    const currentProps = assign({}, currentChild.props);
-    currentProps.type = 'leave';
-    currentProps.direction = type;
-    currentProps.animType = _animType;
-    currentProps.duration = this.props.duration;
-    currentProps.ease = this.props.ease;
-    currentProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
-    currentProps.children = toArrayChildren(currentChild.props.children).map(setAnimCompToTagComp);
-    const newProps = assign({}, newChild.props);
-    newProps.type = 'enter';
-    newProps.direction = type;
-    newProps.animType = _animType;
-    newProps.duration = this.props.duration;
-    newProps.ease = this.props.ease;
-    // 挡截 newChild, 动画的时候把子级全部去掉，只留 image
-    newProps.children = toArrayChildren(newProps.children).map((item, i) =>
-      React.cloneElement(item, { ...item.props, key: i }, null)
-    );
-    newProps.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
-    this.children.elemWrapper[newShow] = React.cloneElement(newChild, newProps);
     const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-    /*
-     const mask = (<div className="banner-anim-elem-mask" key="elem-mask"
-     style={{
-     height: this.state.wrapperHeight,
-     }}
-     >
-     {React.cloneElement(currentChild, currentProps)}
-     {this.children.elemWrapper[newShow]}
-     </div>);
-     */
-    // 去掉 mask, thumbNoFloat false 时自已加底色遮挡，
-    // 加 mask 后，如果是 video 每个进出场都重加载；
-    const children = [
-      React.cloneElement(currentChild, currentProps),
-      this.children.elemWrapper[newShow],
-    ].concat(this.children.arrowWrapper, thumbWrapper);
+    const children = this.children.elemWrapper.map((item, i) => {
+      if (i !== this.state.currentShow && i !== newShow) {
+        return item
+      }
+      const props = assign({}, item.props);
+      props.type = i === newShow ? 'enter' : 'leave';
+      props.direction = type;
+      props.animType = _animType;
+      props.duration = this.props.duration;
+      props.ease = this.props.ease;
+      props.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
+      // 挡截 newChild, 动画的时候把子级全部去掉，只留 image, currentChild 的子级去除动画效果
+      props.children = i === newShow ?
+        toArrayChildren(props.children).map((item, i) =>
+          React.cloneElement(item, { ...item.props, key: i }, null)
+        ) : toArrayChildren(props.children).map(setAnimCompToTagComp);
+      if (i === newShow) {
+        const newStyle = assign({}, props.style);
+        newStyle.display = null;
+        newStyle.zIndex = 1;
+        props.style = newStyle;
+      }
+      return React.cloneElement(item, props);
+    }).concat(this.children.arrowWrapper, thumbWrapper);
     this.props.onChange('before', newShow);
     this.setState({
       children,
