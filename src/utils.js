@@ -21,6 +21,9 @@ export function dataToArray(vars) {
 }
 
 export function setAnimCompToTagComp(item, i) {
+  if (!item) {
+    return null;
+  }
   const props = assign({}, item.props);
   props.key = item.key || i;
   // 压缩后名称不一样了。

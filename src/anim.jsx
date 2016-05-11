@@ -136,7 +136,6 @@ export default {
     const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
     const gridNumH = Math.ceil(elemOffset.height / gridWidth);
-    const children = toArrayChildren(props.children).map(setAnimCompToTagComp);
     for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
       const style = assign({}, props.style);
@@ -164,7 +163,7 @@ export default {
         onComplete: i === length ? animData.onComplete : null,
       };
       const mask = (<elem.type style={style} key={ i } animation={animation}>
-        { cloneElement(elem, props, children) }
+        { cloneElement(elem, props) }
       </elem.type>);
       animChild.push(mask);
     }
