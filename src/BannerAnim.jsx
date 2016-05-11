@@ -16,6 +16,7 @@ class BannerAnim extends Component {
     this.tweenBool = false;
     [
       'replaceChildren',
+      'replaceChildrenArrowThumb',
       'next',
       'prev',
       'thumbClick',
@@ -56,14 +57,20 @@ class BannerAnim extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // banner 不作高度的响应，必须跟初次进入统一高度。
-    this.children = this.saveChildren(nextProps.children);
-
+    console.log(this.children, 1)
     // 在动画时不刷新 children 会在结束后触发；
+    const _children = this.saveChildren(nextProps.children, true);
+
+    let children;
     if (!this.tweenBool) {
-      const children = this.replaceChildren(this.state.children, this.children);
-      this.setState({ children });
+      // 元素在动画结束后再刷新
+      children = this.replaceChildren(this.state.children, _children);
+      this.children = _children;
+    } else {
+      children = this.replaceChildrenArrowThumb(this.children, _children);
+      console.log(this.children.elemWrapper, children)
     }
+    this.setState({ children });
   }
 
   componentWillUnmount() {
@@ -336,7 +343,6 @@ class BannerAnim extends Component {
         _children.thumbWrapper.push(
           <Thumb length={_children.elemWrapper.length} key="thumb"
             thumbClick={this.thumbClick}
-            active={this.props.initShow}
             default
           />);
       }
@@ -346,8 +352,8 @@ class BannerAnim extends Component {
 
   animToCurrentShow(newShow, type) {
     const _animType = this.getAnimType(this.props.type);
-    const thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-    const children = this.children.elemWrapper.map((item, i) => {
+    this.children.thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
+    this.children.elemWrapper = this.children.elemWrapper.map((item, i) => {
       if (i !== this.state.currentShow && i !== newShow) {
         return item;
       }
@@ -368,7 +374,9 @@ class BannerAnim extends Component {
         props.style = newStyle;
       }
       return React.cloneElement(item, props);
-    }).concat(this.children.arrowWrapper, thumbWrapper);
+    });
+    const children = this.children.elemWrapper.concat(this.children.arrowWrapper,
+      this.children.thumbWrapper);
     this.props.onChange('before', newShow);
     this.setState({
       children,
@@ -416,6 +424,20 @@ class BannerAnim extends Component {
       }
       return _item;
     });
+  }
+
+  replaceChildrenArrowThumb(currentChild, nextChild) {
+    // 在动画时只更新箭头与缩略图
+    const children = nextChild;
+    children.arrowWrapper = children.arrowWrapper.map(item => {
+      const _item = currentChild.arrowWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
+      return React.cloneElement(item, { ..._item.props, ...item.props });
+    });
+    children.thumbWrapper = children.thumbWrapper.map(item => {
+      let _item = currentChild.thumbWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
+      return React.cloneElement(item, { ..._item.props, ...item.props });
+    });
+    return currentChild.elemWrapper.concat(children.arrowWrapper, children.thumbWrapper);
   }
 
   render() {

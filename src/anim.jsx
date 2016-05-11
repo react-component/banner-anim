@@ -133,7 +133,7 @@ export default {
     }
     const props = assign({}, elem.props);
     const animChild = [];
-    const gridNum = 10;
+    const gridNum = 6;
     const gridWidth = elemOffset.width / gridNum;
     const gridNumH = Math.ceil(elemOffset.height / gridWidth);
     for (let i = 0; i < gridNum * gridNumH; i++) {

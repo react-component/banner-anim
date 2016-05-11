@@ -2,7 +2,7 @@
 
 import BannerAnim from 'rc-banner-anim';
 import QueueAnim from 'rc-queue-anim';
-import TweenOne from 'rc-tween-one';
+import TweenOne, { TweenOneGroup } from 'rc-tween-one';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/index.less';
@@ -64,12 +64,14 @@ class Demo extends React.Component {
   }
 
   nextEnter() {
+    console.log('enter')
     this.setState({
       nextEnter: true,
     });
   }
 
   nextLeave() {
+    console.log('leave')
     this.setState({
       nextEnter: false,
     });
@@ -105,9 +107,9 @@ class Demo extends React.Component {
           animation={{ left: this.state.prevEnter ? 0 : -120 }}
         >
           <div className="arrow"></div>
-          <QueueAnim type="alpha" className="img-wrapper" component="ul">
+          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} appear={false} className="img-wrapper" component="ul">
             <li style={{ backgroundImage: `url(${this.imgArray[intArray[0]]})`}} key={intArray[0]} />
-          </QueueAnim>
+          </TweenOneGroup>
         </Arrow>
         <Arrow arrowType="next" key="next" prefixCls="user-arrow" component={TweenOne}
           onMouseEnter={this.nextEnter}
@@ -115,9 +117,9 @@ class Demo extends React.Component {
           animation={{ right: this.state.nextEnter ? 0 : -120 }}
         >
           <div className="arrow"></div>
-          <QueueAnim type="alpha" className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} />
-          </QueueAnim>
+          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} appear={false} className="img-wrapper" component="ul">
+            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} name={"abc" + intArray[1]}/>
+          </TweenOneGroup>
         </Arrow>
       </BannerAnim>
     );
