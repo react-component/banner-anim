@@ -57,7 +57,6 @@ class BannerAnim extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.children, 1)
     // 在动画时不刷新 children 会在结束后触发；
     const _children = this.saveChildren(nextProps.children, true);
 
@@ -68,7 +67,6 @@ class BannerAnim extends Component {
       this.children = _children;
     } else {
       children = this.replaceChildrenArrowThumb(this.children, _children);
-      console.log(this.children.elemWrapper, children)
     }
     this.setState({ children });
   }
@@ -434,7 +432,7 @@ class BannerAnim extends Component {
       return React.cloneElement(item, { ..._item.props, ...item.props });
     });
     children.thumbWrapper = children.thumbWrapper.map(item => {
-      let _item = currentChild.thumbWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
+      const _item = currentChild.thumbWrapper.filter(arrowItem => arrowItem.key === item.key)[0];
       return React.cloneElement(item, { ..._item.props, ...item.props });
     });
     return currentChild.elemWrapper.concat(children.arrowWrapper, children.thumbWrapper);
