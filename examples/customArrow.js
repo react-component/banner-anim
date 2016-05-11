@@ -64,14 +64,12 @@ class Demo extends React.Component {
   }
 
   nextEnter() {
-    console.log('enter')
     this.setState({
       nextEnter: true,
     });
   }
 
   nextLeave() {
-    console.log('leave')
     this.setState({
       nextEnter: false,
     });
@@ -118,7 +116,7 @@ class Demo extends React.Component {
         >
           <div className="arrow"></div>
           <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} appear={false} className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} name={"abc" + intArray[1]}/>
+            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} />
           </TweenOneGroup>
         </Arrow>
       </BannerAnim>
