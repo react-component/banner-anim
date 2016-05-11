@@ -107,7 +107,7 @@ React.render(<BannerAnim>
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | delay    |     number      |  null        | open followParallax delay |
-| data     | array           |  null        | content: { key: string, scale: number, type: array or string, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid.  }; key: dom key, banner bg key is `bgElem`, scale: Animation value = banner.width / 2 ＊ scale, type: style or `x` `y` |
+| data     | array           |  null        | content: { key: string, scale: number, type: array or string, bgPosition: string }; key: dom key, banner bg key is `bgElem`, scale: Animation value = banner.width / 2 ＊ scale, type: style or `x` `y`, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid. |
 | ease | string        | false         | `true` is `easeInOutQuad`   |
 | minMove    |   number        |  null        | ease.easeInOutQuad(start, minMove, 1, end); The mouse to move once, the minimum point of moving graphics, a second to reach the position of the mouse. |
 
