@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>followMouse.js - example - rc-banner-anim@0.2.2</title>
+  <title>followMouse.js - example - rc-banner-anim@0.2.3</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -257,7 +257,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
 <div class="container">
   <div class="header">
-    <h1>rc-banner-anim@0.2.2</h1>
+    <h1>rc-banner-anim@0.2.3</h1>
 
     <p>banner-anim animation component for react</p>
   </div>
@@ -282,11 +282,13 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
           <span class="hljs-attribute">prefixCls</span>=<span class="hljs-value">"banner-user-elem"</span>
           <span class="hljs-attribute">bg</span>=<span class="hljs-value">"https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"</span>
           <span class="hljs-attribute">bgPrefixCls</span>=<span class="hljs-value">"banner-user-bg"</span>
+          <span class="hljs-attribute">name</span>=<span class="hljs-value">"1"</span>
           <span class="hljs-attribute">followParallax</span>=<span class="hljs-value">{{</span>
-            <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">800</span>,
-            <span class="hljs-attribute">transition:</span> '<span class="hljs-attribute">transform</span> <span class="hljs-attribute">.5s</span> <span class="hljs-attribute">ease-out</span>',
+            <span class="hljs-attribute">ease:</span> '<span class="hljs-attribute">easeInOutCirc</span>',
+            <span class="hljs-attribute">minMove:</span> <span class="hljs-attribute">0.1</span>,
+            <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">1000</span>,
             <span class="hljs-attribute">data:</span> [
-              { <span class="hljs-attribute">key:</span> '<span class="hljs-attribute">bgElem</span>', <span class="hljs-attribute">scale:</span> <span class="hljs-attribute">0.03</span>, <span class="hljs-attribute">type:</span> ['<span class="hljs-attribute">backgroundPositionX</span>']},
+              { <span class="hljs-attribute">key:</span> '<span class="hljs-attribute">bgElem</span>', <span class="hljs-attribute">scale:</span> <span class="hljs-attribute">0.03</span>, <span class="hljs-attribute">bgPosition:</span> '<span class="hljs-attribute">50</span>%', <span class="hljs-attribute">type:</span> ['<span class="hljs-attribute">backgroundPositionX</span>']},
               { <span class="hljs-attribute">key:</span> '<span class="hljs-attribute">queue</span>', <span class="hljs-attribute">scale:</span> <span class="hljs-attribute">0.05</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
               { <span class="hljs-attribute">key:</span> '<span class="hljs-attribute">text</span>', <span class="hljs-attribute">scale:</span> <span class="hljs-attribute">-0.03</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
             ],

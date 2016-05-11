@@ -3,12 +3,12 @@ webpackJsonp([6],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(201);
+	module.exports = __webpack_require__(204);
 
 
 /***/ },
 
-/***/ 201:
+/***/ 204:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -29,11 +29,11 @@ webpackJsonp([6],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(187);
+	var _rcQueueAnim = __webpack_require__(190);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(172);
+	var _rcTweenOne = __webpack_require__(175);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -41,11 +41,11 @@ webpackJsonp([6],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(193);
+	__webpack_require__(196);
 	
 	var Element = _rcBannerAnim2['default'].Element;
 	
@@ -86,7 +86,7 @@ webpackJsonp([6],{
 	          ),
 	          _react2['default'].createElement(
 	            _rcTweenOne2['default'],
-	            { animation: { y: 50, opacity: 0, type: 'from' }, name: 'TweenOne' },
+	            { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne1' },
 	            'Ant Motion Demo.Ant Motion Demo'
 	          )
 	        ),
@@ -112,7 +112,7 @@ webpackJsonp([6],{
 	          ),
 	          _react2['default'].createElement(
 	            _rcTweenOne2['default'],
-	            { animation: { y: 50, opacity: 0, type: 'from' }, name: 'TweenOne' },
+	            { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne2' },
 	            'Ant Motion Demo.Ant Motion Demo'
 	          )
 	        )

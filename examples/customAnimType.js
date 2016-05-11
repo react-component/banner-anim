@@ -3,12 +3,12 @@ webpackJsonp([2],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(195);
+	module.exports = __webpack_require__(198);
 
 
 /***/ },
 
-/***/ 195:
+/***/ 198:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -31,11 +31,11 @@ webpackJsonp([2],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(187);
+	var _rcQueueAnim = __webpack_require__(190);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(172);
+	var _rcTweenOne = __webpack_require__(175);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -43,15 +43,15 @@ webpackJsonp([2],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _objectAssign = __webpack_require__(8);
+	var _objectAssign = __webpack_require__(172);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	__webpack_require__(193);
+	__webpack_require__(196);
 	
 	var animType = _rcBannerAnim2['default'].animType;
 	var setAnimCompToTagComp = _rcBannerAnim2['default'].setAnimCompToTagComp;

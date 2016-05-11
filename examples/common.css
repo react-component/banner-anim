@@ -111,9 +111,6 @@
   height: 600px;
   color: #fff;
 }
-.banner-anim-elem.banner-user-elem .banner-user-bg {
-  background-size: 110%;
-}
 ul,
 li {
   list-style: none;

@@ -3,12 +3,12 @@ webpackJsonp([3],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(196);
+	module.exports = __webpack_require__(199);
 
 
 /***/ },
 
-/***/ 196:
+/***/ 199:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -29,11 +29,11 @@ webpackJsonp([3],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(187);
+	var _rcQueueAnim = __webpack_require__(190);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(172);
+	var _rcTweenOne = __webpack_require__(175);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -41,13 +41,13 @@ webpackJsonp([3],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(193);
+	__webpack_require__(196);
 	
-	__webpack_require__(197);
+	__webpack_require__(200);
 	
 	var Element = _rcBannerAnim2['default'].Element;
 	var Arrow = _rcBannerAnim2['default'].Arrow;
@@ -221,7 +221,7 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 197:
+/***/ 200:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
