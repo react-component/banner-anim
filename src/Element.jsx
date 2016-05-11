@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import TweenOne from 'rc-tween-one';
 import ticker from 'rc-tween-one/lib/ticker';
 import assign from 'object-assign';
+import ease from 'tween-functions';
 import Css from 'style-utils';
 import animType from './anim';
 import {
@@ -26,17 +27,22 @@ class Element extends Component {
       },
       mouseXY: null,
       domWH: null,
+      onMouseMove: null,
     };
+    this.tickerId = -1;
     this.isScroll = false;
+    this.delayTimeout = null;
     [
       'onScroll',
       'onResize',
       'onMouseMove',
+      'onMouseEnter',
       'getImgOrVideo',
       'videoLoadedData',
       'addScrollEvent',
       'getFollowStyle',
       'followAnalysisType',
+      'getFollowMouseMove',
       'getChildren',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
@@ -49,21 +55,6 @@ class Element extends Component {
       delete animType.grid;
       delete animType.gridBar;
       this.video = this.dom.children[0].children[0];
-    }
-    if (this.props.followParallax) {
-      this.timeoutID = `followTicker${Date.now() + Math.random()}`;
-      this.startFrame = ticker.frame;
-      ticker.wake(this.timeoutID, () => {
-        const moment = Math.round((ticker.frame - this.startFrame) * (1000 / 60));
-        if (moment >= this.props.followParallax.delay || 0) {
-          this.cancelRequestAnimationFrame();
-          if (window.addEventListener) {
-            this.dom.addEventListener('mousemove', this.onMouseMove);
-          } else {
-            this.dom.attachEvent('onmousemove', this.onMouseMove);
-          }
-        }
-      });
     }
   }
 
@@ -79,12 +70,20 @@ class Element extends Component {
     if (window.addEventListener) {
       window.removeEventListener('resize', this.onResize);
       window.removeEventListener('scroll', this.onScroll);
-      this.dom.removeEventListener('mousemove', this.onMouseMove);
     } else {
       window.detachEvent('onresize', this.onResize);
       window.detachEvent('onscroll', this.onScroll);
-      this.dom.detachEvent('onmousemove', this.onMouseMove);
     }
+  }
+
+  onMouseEnter(e) {
+    const domRect = this.dom.getBoundingClientRect();
+    const scrollTop = currentScrollTop();
+    const offsetTop = domRect.top + scrollTop;
+    this.enterMouse = {
+      x: e.pageX - domRect.left,
+      y: e.pageY - offsetTop,
+    };
   }
 
   onMouseMove(e) {
@@ -100,10 +99,32 @@ class Element extends Component {
       h: domRect.height,
     };
 
-    this.setState({
-      mouseXY,
-      domWH,
-    });
+    if (this.props.followParallax && this.props.followParallax.ease) {
+      ticker.clear(this.tickerId);
+      this.tickerId = `bannerElementTicker${Date.now() + Math.random()}`;
+      const startFrame = ticker.frame;
+      ticker.wake(this.tickerId, ()=> {
+        const moment = (ticker.frame - startFrame) * ticker.perFrame;
+        const start = typeof this.props.followParallax.minMove === 'number' ?
+          this.props.followParallax.minMove : 0.08;
+        const ratio = ease[this.props.followParallax.ease === true ? 'easeInOutQuad'
+          : this.props.followParallax.ease](moment, start, 1, 1000);
+        this.enterMouse.x = this.enterMouse.x + (mouseXY.x - this.enterMouse.x) * ratio;
+        this.enterMouse.y = this.enterMouse.y + (mouseXY.y - this.enterMouse.y) * ratio;
+        this.setState({
+          mouseXY: this.enterMouse,
+          domWH,
+        });
+        if (moment >= 1000) {
+          ticker.clear(this.tickerId);
+        }
+      });
+    } else {
+      this.setState({
+        mouseXY,
+        domWH,
+      });
+    }
   }
 
   onResize() {
@@ -166,9 +187,10 @@ class Element extends Component {
     });
   }
 
-  getFollowStyle(type, value) {
+  getFollowStyle(type, data) {
     let mouseData = this.state.mouseXY.x;
     let domData = this.state.domWH.w;
+    const value = data.scale;
     if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
       mouseData = this.state.mouseXY.y;
       domData = this.state.domWH.h;
@@ -179,7 +201,8 @@ class Element extends Component {
       d = (mouseData / domData) * value + 1 - value;
     }
     const css = Css.getParam(type, d, d);
-    return type.indexOf('backgroundPosition') >= 0 ? `calc(50% + ${css}px )` : css;
+    return type.indexOf('backgroundPosition') >= 0 ?
+      `calc(${ data.bgPosition || '50%'} + ${css}px )` : css;
   }
 
   getImgOrVideo() {
@@ -193,7 +216,7 @@ class Element extends Component {
           return;
         }
         if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
-          dataToArray(item.type).map(this.followAnalysisType.bind(this, item.scale))
+          dataToArray(item.type).map(this.followAnalysisType.bind(this, item))
             .forEach(_item => {
               followObj[_item.cssName] = Css
                 .mergeStyle(followObj[_item.cssName], _item.data);
@@ -226,6 +249,29 @@ class Element extends Component {
     return dom;
   }
 
+  getFollowMouseMove() {
+    let onMouseMove;
+    if (this.props.children) {
+      if (this.props.followParallax) {
+        if (this.props.followParallax.delay) {
+          onMouseMove = !this.delayTimeout ? null : this.state.onMouseMove;
+          this.delayTimeout = this.delayTimeout ||
+            ticker.timeout(() => {
+              this.setState({
+                onMouseMove: this.onMouseMove,
+              });
+            }, this.props.followParallax.delay);
+        } else {
+          onMouseMove = this.onMouseMove;
+        }
+      }
+    } else {
+      ticker.clear(this.delayTimeout);
+      this.delayTimeout = null;
+    }
+    return onMouseMove;
+  }
+
   getChildren() {
     if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
       return this.props.children;
@@ -240,7 +286,7 @@ class Element extends Component {
         if (this.props.followParallax.transition) {
           style.transition = this.props.followParallax.transition;
         }
-        dataToArray(data.type).map(this.followAnalysisType.bind(this, data.scale))
+        dataToArray(data.type).map(this.followAnalysisType.bind(this, data))
           .forEach(_item => {
             style[_item.cssName] = Css.mergeStyle(style[_item.cssName], _item.data);
           });
@@ -271,7 +317,7 @@ class Element extends Component {
     }
   }
 
-  followAnalysisType(scale, _type) {
+  followAnalysisType(data, _type) {
     const type = Css.getGsapType(_type);
     const cssName = Css.isTransform(type);
     // 把 bgParallax 的合进来；
@@ -279,7 +325,7 @@ class Element extends Component {
     return {
       cssName: cssName,
       data: Css.mergeStyle(bgParallaxStyle[cssName] || '',
-        this.getFollowStyle(type, scale)),
+        this.getFollowStyle(type, data)),
     };
   }
 
@@ -291,12 +337,16 @@ class Element extends Component {
   render() {
     const bgElem = this.props.bg || this.props.img ?
       this.getImgOrVideo() : null;
+    // 添加 followParallax delay;
+    const onMouseMove = this.getFollowMouseMove();
     const childrenToRender = (
       <TweenOne
         {...this.props}
         style={this.props.style}
         className={`banner-anim-elem ${this.props.prefixCls || ''}`.trim()}
         component={this.props.component}
+        onMouseEnter={this.onMouseEnter}
+        onMouseMove={onMouseMove}
       >
         {bgElem}
         {this.getChildren()}

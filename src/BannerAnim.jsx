@@ -359,10 +359,8 @@ class BannerAnim extends Component {
       props.ease = this.props.ease;
       props.elemOffset = { width: this.state.elemWidth, height: this.state.wrapperHeight };
       // 挡截 newChild, 动画的时候把子级全部去掉，只留 image, currentChild 的子级去除动画效果
-      props.children = i === newShow ?
-        toArrayChildren(props.children).map((_item, ii) =>
-          React.cloneElement(_item, { ..._item.props, key: ii }, null)
-        ) : toArrayChildren(props.children).map(setAnimCompToTagComp);
+      props.children = i === newShow ? null :
+        toArrayChildren(props.children).map(setAnimCompToTagComp);
       if (i === newShow) {
         const newStyle = assign({}, props.style);
         newStyle.display = null;

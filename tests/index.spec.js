@@ -71,7 +71,6 @@ describe('rc-banner-anim', function() {
       type: 'across',
     });
     const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
-    console.log(children[1].style.display)
     expect(children[0].style.display).to.be('none');
     expect(children[1].style.display).to.not.be.ok();
   });
@@ -82,7 +81,7 @@ describe('rc-banner-anim', function() {
       autoPlaySpeed: 1000,
       type: 'across',
     });
-    let children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
+    const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
     expect(children[0].style.display).to.not.be.ok();
     setTimeout(()=> {
       expect(children[1].style.display).to.not.be.ok();

@@ -91,6 +91,8 @@ React.render(<BannerAnim>
 
 ### Element 
 
+> children is `TweenOne`, animation type must `from`;
+
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | key      |     string      |      -       |  must                 |
@@ -104,9 +106,10 @@ React.render(<BannerAnim>
 #### followParallax is object
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-| delay    |   number        |  null        | must, Delayed opening, best after the animation to open |
+| delay    |     number      |  null        | open followParallax delay |
 | data     | array           |  null        | content: { key: string, scale: number, type: array or string }; key: dom key, banner bg key is `bgElem`, scale: Animation value = banner.width / 2 ＊ scale, type: style or `x` `y` |
-| transition | string        | null         | style transition  |
+| ease | string        | false         | `true` is `easeInOutQuad`   |
+| minMove    |   number        |  null        | ease.easeInOutQuad(start, minMove, 1, end); The mouse to move once, the minimum point of moving graphics, a second to reach the position of the mouse. |
 
 
 ### Arrow or Thumb
