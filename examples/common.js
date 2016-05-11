@@ -201,7 +201,7 @@
 	
 	    _get(Object.getPrototypeOf(BannerAnim.prototype), 'constructor', this).apply(this, arguments);
 	    this.tweenBool = false;
-	    ['replaceChildren', 'next', 'prev', 'thumbClick', 'getElementHeight', 'saveChildren', 'getShowChildren', 'animToCurrentShow', 'getAnimType', 'autoPlay', 'animEndSetState', 'setThumbActive', 'onResize', 'cancelRequestAnimationFrame', 'timeoutRaf', 'onMouseEnter', 'onMouseLeave', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'getDomDataSetToState'].forEach(function (method) {
+	    ['replaceChildren', 'replaceChildrenArrowThumb', 'next', 'prev', 'thumbClick', 'getElementHeight', 'saveChildren', 'getShowChildren', 'animToCurrentShow', 'getAnimType', 'autoPlay', 'animEndSetState', 'setThumbActive', 'onResize', 'cancelRequestAnimationFrame', 'timeoutRaf', 'onMouseEnter', 'onMouseLeave', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'getDomDataSetToState'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	    this.state = {
@@ -226,14 +226,18 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
-	      // banner 不作高度的响应，必须跟初次进入统一高度。
-	      this.children = this.saveChildren(nextProps.children);
-	
 	      // 在动画时不刷新 children 会在结束后触发；
+	      var _children = this.saveChildren(nextProps.children, true);
+	
+	      var children = undefined;
 	      if (!this.tweenBool) {
-	        var children = this.replaceChildren(this.state.children, this.children);
-	        this.setState({ children: children });
+	        // 元素在动画结束后再刷新
+	        children = this.replaceChildren(this.state.children, _children);
+	        this.children = _children;
+	      } else {
+	        children = this.replaceChildrenArrowThumb(this.children, _children);
 	      }
+	      this.setState({ children: children });
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
@@ -516,7 +520,6 @@
 	          this.thumbIsDefault = true;
 	          _children.thumbWrapper.push(_react2['default'].createElement(_Thumb2['default'], { length: _children.elemWrapper.length, key: 'thumb',
 	            thumbClick: this.thumbClick,
-	            active: this.props.initShow,
 	            'default': true
 	          }));
 	        }
@@ -529,8 +532,8 @@
 	      var _this3 = this;
 	
 	      var _animType = this.getAnimType(this.props.type);
-	      var thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
-	      var children = this.children.elemWrapper.map(function (item, i) {
+	      this.children.thumbWrapper = this.children.thumbWrapper.map(this.setThumbActive.bind(this, newShow));
+	      this.children.elemWrapper = this.children.elemWrapper.map(function (item, i) {
 	        if (i !== _this3.state.currentShow && i !== newShow) {
 	          return item;
 	        }
@@ -550,7 +553,8 @@
 	          props.style = newStyle;
 	        }
 	        return _react2['default'].cloneElement(item, props);
-	      }).concat(this.children.arrowWrapper, thumbWrapper);
+	      });
+	      var children = this.children.elemWrapper.concat(this.children.arrowWrapper, this.children.thumbWrapper);
 	      this.props.onChange('before', newShow);
 	      this.setState({
 	        children: children,
@@ -611,6 +615,25 @@
 	        }
 	        return _item;
 	      });
+	    }
+	  }, {
+	    key: 'replaceChildrenArrowThumb',
+	    value: function replaceChildrenArrowThumb(currentChild, nextChild) {
+	      // 在动画时只更新箭头与缩略图
+	      var children = nextChild;
+	      children.arrowWrapper = children.arrowWrapper.map(function (item) {
+	        var _item = currentChild.arrowWrapper.filter(function (arrowItem) {
+	          return arrowItem.key === item.key;
+	        })[0];
+	        return _react2['default'].cloneElement(item, _extends({}, _item.props, item.props));
+	      });
+	      children.thumbWrapper = children.thumbWrapper.map(function (item) {
+	        var _item = currentChild.thumbWrapper.filter(function (arrowItem) {
+	          return arrowItem.key === item.key;
+	        })[0];
+	        return _react2['default'].cloneElement(item, _extends({}, _item.props, item.props));
+	      });
+	      return currentChild.elemWrapper.concat(children.arrowWrapper, children.thumbWrapper);
 	    }
 	  }, {
 	    key: 'render',
@@ -21381,15 +21404,79 @@
 	  value: true
 	});
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function() {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];
+	      descriptor.enumerable = descriptor.enumerable || false;
+	      descriptor.configurable = true;
+	      if ('value' in descriptor) descriptor.writable = true;
+	      Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }
 	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	  return function(Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+	    if (staticProps) defineProperties(Constructor, staticProps);
+	    return Constructor;
+	  };
+	})();
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	var _get = function get(_x, _x2, _x3) {
+	  var _again = true;
+	  _function: while (_again) {
+	    var object = _x, property = _x2, receiver = _x3;
+	    _again = false;
+	    if (object === null) object = Function.prototype;
+	    var desc = Object.getOwnPropertyDescriptor(object, property);
+	    if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);
+	      if (parent === null) {
+	        return undefined;
+	      } else {
+	        _x = parent;
+	        _x2 = property;
+	        _x3 = receiver;
+	        _again = true;
+	        desc = parent = undefined;
+	        continue _function;
+	      }
+	    } else if ('value' in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;
+	      if (getter === undefined) {
+	        return undefined;
+	      }
+	      return getter.call(receiver);
+	    }
+	  }
+	};
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError('Cannot call a class as a function');
+	  }
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== 'function' && superClass !== null) {
+	    throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
+	  }
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      enumerable: false,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
 	
 	var _react = __webpack_require__(5);
 	
@@ -21413,11 +21500,12 @@
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
-	function noop() {}
+	function noop() {
+	}
 	
 	var perFrame = Math.round(1000 / 60);
 	
-	var TweenOne = (function (_Component) {
+	var TweenOne = (function(_Component) {
 	  _inherits(TweenOne, _Component);
 	
 	  function TweenOne() {
@@ -21438,7 +21526,7 @@
 	      startFrame: _ticker2['default'].frame,
 	      paused: this.props.paused
 	    };
-	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
+	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function(method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	  }
@@ -21502,7 +21590,7 @@
 	        this.startAnimation = newAnimation;
 	        this.setState({
 	          startFrame: _ticker2['default'].frame
-	        }, function () {
+	        }, function() {
 	          _this2.start(nextProps);
 	        });
 	      }
@@ -21512,11 +21600,11 @@
 	          this.cancelRequestAnimationFrame();
 	        } else {
 	          if (nextProps.reverse && nextProps.reverseDelay) {
-	            (function () {
+	            (function() {
 	              _this2.cancelRequestAnimationFrame();
 	              var startFrame = _ticker2['default'].frame;
 	              var timeoutKey = 'delay' + (Date.now() + Math.random());
-	              _ticker2['default'].wake(timeoutKey, function () {
+	              _ticker2['default'].wake(timeoutKey, function() {
 	                var _frame = _ticker2['default'].frame - startFrame;
 	                var time = _frame * perFrame;
 	                if (time >= nextProps.reverseDelay) {
@@ -21544,7 +21632,7 @@
 	      this.setState({
 	        startMoment: this.timeLine.progressTime,
 	        startFrame: _ticker2['default'].frame
-	      }, function () {
+	      }, function() {
 	        _this3.play();
 	      });
 	    }
@@ -21582,7 +21670,7 @@
 	      // this.timeLine.onChange();
 	      this.setState({
 	        style: style
-	      }, function () {
+	      }, function() {
 	        _this4.timeLine.onChange();
 	      });
 	    }
@@ -21618,6 +21706,7 @@
 	        }
 	      }
 	      // 进入时闪屏，清除子级；
+	
 	      props.children = !this.dom ? null : props.children;
 	      props.children = this.props.animation ? props.children : this.props.children;
 	      return _react2['default'].createElement(this.props.component, props);
@@ -21648,6 +21737,7 @@
 	};
 	exports['default'] = TweenOne;
 	module.exports = exports['default'];
+
 
 /***/ },
 /* 177 */
@@ -23452,6 +23542,7 @@
 	exports['default'] = ticker;
 	module.exports = exports['default'];
 
+
 /***/ },
 /* 183 */
 /***/ function(module, exports, __webpack_require__) {
@@ -23762,6 +23853,7 @@
 	exports['default'] = TweenOneGroup;
 	module.exports = exports['default'];
 
+
 /***/ },
 /* 186 */
 /***/ function(module, exports, __webpack_require__) {
@@ -23912,7 +24004,7 @@
 	    }
 	    var props = (0, _objectAssign2['default'])({}, elem.props);
 	    var animChild = [];
-	    var gridNum = 10;
+	    var gridNum = 6;
 	    var gridWidth = elemOffset.width / gridNum;
 	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
 	    for (var i = 0; i < gridNum * gridNumH; i++) {

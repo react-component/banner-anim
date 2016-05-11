@@ -191,8 +191,8 @@ webpackJsonp([3],{
 	          },
 	          _react2['default'].createElement('div', { className: 'arrow' }),
 	          _react2['default'].createElement(
-	            _rcQueueAnim2['default'],
-	            { type: 'alpha', className: 'img-wrapper', component: 'ul' },
+	            _rcTweenOne.TweenOneGroup,
+	            { enter: { opacity: 0, type: 'from' }, leave: { opacity: 0 }, appear: false, className: 'img-wrapper', component: 'ul' },
 	            _react2['default'].createElement('li', { style: { backgroundImage: 'url(' + this.imgArray[intArray[0]] + ')' }, key: intArray[0] })
 	          )
 	        ),
@@ -205,8 +205,8 @@ webpackJsonp([3],{
 	          },
 	          _react2['default'].createElement('div', { className: 'arrow' }),
 	          _react2['default'].createElement(
-	            _rcQueueAnim2['default'],
-	            { type: 'alpha', className: 'img-wrapper', component: 'ul' },
+	            _rcTweenOne.TweenOneGroup,
+	            { enter: { opacity: 0, type: 'from' }, leave: { opacity: 0 }, appear: false, className: 'img-wrapper', component: 'ul' },
 	            _react2['default'].createElement('li', { style: { backgroundImage: 'url(' + this.imgArray[intArray[1]] + ')' }, key: intArray[1] })
 	          )
 	        )
