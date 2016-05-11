@@ -21619,6 +21619,7 @@
 	      }
 	      // 进入时闪屏，清除子级；
 	      props.children = !this.dom ? null : props.children;
+	      props.children = this.props.animation ? props.children : this.props.children;
 	      return _react2['default'].createElement(this.props.component, props);
 	    }
 	  }]);
@@ -23914,7 +23915,6 @@
 	    var gridNum = 10;
 	    var gridWidth = elemOffset.width / gridNum;
 	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
-	    var children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
 	    for (var i = 0; i < gridNum * gridNumH; i++) {
 	      // mask样式
 	      var style = (0, _objectAssign2['default'])({}, props.style);
@@ -23942,7 +23942,7 @@
 	      var mask = _react2['default'].createElement(
 	        elem.type,
 	        { style: style, key: i, animation: animation },
-	        (0, _react.cloneElement)(elem, props, children)
+	        (0, _react.cloneElement)(elem, props)
 	      );
 	      animChild.push(mask);
 	    }
@@ -24000,6 +24000,9 @@
 	}
 	
 	function setAnimCompToTagComp(item, i) {
+	  if (!item) {
+	    return null;
+	  }
 	  var props = (0, _objectAssign2['default'])({}, item.props);
 	  props.key = item.key || i;
 	  // 压缩后名称不一样了。
