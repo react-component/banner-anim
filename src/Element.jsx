@@ -171,15 +171,12 @@ class Element extends Component {
   }
 
   onScroll() {
-    // const clientHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
     const scrollTop = currentScrollTop();
     const domHeight = this.props.elemOffset.height;
     const offsetTop = this.props.elemOffset.top;
-    // const elementShowHeight = scrollTop - offsetTop + clientHeight;
     // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
-    let scale = scrollTop / (domHeight + offsetTop);// elementShowHeight / (clientHeight + domHeight);
+    let scale = scrollTop / (domHeight + offsetTop);
     scale = scale >= 1 ? 1 : scale;
-    // scale = scale <=0 ? 0 : scale;
     const _css = {};
     Object.keys(this.props.bgParallax).forEach((_key)=> {
       const key = getGsapType(_key);

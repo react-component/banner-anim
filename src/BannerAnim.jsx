@@ -8,6 +8,8 @@ import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
 import '../assets/index.css';
+// tnpm 4 run lint error;
+import {} from 'style-utils';
 
 class BannerAnim extends Component {
   constructor() {
