@@ -9,7 +9,6 @@ import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
 import '../assets/index.css';
 
-
 class BannerAnim extends Component {
   constructor() {
     super(...arguments);
@@ -52,7 +51,7 @@ class BannerAnim extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     this.tweenBool = false;
   }
 
@@ -106,91 +105,6 @@ class BannerAnim extends Component {
       this.prev();
     }
     delete this.mouseXY;
-  }
-
-  next() {
-    if (!this.tweenBool) {
-      this.tweenBool = true;
-      let newShow = this.state.currentShow;
-      newShow++;
-      if (newShow >= this.elemWrapper.length) {
-        newShow = 0;
-      }
-      this.animTweenStart(newShow, 'next');
-    }
-  }
-
-  prev() {
-    if (!this.tweenBool) {
-      this.tweenBool = true;
-      let newShow = this.state.currentShow;
-      newShow--;
-      if (newShow < 0) {
-        newShow = this.elemWrapper.length - 1;
-      }
-      this.animTweenStart(newShow, 'prev');
-    }
-  }
-
-  thumbClick(i) {
-    if (!this.tweenBool) {
-      this.tweenBool = true;
-      if (i !== this.state.currentShow) {
-        const type = i > this.state.currentShow ? 'next' : 'prev';
-        this.animTweenStart(i, type);
-      }
-    }
-  }
-
-  getAnimType(type) {
-    const typeArray = type ? dataToArray(type) : Object.keys(animType);
-    const random = Math.round(Math.random() * (typeArray.length - 1));
-    return animType[typeArray[random]];
-  }
-
-  getElementHeight(children) {
-    let height = 0;
-    for (let i = 0; i < children.length; i++) {
-      const dom = children[i];
-      const _height = dom.getBoundingClientRect().height;
-      height = height > _height ? height : _height;
-    }
-    return height;
-  }
-
-  autoPlay() {
-    this.autoPlayId = ticker.interval(this.next, this.props.autoPlaySpeed);
-  }
-
-  animTweenStart(show, type) {
-    this.props.onChange('before', show);
-    this.setState({
-      currentShow: show,
-      direction: type,
-    });
-  }
-
-  animEnd(type) {
-    if (type === 'enter') {
-      this.tweenBool = false;
-      this.props.onChange('after', this.state.currentShow);
-    }
-  }
-
-  getDomDataSetToState() {
-    this.dom = ReactDOM.findDOMNode(this);
-    const domRect = this.dom.getBoundingClientRect();
-    // 获取宽度与定位，setState刷新；
-    const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
-    const _tHeight = this.thumbIsDefault ? 40 :
-      this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
-    const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
-    this.setState({
-      wrapperHeight,
-      thumbHeight,
-      domRect,
-    });
-    this.tweenBool = false;
   }
 
   getRenderChildren(children) {
@@ -248,15 +162,101 @@ class BannerAnim extends Component {
         );
       }
       if (!thumb) {
-        thumb = <Thumb length={elem.length} key="thumb"
+        thumb = (<Thumb length={elem.length} key="thumb"
           thumbClick={this.thumbClick}
           active={this.state.currentShow}
           default
-        />;
+        />);
       }
     }
     this.elemWrapper = elem;
     return elem.concat(arrow, thumb);
+  }
+
+  getDomDataSetToState() {
+    this.dom = ReactDOM.findDOMNode(this);
+    const domRect = this.dom.getBoundingClientRect();
+    // 获取宽度与定位，setState刷新；
+    const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
+    const _tHeight = this.thumbIsDefault ? 40 :
+      this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
+    const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
+    this.setState({
+      wrapperHeight,
+      thumbHeight,
+      domRect,
+    });
+    this.tweenBool = false;
+  }
+
+  getElementHeight(children) {
+    let height = 0;
+    for (let i = 0; i < children.length; i++) {
+      const dom = children[i];
+      const _height = dom.getBoundingClientRect().height;
+      height = height > _height ? height : _height;
+    }
+    return height;
+  }
+
+
+  getAnimType(type) {
+    const typeArray = type ? dataToArray(type) : Object.keys(animType);
+    const random = Math.round(Math.random() * (typeArray.length - 1));
+    return animType[typeArray[random]];
+  }
+
+  autoPlay() {
+    this.autoPlayId = ticker.interval(this.next, this.props.autoPlaySpeed);
+  }
+
+  animTweenStart(show, type) {
+    this.props.onChange('before', show);
+    this.setState({
+      currentShow: show,
+      direction: type,
+    });
+  }
+
+  animEnd(type) {
+    if (type === 'enter') {
+      this.tweenBool = false;
+      this.props.onChange('after', this.state.currentShow);
+    }
+  }
+
+  next() {
+    if (!this.tweenBool) {
+      this.tweenBool = true;
+      let newShow = this.state.currentShow;
+      newShow++;
+      if (newShow >= this.elemWrapper.length) {
+        newShow = 0;
+      }
+      this.animTweenStart(newShow, 'next');
+    }
+  }
+
+  prev() {
+    if (!this.tweenBool) {
+      this.tweenBool = true;
+      let newShow = this.state.currentShow;
+      newShow--;
+      if (newShow < 0) {
+        newShow = this.elemWrapper.length - 1;
+      }
+      this.animTweenStart(newShow, 'prev');
+    }
+  }
+
+  thumbClick(i) {
+    if (!this.tweenBool) {
+      this.tweenBool = true;
+      if (i !== this.state.currentShow) {
+        const type = i > this.state.currentShow ? 'next' : 'prev';
+        this.animTweenStart(i, type);
+      }
+    }
   }
 
   render() {

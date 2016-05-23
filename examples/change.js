@@ -34,7 +34,7 @@ class Demo extends React.Component {
           </QueueAnim>
           <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne2">Ant Motion Demo.Ant
             Motion Demo</TweenOne>
-        </Element>]
+        </Element>],
     };
     [].forEach((method) => this[method] = this[method].bind(this));
   }

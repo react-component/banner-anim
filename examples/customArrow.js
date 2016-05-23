@@ -116,7 +116,7 @@ class Demo extends React.Component {
         >
           <div className="arrow"></div>
           <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} name={"abc" + intArray[1]}/>
+            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} />
           </TweenOneGroup>
         </Arrow>
       </BannerAnim>

@@ -93,12 +93,6 @@ class Element extends Component {
     }
   }
 
-  animEnd() {
-    const type = this.state.show ? 'enter' : 'leave';
-    this.props.callBack(type);
-    this.setState({ show: this.props.show });
-  }
-
   onMouseEnter(e) {
     const domRect = this.dom.getBoundingClientRect();
     const scrollTop = currentScrollTop();
@@ -316,6 +310,12 @@ class Element extends Component {
     return child;
   }
 
+  animEnd() {
+    const type = this.state.show ? 'enter' : 'leave';
+    this.props.callBack(type);
+    this.setState({ show: this.props.show });
+  }
+
   videoLoadedData() {
     if (this.state.show) {
       this.onResize();
@@ -409,7 +409,7 @@ class Element extends Component {
       }
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseMove = this.getFollowMouseMove();
-      return React.createElement(TweenOne, props, [bgElem, this.getChildren()])
+      return React.createElement(TweenOne, props, [bgElem, this.getChildren()]);
     }
     return this.animChildren(props, style, bgElem);
   }
@@ -433,6 +433,7 @@ Element.propTypes = {
   callBack: PropTypes.func,
   bgParallax: PropTypes.object,
   followParallax: PropTypes.object,
+  show: PropTypes.string,
 };
 Element.defaultProps = {
   component: 'div',
