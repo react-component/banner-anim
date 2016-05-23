@@ -430,7 +430,7 @@ Element.propTypes = {
   callBack: PropTypes.func,
   bgParallax: PropTypes.object,
   followParallax: PropTypes.object,
-  show: PropTypes.string,
+  show: PropTypes.bool,
 };
 Element.defaultProps = {
   component: 'div',

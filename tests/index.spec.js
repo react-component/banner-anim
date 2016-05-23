@@ -71,8 +71,10 @@ describe('rc-banner-anim', function() {
       type: 'across',
     });
     const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
-    expect(children[0].style.display).to.be('none');
-    expect(children[1].style.display).to.not.be.ok();
+    setTimeout(()=> {
+      expect(children[0].style.display).to.be('none');
+      expect(children[1].style.display).to.be('block');
+    });
   });
 
   it('banner animation autoplay', function(done) {
@@ -82,10 +84,12 @@ describe('rc-banner-anim', function() {
       type: 'across',
     });
     const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
-    expect(children[0].style.display).to.not.be.ok();
+    expect(children[0].style.display).to.be('block');
+    expect(children[1].style.display).to.be('none');
     setTimeout(()=> {
-      expect(children[1].style.display).to.not.be.ok();
+      expect(children[0].style.display).to.be('block');
+      expect(children[1].style.display).to.be('block');
       done();
-    }, 1650);
+    }, 1030);
   });
 });

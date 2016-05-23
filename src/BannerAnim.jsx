@@ -63,7 +63,6 @@ class BannerAnim extends Component {
     } else {
       window.detachEvent('onresize', this.getDomDataSetToState);
     }
-    this.cancelRequestAnimationFrame();
   }
 
   onMouseEnter() {
