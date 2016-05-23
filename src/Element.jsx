@@ -4,7 +4,14 @@ import TweenOne from 'rc-tween-one';
 import ticker from 'rc-tween-one/lib/ticker';
 import assign from 'object-assign';
 import ease from 'tween-functions';
-import Css from 'style-utils';
+import {
+  getUnit,
+  getGsapType,
+  isConvert,
+  getValues,
+  mergeStyle,
+  checkStyleName,
+} from 'style-utils';
 import animType from './anim';
 import {
   currentScrollTop,
@@ -28,10 +35,13 @@ class Element extends Component {
       mouseXY: null,
       domWH: null,
       onMouseMove: null,
+      show: this.props.show,
     };
     this.tickerId = -1;
     this.isScroll = false;
     this.delayTimeout = null;
+    this.tweenBool = false;
+    this.show = this.state.show;
     [
       'onScroll',
       'onResize',
@@ -44,6 +54,8 @@ class Element extends Component {
       'followAnalysisType',
       'getFollowMouseMove',
       'getChildren',
+      'animEnd',
+      'animChildren',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -56,6 +68,11 @@ class Element extends Component {
       delete animType.gridBar;
       this.video = this.dom.children[0].children[0];
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const show = nextProps.show;
+    this.setState({ show });
   }
 
   componentDidUpdate() {
@@ -74,6 +91,12 @@ class Element extends Component {
       window.detachEvent('onresize', this.onResize);
       window.detachEvent('onscroll', this.onScroll);
     }
+  }
+
+  animEnd() {
+    const type = this.state.show ? 'enter' : 'leave';
+    this.props.callBack(type);
+    this.setState({ show: this.props.show });
   }
 
   onMouseEnter(e) {
@@ -146,7 +169,7 @@ class Element extends Component {
       scale = domRect.height / videoDomRect.height;
       videoRect.height = domRect.height;
       videoRect.width = videoDomRect.width * scale;
-      videoRect.left = -(videoRect.width - domRect.width) / 2;
+      videoRect.left = -(videoDomRect.width - domRect.width) / 2;
     }
     this.setState({
       videoRect,
@@ -156,9 +179,8 @@ class Element extends Component {
   onScroll() {
     // const clientHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
     const scrollTop = currentScrollTop();
-    const domRect = this.dom.getBoundingClientRect();
-    const domHeight = domRect.height;
-    const offsetTop = domRect.top + scrollTop;
+    const domHeight = this.props.elemOffset.height;
+    const offsetTop = this.props.elemOffset.top;
     // const elementShowHeight = scrollTop - offsetTop + clientHeight;
     // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
     let scale = scrollTop / (domHeight + offsetTop);// elementShowHeight / (clientHeight + domHeight);
@@ -166,20 +188,21 @@ class Element extends Component {
     // scale = scale <=0 ? 0 : scale;
     const _css = {};
     Object.keys(this.props.bgParallax).forEach((_key)=> {
-      const key = Css.getGsapType(_key);
+      const key = getGsapType(_key);
       const item = this.props.bgParallax[_key];
-      const cssName = Css.isTransform(key);
+      const cssName = isConvert(key);
       if (!Array.isArray(item)) {
         _css[cssName] = item;
         return;
       }
       const cssData = item[0] - scale * (item[0] - item[1]);
+      const unit = getUnit(key, cssData);
       if (cssName === 'transform') {
-        _css[cssName] = Css.mergeStyle(_css[cssName] || '', Css.getParam(key, cssData, cssData));
+        _css[cssName] = mergeStyle(_css[cssName] || '', getValues(key, cssData, unit));
       } else if (cssName === 'filter') {
-        _css[cssName] = Css.mergeStyle(_css[cssName] || '', Css.getFilterParam(key, cssData, cssData));
+        _css[checkStyleName(cssName)] = mergeStyle(_css[cssName] || '', getValues(key, cssData, unit));
       } else {
-        _css[cssName] = Css.getParam(key, cssData, cssData);
+        _css[cssName] = cssData;
       }
     });
     this.setState({
@@ -200,7 +223,8 @@ class Element extends Component {
       // 如果是透明度，，变换为value的区间，，最左边为 1 - value; 最右边为 1;
       d = (mouseData / domData) * value + 1 - value;
     }
-    const css = Css.getParam(type, d, d);
+    const unit = isConvert(type) !== type ? getUnit(type, d) : '';
+    const css = isConvert(type) !== type ? getValues(type, d, unit) : d;
     return type.indexOf('backgroundPosition') >= 0 ?
       `calc(${ data.bgPosition || '50%'} + ${css}px )` : css;
   }
@@ -217,10 +241,9 @@ class Element extends Component {
         }
         if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
           dataToArray(item.type).map(this.followAnalysisType.bind(this, item))
-            .forEach(_item => {
-              followObj[_item.cssName] = Css
-                .mergeStyle(followObj[_item.cssName], _item.data);
-            });
+            .forEach(_item =>
+              followObj[_item.cssName] = mergeStyle(followObj[_item.cssName], _item.data)
+            );
         }
       });
     }
@@ -251,23 +274,18 @@ class Element extends Component {
 
   getFollowMouseMove() {
     let onMouseMove;
-    if (this.props.children) {
-      if (this.props.followParallax) {
-        if (this.props.followParallax.delay) {
-          onMouseMove = !this.delayTimeout ? null : this.state.onMouseMove;
-          this.delayTimeout = this.delayTimeout ||
-            ticker.timeout(() => {
-              this.setState({
-                onMouseMove: this.onMouseMove,
-              });
-            }, this.props.followParallax.delay);
-        } else {
-          onMouseMove = this.onMouseMove;
-        }
+    if (this.props.followParallax) {
+      if (this.props.followParallax.delay) {
+        onMouseMove = !this.delayTimeout ? null : this.state.onMouseMove;
+        this.delayTimeout = this.delayTimeout ||
+          ticker.timeout(() => {
+            this.setState({
+              onMouseMove: this.onMouseMove,
+            });
+          }, this.props.followParallax.delay);
+      } else {
+        onMouseMove = this.onMouseMove;
       }
-    } else {
-      ticker.clear(this.delayTimeout);
-      this.delayTimeout = null;
     }
     return onMouseMove;
   }
@@ -287,9 +305,9 @@ class Element extends Component {
           style.transition = this.props.followParallax.transition;
         }
         dataToArray(data.type).map(this.followAnalysisType.bind(this, data))
-          .forEach(_item => {
-            style[_item.cssName] = Css.mergeStyle(style[_item.cssName], _item.data);
-          });
+          .forEach(_item =>
+            style[_item.cssName] = mergeStyle(style[_item.cssName], _item.data)
+          );
         props.style = style;
         return React.cloneElement(item, props);
       }
@@ -299,11 +317,19 @@ class Element extends Component {
   }
 
   videoLoadedData() {
-    this.onResize();
-    if (window.addEventListener) {
-      window.addEventListener('resize', this.onResize);
+    if (this.state.show) {
+      this.onResize();
+      if (window.addEventListener) {
+        window.addEventListener('resize', this.onResize);
+      } else {
+        window.attachEvent('onresize', this.onResize);
+      }
     } else {
-      window.attachEvent('onresize', this.onResize);
+      if (window.addEventListener) {
+        window.removeEventListener('resize', this.onResize);
+      } else {
+        window.detachEvent('onresize', this.onResize);
+      }
     }
   }
 
@@ -318,52 +344,74 @@ class Element extends Component {
   }
 
   followAnalysisType(data, _type) {
-    const type = Css.getGsapType(_type);
-    const cssName = Css.isTransform(type);
+    const type = getGsapType(_type);
+    const cssName = isConvert(type);
     // 把 bgParallax 的合进来；
     const bgParallaxStyle = this.state.bgParallaxAnim || {};
     return {
       cssName: cssName,
-      data: Css.mergeStyle(bgParallaxStyle[cssName] || '',
+      data: mergeStyle(bgParallaxStyle[cssName] || '',
         this.getFollowStyle(type, data)),
     };
   }
 
   cancelRequestAnimationFrame() {
     ticker.clear(this.timeoutID);
+    ticker.clear(this.delayTimeout);
+    this.delayTimeout = -1;
     this.timeoutID = -1;
   }
 
+  animChildren(props, style, bgElem) {
+    if (this.tickerId) {
+      ticker.clear(this.tickerId);
+    }
+    if (this.delayTimeout) {
+      ticker.clear(this.delayTimeout);
+      this.delayTimeout = null;
+    }
+    style.display = 'block';
+    props.component = this.props.component;
+    this.show = this.state.show;
+    style.zIndex = this.state.show ? 1 : 0;
+    props.children = this.props.show ? bgElem : [bgElem, this.getChildren()];
+
+    const childrenToRender = React.createElement(TweenOne, props);
+    const type = this.state.show ? 'enter' : 'leave';
+    return this.props.animType(childrenToRender,
+      type,
+      this.props.direction,
+      {
+        ease: this.props.ease,
+        duration: this.props.duration,
+        onComplete: this.animEnd,
+      },
+      this.props.elemOffset
+    );
+  }
+
   render() {
+    const props = assign({}, this.props);
+    const style = assign({}, props.style);
+    style.display = props.show ? 'block' : 'none';
+    style.position = 'absolute';
+    style.width = '100%';
+    props.style = style;
+    props.className = `banner-anim-elem ${this.props.prefixCls || ''}`.trim();
+    delete props.direction;
+    delete props.show;
     const bgElem = this.props.bg || this.props.img ?
       this.getImgOrVideo() : null;
-    // 添加 followParallax delay;
-    const onMouseMove = this.getFollowMouseMove();
-    const childrenToRender = (
-      <TweenOne
-        {...this.props}
-        style={this.props.style}
-        className={`banner-anim-elem ${this.props.prefixCls || ''}`.trim()}
-        component={this.props.component}
-        onMouseEnter={this.onMouseEnter}
-        onMouseMove={onMouseMove}
-      >
-        {bgElem}
-        {this.getChildren()}
-      </TweenOne>
-    );
-    return (this.props.animType ?
-      this.props.animType(childrenToRender,
-        this.props.type,
-        this.props.direction,
-        {
-          ease: this.props.ease,
-          duration: this.props.duration,
-          onComplete: this.props.callBack.bind(this, this.props.type),
-        },
-        this.props.elemOffset
-      ) :
-      childrenToRender);
+    if (this.show === this.state.show) {
+      style.transform = null;
+      if (!this.state.show) {
+        return React.createElement(TweenOne, props, bgElem);
+      }
+      props.onMouseEnter = this.onMouseEnter;
+      props.onMouseMove = this.getFollowMouseMove();
+      return React.createElement(TweenOne, props, [bgElem, this.getChildren()])
+    }
+    return this.animChildren(props, style, bgElem);
   }
 }
 

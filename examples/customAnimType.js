@@ -17,7 +17,6 @@ animType.custom = (elem, type, direction, animData)=> {
   if (type === 'enter') {
     _y = direction === 'next' ? '-100%' : '100%';
   } else {
-    // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
     _y = direction === 'next' ? '50%' : '-50%';
     children = React.Children.toArray(children).map(setAnimCompToTagComp);
   }

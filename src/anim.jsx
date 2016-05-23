@@ -1,6 +1,7 @@
 import React, { cloneElement } from 'react';
 import assign from 'object-assign';
 import { toArrayChildren, setAnimCompToTagComp } from './utils';
+import ticker from 'rc-tween-one/lib/ticker';
 
 export default {
   across(elem, type, direction, animData) {
@@ -98,7 +99,7 @@ export default {
     for (let i = 0; i < girdNum; i++) {
       const style = assign({}, props.style);
       style.width = `${girdSize}%`;
-      style.left = `${i * girdSize}%`;
+      style.left = `${i * girdSize + 0.01}%`;
       style.position = 'absolute';
       style.overflow = 'hidden';
       const _style = assign({}, props.style);
@@ -128,21 +129,27 @@ export default {
     return cloneElement(elem, _props);
   },
   grid(elem, type, direction, animData, elemOffset) {
-    if (type === 'leave') {
-      return elem;
-    }
     const props = assign({}, elem.props);
     const animChild = [];
-    const gridNum = 6;
+    const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
     const gridNumH = Math.ceil(elemOffset.height / gridWidth);
+    if (type === 'leave') {
+      const _delay = (gridNum * gridNumH - 1) % gridNum * 50 +
+        Math.floor((gridNum * gridNumH - 1) / gridNum) * 50;
+      ticker.timeout(()=> {
+        animData.onComplete();
+      }, _delay + animData.duration);
+      props.children = toArrayChildren(props.children).map(setAnimCompToTagComp);
+      return React.cloneElement(elem, props);
+    }
     for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
       const style = assign({}, props.style);
       style.position = 'absolute';
       style.overflow = 'hidden';
-      style.width = `${gridWidth}px`;
-      style.height = `${gridWidth}px`;
+      style.width = `${gridWidth + 1}px`;
+      style.height = `${gridWidth + 1}px`;
       style.left = i % gridNum * gridWidth;
       style.top = Math.floor(i / gridNum) * gridWidth;
       // clone 的样式

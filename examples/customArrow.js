@@ -115,8 +115,8 @@ class Demo extends React.Component {
           animation={{ right: this.state.nextEnter ? 0 : -120 }}
         >
           <div className="arrow"></div>
-          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} appear={false} className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} />
+          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} className="img-wrapper" component="ul">
+            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} name={"abc" + intArray[1]}/>
           </TweenOneGroup>
         </Arrow>
       </BannerAnim>
