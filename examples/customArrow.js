@@ -1,14 +1,14 @@
-webpackJsonp([3],{
+webpackJsonp([4],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(199);
+	module.exports = __webpack_require__(200);
 
 
 /***/ },
 
-/***/ 199:
+/***/ 200:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -41,13 +41,13 @@ webpackJsonp([3],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(42);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
 	__webpack_require__(196);
 	
-	__webpack_require__(200);
+	__webpack_require__(201);
 	
 	var Element = _rcBannerAnim2['default'].Element;
 	var Arrow = _rcBannerAnim2['default'].Arrow;
@@ -206,7 +206,7 @@ webpackJsonp([3],{
 	          _react2['default'].createElement('div', { className: 'arrow' }),
 	          _react2['default'].createElement(
 	            _rcTweenOne.TweenOneGroup,
-	            { enter: { opacity: 0, type: 'from' }, leave: { opacity: 0 }, appear: false, className: 'img-wrapper', component: 'ul' },
+	            { enter: { opacity: 0, type: 'from' }, leave: { opacity: 0 }, className: 'img-wrapper', component: 'ul' },
 	            _react2['default'].createElement('li', { style: { backgroundImage: 'url(' + this.imgArray[intArray[1]] + ')' }, key: intArray[1] })
 	          )
 	        )
@@ -221,7 +221,7 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 200:
+/***/ 201:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

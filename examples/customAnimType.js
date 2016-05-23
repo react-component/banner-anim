@@ -1,14 +1,14 @@
-webpackJsonp([2],{
+webpackJsonp([3],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(198);
+	module.exports = __webpack_require__(199);
 
 
 /***/ },
 
-/***/ 198:
+/***/ 199:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -43,7 +43,7 @@ webpackJsonp([2],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(42);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -64,7 +64,6 @@ webpackJsonp([2],{
 	  if (type === 'enter') {
 	    _y = direction === 'next' ? '-100%' : '100%';
 	  } else {
-	    // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
 	    _y = direction === 'next' ? '50%' : '-50%';
 	    children = _react2['default'].Children.toArray(children).map(setAnimCompToTagComp);
 	  }

@@ -1,14 +1,14 @@
-webpackJsonp([6],{
+webpackJsonp([2],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(204);
+	module.exports = __webpack_require__(198);
 
 
 /***/ },
 
-/***/ 204:
+/***/ 198:
 /***/ function(module, exports, __webpack_require__) {
 
 	// use jsx to render html, do not modify simple.html
@@ -53,77 +53,116 @@ webpackJsonp([6],{
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
+	    var _this = this;
+	
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	
+	    this.state = {
+	      children: [_react2['default'].createElement(
+	        Element,
+	        { key: 'aaa',
+	          prefixCls: 'banner-user-elem',
+	          img: 'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg'
+	        },
+	        _react2['default'].createElement(
+	          _rcQueueAnim2['default'],
+	          { name: 'QueueAnim' },
+	          _react2['default'].createElement(
+	            'h1',
+	            { key: 'h1' },
+	            'Ant Motion Demo'
+	          ),
+	          _react2['default'].createElement(
+	            'p',
+	            { key: 'p' },
+	            'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          _rcTweenOne2['default'],
+	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne1' },
+	          'Ant Motion Demo.Ant Motion Demo'
+	        )
+	      ), _react2['default'].createElement(
+	        Element,
+	        { key: 'bbb',
+	          prefixCls: 'banner-user-elem',
+	          img: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
+	        },
+	        _react2['default'].createElement(
+	          _rcQueueAnim2['default'],
+	          { name: 'QueueAnim' },
+	          _react2['default'].createElement(
+	            'h1',
+	            { key: 'h1' },
+	            'Ant Motion Demo'
+	          ),
+	          _react2['default'].createElement(
+	            'p',
+	            { key: 'p' },
+	            'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          _rcTweenOne2['default'],
+	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne2' },
+	          'Ant Motion Demo.Ant Motion Demo'
+	        )
+	      )]
+	    };
+	    [].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
 	  }
 	
 	  _createClass(Demo, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      var children = this.state.children;
+	
+	      setTimeout(function () {
+	        children.push(_react2['default'].createElement(
+	          Element,
+	          { key: 'ccc',
+	            prefixCls: 'banner-user-elem',
+	            img: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
+	          },
+	          _react2['default'].createElement(
+	            _rcQueueAnim2['default'],
+	            { name: 'QueueAnim' },
+	            _react2['default'].createElement(
+	              'h1',
+	              { key: 'h1' },
+	              'Ant Motion Demo'
+	            ),
+	            _react2['default'].createElement(
+	              'p',
+	              { key: 'p' },
+	              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	            )
+	          ),
+	          _react2['default'].createElement(
+	            _rcTweenOne2['default'],
+	            { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne2' },
+	            'Ant Motion Demo.Ant Motion Demo'
+	          )
+	        ));
+	        _this2.setState({
+	          children: children
+	        });
+	      }, 2000);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcBannerAnim2['default'],
-	        { type: 'across' },
-	        _react2['default'].createElement(
-	          Element,
-	          { key: 'aaa',
-	            prefixCls: 'banner-user-elem',
-	            bg: 'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg',
-	            bgPrefixCls: 'banner-user-bg',
-	            name: '1',
-	            followParallax: {
-	              ease: 'easeInOutCirc',
-	              minMove: 0.1,
-	              delay: 1000,
-	              data: [{ key: 'bgElem', scale: 0.03, bgPosition: '50%', type: ['backgroundPositionX'] }, { key: 'queue', scale: 0.05, type: 'x' }, { key: 'text', scale: -0.03, type: 'x' }]
-	            }
-	          },
-	          _react2['default'].createElement(
-	            _rcQueueAnim2['default'],
-	            { key: 'queue' },
-	            _react2['default'].createElement(
-	              'h1',
-	              { key: 'h1' },
-	              'Ant Motion Demo'
-	            ),
-	            _react2['default'].createElement(
-	              'p',
-	              { key: 'p' },
-	              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
-	            )
-	          ),
-	          _react2['default'].createElement(
-	            _rcTweenOne2['default'],
-	            { animation: { y: 50, opacity: 0, type: 'from' }, key: 'text' },
-	            'Ant Motion Demo.Ant MotionDemo'
-	          )
-	        ),
-	        _react2['default'].createElement(
-	          Element,
-	          { key: 'bbb',
-	            prefixCls: 'banner-user-elem',
-	            bg: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
-	          },
-	          _react2['default'].createElement(
-	            _rcQueueAnim2['default'],
-	            null,
-	            _react2['default'].createElement(
-	              'h1',
-	              { key: 'h1' },
-	              'Ant Motion Demo'
-	            ),
-	            _react2['default'].createElement(
-	              'p',
-	              { key: 'p' },
-	              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
-	            )
-	          ),
-	          _react2['default'].createElement(
-	            _rcTweenOne2['default'],
-	            { animation: { y: 50, opacity: 0, type: 'from' } },
-	            'Ant Motion Demo.Ant Motion Demo'
-	          )
-	        )
+	        { type: 'grid' },
+	        this.state.children
 	      );
 	    }
 	  }]);
@@ -136,4 +175,4 @@ webpackJsonp([6],{
 /***/ }
 
 });
-//# sourceMappingURL=followMouse.js.map
+//# sourceMappingURL=change.js.map
