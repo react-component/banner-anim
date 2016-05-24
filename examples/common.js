@@ -21125,7 +21125,7 @@
 	        scale = domRect.height / videoDomRect.height;
 	        videoRect.height = domRect.height;
 	        videoRect.width = videoDomRect.width * scale;
-	        videoRect.left = -(videoDomRect.width - domRect.width) / 2;
+	        videoRect.left = -(videoRect.width - domRect.width) / 2;
 	      }
 	      this.setState({
 	        videoRect: videoRect
@@ -21295,8 +21295,8 @@
 	  }, {
 	    key: 'videoLoadedData',
 	    value: function videoLoadedData() {
+	      this.onResize();
 	      if (this.state.show) {
-	        this.onResize();
 	        if (window.addEventListener) {
 	          window.addEventListener('resize', this.onResize);
 	        } else {
