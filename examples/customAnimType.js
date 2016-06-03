@@ -10,7 +10,7 @@ import './assets/index.less';
 const { animType, setAnimCompToTagComp } = BannerAnim;
 
 animType.custom = (elem, type, direction, animData) => {
-  console.log(`custom animType, type:${type}`);
+  console.log(`custom animType, type:${type}`); // eslint-disable-line no-console
   let _y;
   const props = assign({}, elem.props);
   let children = props.children;

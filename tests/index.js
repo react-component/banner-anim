@@ -42,7 +42,7 @@ describe('rc-banner-anim', () => {
       ReactDom.unmountComponentAtNode(div);
       document.body.removeChild(div);
     } catch (e) {
-      console.log(e);
+      console.log(e); // eslint-disable-line no-console
     }
   });
 
