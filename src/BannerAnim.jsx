@@ -7,7 +7,7 @@ import Thumb from './Thumb';
 import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
 import animType from './anim';
-import '../assets/index.css';
+import '../assets/index.less';
 // tnpm 4 run lint error;
 import {} from 'style-utils';
 
