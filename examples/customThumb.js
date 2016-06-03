@@ -51,8 +51,9 @@ class Demo extends React.Component {
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">Ant Motion Demo.Ant Motion
-            Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">
+            Ant Motion Demo.Ant Motion Demo
+          </TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
@@ -62,8 +63,9 @@ class Demo extends React.Component {
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">Ant Motion Demo.Ant Motion
-            Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">
+            Ant Motion Demo.Ant Motion Demo
+          </TweenOne>
         </Element>
         <Thumb prefixCls="user-thumb" key="thumb" component={TweenOne}
           animation={{ bottom: this.state.enter ? 0 : -70 }}

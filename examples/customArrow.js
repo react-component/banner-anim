@@ -87,7 +87,9 @@ class Demo extends React.Component {
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">Ant Motion Demo.Ant Motion Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">
+            Ant Motion Demo.Ant Motion Demo
+          </TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
@@ -97,7 +99,9 @@ class Demo extends React.Component {
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">Ant Motion Demo.Ant Motion Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">
+            Ant Motion Demo.Ant Motion Demo
+          </TweenOne>
         </Element>
         <Arrow arrowType="prev" key="prev" prefixCls="user-arrow" component={TweenOne}
           onMouseEnter={this.prevEnter}
@@ -105,8 +109,13 @@ class Demo extends React.Component {
           animation={{ left: this.state.prevEnter ? 0 : -120 }}
         >
           <div className="arrow"></div>
-          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} appear={false} className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[0]]})`}} key={intArray[0]} />
+          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }}
+            appear={false} className="img-wrapper" component="ul"
+          >
+            <li
+              style={{ backgroundImage: `url(${this.imgArray[intArray[0]]})` }}
+              key={intArray[0]}
+            />
           </TweenOneGroup>
         </Arrow>
         <Arrow arrowType="next" key="next" prefixCls="user-arrow" component={TweenOne}
@@ -115,8 +124,13 @@ class Demo extends React.Component {
           animation={{ right: this.state.nextEnter ? 0 : -120 }}
         >
           <div className="arrow"></div>
-          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }} className="img-wrapper" component="ul">
-            <li style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})`}} key={intArray[1]} />
+          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }}
+            className="img-wrapper" component="ul"
+          >
+            <li
+              style={{ backgroundImage: `url(${this.imgArray[intArray[1]]})` }}
+              key={intArray[1]}
+            />
           </TweenOneGroup>
         </Arrow>
       </BannerAnim>

@@ -22,7 +22,7 @@ class Demo extends React.Component {
             minMove: 0.1,
             delay: 1000,
             data: [
-              { key: 'bgElem', scale: 0.03, bgPosition: '50%', type: ['backgroundPositionX']},
+              { key: 'bgElem', scale: 0.03, bgPosition: '50%', type: ['backgroundPositionX'] },
               { key: 'queue', scale: 0.05, type: 'x' },
               { key: 'text', scale: -0.03, type: 'x' },
             ],

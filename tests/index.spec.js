@@ -6,7 +6,7 @@ import TestUtils from 'react-addons-test-utils';
 
 const { Element } = BannerAnim;
 
-describe('rc-banner-anim', function() {
+describe('rc-banner-anim', () => {
   let div;
 
   function createBannerAnimInstance(props = {}) {
@@ -32,12 +32,12 @@ describe('rc-banner-anim', function() {
     return ReactDom.render(<BannerAnimExample />, div);
   }
 
-  beforeEach(function() {
+  beforeEach(() => {
     div = document.createElement('div');
     document.body.appendChild(div);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     try {
       ReactDom.unmountComponentAtNode(div);
       document.body.removeChild(div);
@@ -46,7 +46,7 @@ describe('rc-banner-anim', function() {
     }
   });
 
-  it('should render children', function() {
+  it('should render children', () => {
     const instance = createBannerAnimInstance();
     const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
     const childrenSpan = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'span');
@@ -56,7 +56,7 @@ describe('rc-banner-anim', function() {
     expect(childrenSpan.length).to.be(3);
   });
 
-  it('banner animation thumbFloat', function() {
+  it('banner animation thumbFloat', () => {
     const instance = createBannerAnimInstance({
       thumbFloat: false,
       type: 'across',
@@ -65,19 +65,19 @@ describe('rc-banner-anim', function() {
     expect(children.getBoundingClientRect().height).to.be(140);
   });
 
-  it('banner animation initShow', function() {
+  it('banner animation initShow', () => {
     const instance = createBannerAnimInstance({
       initShow: 1,
       type: 'across',
     });
     const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
-    setTimeout(()=> {
+    setTimeout(() => {
       expect(children[0].style.display).to.be('none');
       expect(children[1].style.display).to.be('block');
     });
   });
 
-  it('banner animation autoplay', function(done) {
+  it('banner animation autoplay', (done) => {
     const instance = createBannerAnimInstance({
       autoPlay: true,
       autoPlaySpeed: 1000,
@@ -86,7 +86,7 @@ describe('rc-banner-anim', function() {
     const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
     expect(children[0].style.display).to.be('block');
     expect(children[1].style.display).to.be('none');
-    setTimeout(()=> {
+    setTimeout(() => {
       expect(children[0].style.display).to.be('block');
       expect(children[1].style.display).to.be('block');
       done();

@@ -4,7 +4,7 @@ import assign from 'object-assign';
 
 export function toArrayChildren(children) {
   const ret = [];
-  React.Children.forEach(children, c=> {
+  React.Children.forEach(children, c => {
     ret.push(c);
   });
   return ret;
@@ -28,7 +28,8 @@ export function setAnimCompToTagComp(item, i) {
   props.key = item.key || i;
   // 压缩后名称不一样了。
   const propTypes = item.type.propTypes;
-  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse &&
+  if (propTypes && (propTypes.animConfig &&
+      propTypes.animatingClassName && propTypes.leaveReverse &&
       propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration
       || item.type === TweenOne
       || propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
@@ -57,6 +58,7 @@ setAnimCompToTagComp.propTypes = {
 export function currentScrollTop() {
   const supportPageOffset = window.pageXOffset !== undefined;
   const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
-  const isCSS1ScrollTop = isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+  const isCSS1ScrollTop = isCSS1Compat ?
+    document.documentElement.scrollTop : document.body.scrollTop;
   return supportPageOffset ? window.pageYOffset : isCSS1ScrollTop;
 }

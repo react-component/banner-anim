@@ -137,7 +137,7 @@ export default {
     if (type === 'leave') {
       const _delay = (gridNum * gridNumH - 1) % gridNum * 50 +
         Math.floor((gridNum * gridNumH - 1) / gridNum) * 50;
-      ticker.timeout(()=> {
+      ticker.timeout(() => {
         animData.onComplete();
       }, _delay + animData.duration);
       props.children = toArrayChildren(props.children).map(setAnimCompToTagComp);
@@ -166,7 +166,7 @@ export default {
         ...animData,
         opacity: 0,
         type: 'from',
-        delay: delay,
+        delay,
         onComplete: i === length ? animData.onComplete : null,
       };
       const mask = (<elem.type style={style} key={ i } animation={animation}>

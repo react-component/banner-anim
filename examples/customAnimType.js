@@ -9,7 +9,7 @@ import assign from 'object-assign';
 import './assets/index.less';
 const { animType, setAnimCompToTagComp } = BannerAnim;
 
-animType.custom = (elem, type, direction, animData)=> {
+animType.custom = (elem, type, direction, animData) => {
   console.log(`custom animType, type:${type}`);
   let _y;
   const props = assign({}, elem.props);
@@ -44,8 +44,9 @@ class Demo extends React.Component {
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">Ant Motion Demo.Ant Motion
-            Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">
+            Ant Motion Demo.Ant Motion Demo
+          </TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
@@ -55,8 +56,9 @@ class Demo extends React.Component {
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">Ant Motion Demo.Ant Motion
-            Demo</TweenOne>
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">
+            Ant Motion Demo.Ant Motion Demo
+          </TweenOne>
         </Element>
       </BannerAnim>
     );

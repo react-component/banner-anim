@@ -30,7 +30,8 @@ class Thumb extends Component {
     const childToRender = toArrayChildren(children).map((item, i) => {
       const props = assign({}, item.props);
       props.onClick = this.props.thumbClick.bind(this, i);
-      props.className = `${props.className || ''} ${this.props.active === i ? 'active' : ''}`.trim();
+      props.className = `${props.className || ''} ${this.props.active === i ? 'active' : ''}`
+        .trim();
       return React.cloneElement(item, props);
     });
     const props = assign({}, this.props);
@@ -55,7 +56,7 @@ Thumb.propTypes = {
 };
 Thumb.defaultProps = {
   component: 'div',
-  thumbClick: ()=> {
+  thumbClick: () => {
   },
 };
 

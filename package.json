@@ -41,7 +41,7 @@
     "expect.js": "0.3.x",
     "pre-commit": "1.x",
     "rc-server": "3.x",
-    "rc-tools": "4.x",
+    "rc-tools": "5.x",
     "react": "15.x",
     "react-addons-test-utils": "15.x",
     "react-dom": "15.x",
@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "object-assign": "~4.0.1",
-    "rc-tween-one": "~0.5.1",
+    "rc-tween-one": "~0.6.0",
     "style-utils": "~0.1.2",
     "tween-functions": "1.x"
   },

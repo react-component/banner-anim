@@ -157,9 +157,11 @@ class BannerAnim extends Component {
       if (!arrow.length) {
         arrow.push(
           <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default
-            elemHeight={this.state.wrapperHeight} />,
+            elemHeight={this.state.wrapperHeight}
+          />,
           <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default
-            elemHeight={this.state.wrapperHeight} />
+            elemHeight={this.state.wrapperHeight}
+          />
         );
       }
       if (!thumb) {
@@ -178,7 +180,8 @@ class BannerAnim extends Component {
     this.dom = ReactDOM.findDOMNode(this);
     const domRect = this.dom.getBoundingClientRect();
     // 获取宽度与定位，setState刷新；
-    const wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
+    const wrapperHeight = this.getElementHeight(
+      this.dom.getElementsByClassName('banner-anim-elem'));
     const _tHeight = this.thumbIsDefault ? 40 :
       this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
     const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
@@ -266,7 +269,7 @@ class BannerAnim extends Component {
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = assign({}, props.style);
-    props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
+    props.style.height = `${this.state.wrapperHeight + this.state.thumbHeight}px`;
     if (childrenToRender.length > 1) {
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseLeave = this.onMouseLeave;
@@ -311,11 +314,11 @@ BannerAnim.defaultProps = {
   thumb: true,
   thumbFloat: true,
   autoPlaySpeed: 5000,
-  onChange: ()=> {
+  onChange: () => {
   },
-  onMouseEnter: ()=> {
+  onMouseEnter: () => {
   },
-  onMouseLeave: ()=> {
+  onMouseLeave: () => {
   },
 };
 BannerAnim.Arrow = Arrow;

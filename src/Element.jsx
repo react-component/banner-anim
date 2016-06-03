@@ -120,7 +120,7 @@ class Element extends Component {
       ticker.clear(this.tickerId);
       this.tickerId = `bannerElementTicker${Date.now() + Math.random()}`;
       const startFrame = ticker.frame;
-      ticker.wake(this.tickerId, ()=> {
+      ticker.wake(this.tickerId, () => {
         const moment = (ticker.frame - startFrame) * ticker.perFrame;
         const start = typeof this.props.followParallax.minMove === 'number' ?
           this.props.followParallax.minMove : 0.08;
@@ -178,7 +178,7 @@ class Element extends Component {
     let scale = scrollTop / (domHeight + offsetTop);
     scale = scale >= 1 ? 1 : scale;
     const _css = {};
-    Object.keys(this.props.bgParallax).forEach((_key)=> {
+    Object.keys(this.props.bgParallax).forEach((_key) => {
       const key = getGsapType(_key);
       const item = this.props.bgParallax[_key];
       const cssName = isConvert(key);
@@ -191,7 +191,8 @@ class Element extends Component {
       if (cssName === 'transform') {
         _css[cssName] = mergeStyle(_css[cssName] || '', getValues(key, cssData, unit));
       } else if (cssName === 'filter') {
-        _css[checkStyleName(cssName)] = mergeStyle(_css[cssName] || '', getValues(key, cssData, unit));
+        _css[checkStyleName(cssName)] = mergeStyle(_css[cssName] || '',
+          getValues(key, cssData, unit));
       } else {
         _css[cssName] = cssData;
       }
@@ -346,7 +347,7 @@ class Element extends Component {
     // 把 bgParallax 的合进来；
     const bgParallaxStyle = this.state.bgParallaxAnim || {};
     return {
-      cssName: cssName,
+      cssName,
       data: mergeStyle(bgParallaxStyle[cssName] || '',
         this.getFollowStyle(type, data)),
     };
