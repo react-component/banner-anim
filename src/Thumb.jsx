@@ -25,7 +25,7 @@ class Thumb extends Component {
     className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
     const children = this.props.default ? this.getDefaultThumb() : this.props.children;
     if (this.props.length && toArrayChildren(children).length !== this.props.length) {
-      console.warn('The thumbnail length and the images length different.');
+      console.warn('The thumbnail length and the images length different.'); // eslint-disable-line
     }
     const childToRender = toArrayChildren(children).map((item, i) => {
       const props = assign({}, item.props);
