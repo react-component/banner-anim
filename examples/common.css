@@ -1,3 +1,13 @@
+.banner-anim-elem.banner-user-elem {
+  height: 600px;
+  color: #fff;
+}
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 .banner-anim {
   position: relative;
   overflow: hidden;
@@ -106,16 +116,6 @@
 .banner-anim-thumb-default span:active,
 .banner-anim-thumb-default span.active {
   background: #fff;
-}
-.banner-anim-elem.banner-user-elem {
-  height: 600px;
-  color: #fff;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
 /*# sourceMappingURL=common.css.map*/

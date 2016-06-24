@@ -221,8 +221,6 @@
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
-	__webpack_require__(191);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -24025,12 +24023,6 @@
 
 /***/ },
 /* 191 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24039,7 +24031,7 @@
 	  value: true
 	});
 	
-	var _QueueAnim = __webpack_require__(193);
+	var _QueueAnim = __webpack_require__(192);
 	
 	var _QueueAnim2 = _interopRequireDefault(_QueueAnim);
 	
@@ -24050,7 +24042,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 193 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate) {'use strict';
@@ -24065,9 +24057,9 @@
 	
 	var _reactDom = __webpack_require__(42);
 	
-	var _utils = __webpack_require__(195);
+	var _utils = __webpack_require__(194);
 	
-	var _animTypes = __webpack_require__(196);
+	var _animTypes = __webpack_require__(195);
 	
 	var _animTypes2 = _interopRequireDefault(_animTypes);
 	
@@ -24150,7 +24142,7 @@
 	var velocity = void 0;
 	if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 	  // only load velocity on the client
-	  velocity = __webpack_require__(197);
+	  velocity = __webpack_require__(196);
 	  Object.keys(_ease).forEach(function (key) {
 	    if (velocity.Easings) {
 	      velocity.Easings[key] = _ease[key];
@@ -24497,10 +24489,10 @@
 	
 	exports["default"] = QueueAnim;
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(194).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(193).setImmediate))
 
 /***/ },
-/* 194 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(7).nextTick;
@@ -24579,10 +24571,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(194).setImmediate, __webpack_require__(194).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(193).setImmediate, __webpack_require__(193).clearImmediate))
 
 /***/ },
-/* 195 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24687,7 +24679,7 @@
 	}
 
 /***/ },
-/* 196 */
+/* 195 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24735,7 +24727,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 197 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! VelocityJS.org (1.2.3). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
@@ -28626,7 +28618,13 @@
 	will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
 
 /***/ },
+/* 197 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
 /* 198 */
-191
+197
 /******/ ])));
 //# sourceMappingURL=common.js.map

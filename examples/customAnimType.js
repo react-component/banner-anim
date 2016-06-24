@@ -19,7 +19,7 @@ webpackJsonp([3],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(192);
+	var _rcQueueAnim = __webpack_require__(191);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
@@ -38,6 +38,8 @@ webpackJsonp([3],{
 	var _objectAssign = __webpack_require__(172);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
+	__webpack_require__(197);
 	
 	__webpack_require__(198);
 	
