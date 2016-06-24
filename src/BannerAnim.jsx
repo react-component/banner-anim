@@ -58,6 +58,9 @@ class BannerAnim extends Component {
   }
 
   componentWillUnmount() {
+    if (this.autoPlayId) {
+      ticker.clear(this.autoPlayId);
+    }
     if (window.addEventListener) {
       window.removeEventListener('resize', this.getDomDataSetToState);
     } else {
