@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import expect from 'expect.js';
 import BannerAnim from '../index';
+import '../assets/index.less';
 import TestUtils from 'react-addons-test-utils';
 
 const { Element } = BannerAnim;
@@ -83,10 +84,11 @@ describe('rc-banner-anim', () => {
       autoPlaySpeed: 1000,
       type: 'across',
     });
-    const children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
+    let children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
     expect(children[0].style.display).to.be('block');
     expect(children[1].style.display).to.be('none');
     setTimeout(() => {
+      children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
       expect(children[0].style.display).to.be('block');
       expect(children[1].style.display).to.be('block');
       done();

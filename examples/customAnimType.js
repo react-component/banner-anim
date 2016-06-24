@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'object-assign';
 import './assets/index.less';
+import '../assets/index.less';
 const { animType, setAnimCompToTagComp } = BannerAnim;
 
 animType.custom = (elem, type, direction, animData) => {

@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/index.less';
 import './assets/arrow.less';
+import '../assets/index.less';
 
 const { Element, Arrow } = BannerAnim;
 class Demo extends React.Component {

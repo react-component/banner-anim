@@ -6,6 +6,7 @@ import TweenOne from 'rc-tween-one';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/index.less';
+import '../assets/index.less';
 
 const { Element } = BannerAnim;
 class Demo extends React.Component {
