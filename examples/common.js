@@ -12,7 +12,28 @@
 /******/ 			installedChunks[chunkId] = 0;
 /******/ 		}
 /******/ 		for(moduleId in moreModules) {
-/******/ 			modules[moduleId] = moreModules[moduleId];
+/******/ 			var _m = moreModules[moduleId];
+/******/
+/******/ 			// Check if module is deduplicated
+/******/ 			switch(typeof _m) {
+/******/ 			case "object":
+/******/ 				// Module can be created from a template
+/******/ 				modules[moduleId] = (function(_m) {
+/******/ 					var args = _m.slice(1), templateId = _m[0];
+/******/ 					return function (a,b,c) {
+/******/ 						modules[templateId].apply(this, [a,b,c].concat(args));
+/******/ 					};
+/******/ 				}(_m));
+/******/ 				break;
+/******/ 			case "function":
+/******/ 				// Normal module
+/******/ 				modules[moduleId] = _m;
+/******/ 				break;
+/******/ 			default:
+/******/ 				// Module is a copy of another module
+/******/ 				modules[moduleId] = modules[_m];
+/******/ 				break;
+/******/ 			}
 /******/ 		}
 /******/ 		if(parentJsonpFunction) parentJsonpFunction(chunkIds, moreModules);
 /******/ 		while(callbacks.length)
@@ -91,46 +112,69 @@
 /******/ 	__webpack_require__.p = "";
 /******/ })
 /************************************************************************/
-/******/ ([
+/******/ ((function(modules) {
+	// Check all modules for deduplicated modules
+	for(var i in modules) {
+		if(Object.prototype.hasOwnProperty.call(modules, i)) {
+			switch(typeof modules[i]) {
+			case "function": break;
+			case "object":
+				// Module can be created from a template
+				modules[i] = (function(_m) {
+					var args = _m.slice(1), fn = modules[_m[0]];
+					return function (a,b,c) {
+						fn.apply(this, [a,b,c].concat(args));
+					};
+				}(modules[i]));
+				break;
+			default:
+				// Module is a copy of another module
+				modules[i] = modules[modules[i]];
+				break;
+			}
+		}
+	}
+	return modules;
+}([
 /* 0 */,
 /* 1 */,
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// export this package's api
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _src = __webpack_require__(3);
 	
 	var _src2 = _interopRequireDefault(_src);
 
-	exports['default'] = _src2['default'];
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _src2.default; // export this package's api
+
 	module.exports = exports['default'];
 
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// export this package's api
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _BannerAnim = __webpack_require__(4);
 	
 	var _BannerAnim2 = _interopRequireDefault(_BannerAnim);
 
-	exports['default'] = _BannerAnim2['default'];
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _BannerAnim2.default; // export this package's api
+
 	module.exports = exports['default'];
 
 /***/ },
@@ -139,19 +183,9 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -173,307 +207,297 @@
 	
 	var _Element2 = _interopRequireDefault(_Element);
 	
-	var _Thumb = __webpack_require__(188);
+	var _Thumb = __webpack_require__(190);
 	
 	var _Thumb2 = _interopRequireDefault(_Thumb);
 	
-	var _rcTweenOneLibTicker = __webpack_require__(182);
+	var _ticker = __webpack_require__(184);
 	
-	var _rcTweenOneLibTicker2 = _interopRequireDefault(_rcTweenOneLibTicker);
+	var _ticker2 = _interopRequireDefault(_ticker);
 	
-	var _utils = __webpack_require__(187);
+	var _utils = __webpack_require__(189);
 	
-	var _anim = __webpack_require__(186);
+	var _anim = __webpack_require__(188);
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
-	__webpack_require__(189);
+	__webpack_require__(191);
 	
-	// tnpm 4 run lint error;
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(178);
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
 	
-	var BannerAnim = (function (_Component) {
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	var BannerAnim = function (_Component) {
 	  _inherits(BannerAnim, _Component);
 	
 	  function BannerAnim() {
-	    var _this = this;
-	
 	    _classCallCheck(this, BannerAnim);
 	
-	    _get(Object.getPrototypeOf(BannerAnim.prototype), 'constructor', this).apply(this, arguments);
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
 	    ['getDomDataSetToState', 'getRenderChildren', 'getElementHeight', 'getAnimType', 'next', 'prev', 'thumbClick', 'onMouseEnter', 'onMouseLeave', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'autoPlay', 'animEnd', 'animTweenStart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
-	    this.state = {
-	      currentShow: this.props.initShow,
+	    _this.state = {
+	      currentShow: _this.props.initShow,
 	      direction: null,
 	      wrapperHeight: 0,
 	      thumbHeight: 0,
 	      domRect: {}
 	    };
-	    this.tweenBool = false;
+	    _this.tweenBool = false;
+	    return _this;
 	  }
 	
-	  _createClass(BannerAnim, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.getDomDataSetToState();
-	      if (window.addEventListener) {
-	        window.addEventListener('resize', this.getDomDataSetToState);
-	      } else {
-	        window.attachEvent('onresize', this.getDomDataSetToState);
-	      }
-	      if (this.props.autoPlay) {
-	        this.autoPlay();
-	      }
+	  BannerAnim.prototype.componentDidMount = function componentDidMount() {
+	    this.getDomDataSetToState();
+	    if (window.addEventListener) {
+	      window.addEventListener('resize', this.getDomDataSetToState);
+	    } else {
+	      window.attachEvent('onresize', this.getDomDataSetToState);
 	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps() {
-	      this.tweenBool = false;
+	    if (this.props.autoPlay) {
+	      this.autoPlay();
 	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      if (window.addEventListener) {
-	        window.removeEventListener('resize', this.getDomDataSetToState);
-	      } else {
-	        window.detachEvent('onresize', this.getDomDataSetToState);
-	      }
-	    }
-	  }, {
-	    key: 'onMouseEnter',
-	    value: function onMouseEnter() {
-	      this.props.onMouseEnter();
-	      if (this.props.autoPlay) {
-	        _rcTweenOneLibTicker2['default'].clear(this.autoPlayId);
-	      }
-	    }
-	  }, {
-	    key: 'onMouseLeave',
-	    value: function onMouseLeave() {
-	      this.props.onMouseLeave();
-	      if (this.props.autoPlay) {
-	        this.autoPlay();
-	      }
-	    }
-	  }, {
-	    key: 'onTouchStart',
-	    value: function onTouchStart(e) {
-	      this.mouseXY = {
-	        startX: e.touches === undefined ? e.clientX : e.touches[0].clientX,
-	        startY: e.touches === undefined ? e.clientY : e.touches[0].clientY
-	      };
-	    }
-	  }, {
-	    key: 'onTouchMove',
-	    value: function onTouchMove(e) {
-	      if (!this.mouseXY) {
-	        return;
-	      }
-	      this.mouseXY.currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
-	      this.mouseXY.currentY = e.touches === undefined ? e.clientY : e.touches[0].clientY;
-	    }
-	  }, {
-	    key: 'onTouchEnd',
-	    value: function onTouchEnd() {
-	      var differX = this.mouseXY.currentX - this.mouseXY.startX;
-	      var differY = this.mouseXY.currentY - this.mouseXY.startY;
-	      var r = Math.atan2(differY, differX);
-	      var angle = Math.round(r * 180 / Math.PI);
-	      angle = angle < 0 ? 360 - Math.abs(angle) : angle;
-	      if ((angle >= 0 && angle <= 45 || angle >= 315) && differX > this.state.domRect.width * 0.1) {
-	        this.next();
-	      } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
-	        this.prev();
-	      }
-	      delete this.mouseXY;
-	    }
-	  }, {
-	    key: 'getRenderChildren',
-	    value: function getRenderChildren(children) {
-	      var _this2 = this;
+	  };
 	
-	      var elem = [];
-	      var arrow = [];
-	      var thumb = undefined;
+	  BannerAnim.prototype.componentWillReceiveProps = function componentWillReceiveProps() {
+	    this.tweenBool = false;
+	  };
 	
-	      var _animType = this.getAnimType(this.props.type);
-	      (0, _utils.toArrayChildren)(children).forEach(function (item, i) {
-	        if (!item.key) {
-	          throw new Error('Please add key, key is required');
-	        }
-	        var itemProps = (0, _objectAssign2['default'])({}, item.props);
-	        switch (item.type) {
-	          case _Element2['default']:
-	            itemProps.key = item.key;
-	            itemProps.callBack = _this2.animEnd;
-	            itemProps.show = _this2.state.currentShow === i;
-	            itemProps.animType = _animType;
-	            itemProps.duration = _this2.props.duration;
-	            itemProps.ease = _this2.props.ease;
-	            itemProps.elemOffset = {
-	              top: _this2.state.domRect.top,
-	              width: _this2.state.domRect.width,
-	              height: _this2.state.wrapperHeight
-	            };
-	            itemProps.direction = _this2.state.direction;
-	            if (_this2.props.bgParallaxAll) {
-	              itemProps.bgParallax = _this2.props.bgParallaxAll;
-	            }
-	            elem.push(_react2['default'].cloneElement(item, itemProps));
-	            break;
-	          case _Arrow2['default']:
-	            itemProps.next = _this2.next;
-	            itemProps.prev = _this2.prev;
-	            itemProps.elemHeight = _this2.state.wrapperHeight;
-	            arrow.push(_react2['default'].cloneElement(item, itemProps));
-	            break;
-	          case _Thumb2['default']:
-	            itemProps.thumbClick = _this2.thumbClick;
-	            itemProps.active = _this2.state.currentShow;
-	            thumb = _react2['default'].cloneElement(item, itemProps);
-	            break;
-	          default:
-	            break;
-	        }
-	      });
-	      if (elem.length > 1) {
-	        if (!arrow.length) {
-	          arrow.push(_react2['default'].createElement(_Arrow2['default'], { arrowType: 'prev', key: 'arrowPrev', next: this.next, prev: this.prev, 'default': true,
-	            elemHeight: this.state.wrapperHeight }), _react2['default'].createElement(_Arrow2['default'], { arrowType: 'next', key: 'arrowNext', next: this.next, prev: this.prev, 'default': true,
-	            elemHeight: this.state.wrapperHeight }));
-	        }
-	        if (!thumb) {
-	          thumb = _react2['default'].createElement(_Thumb2['default'], { length: elem.length, key: 'thumb',
-	            thumbClick: this.thumbClick,
-	            active: this.state.currentShow,
-	            'default': true
-	          });
-	        }
-	      }
-	      this.elemWrapper = elem;
-	      return elem.concat(arrow, thumb);
+	  BannerAnim.prototype.componentWillUnmount = function componentWillUnmount() {
+	    if (this.autoPlayId) {
+	      _ticker2.default.clear(this.autoPlayId);
 	    }
-	  }, {
-	    key: 'getDomDataSetToState',
-	    value: function getDomDataSetToState() {
-	      this.dom = _reactDom2['default'].findDOMNode(this);
-	      var domRect = this.dom.getBoundingClientRect();
-	      // 获取宽度与定位，setState刷新；
-	      var wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
-	      var _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
-	      var thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
-	      this.setState({
-	        wrapperHeight: wrapperHeight,
-	        thumbHeight: thumbHeight,
-	        domRect: domRect
-	      });
+	    if (window.addEventListener) {
+	      window.removeEventListener('resize', this.getDomDataSetToState);
+	    } else {
+	      window.detachEvent('onresize', this.getDomDataSetToState);
+	    }
+	  };
+	
+	  BannerAnim.prototype.onMouseEnter = function onMouseEnter() {
+	    this.props.onMouseEnter();
+	    if (this.props.autoPlay) {
+	      _ticker2.default.clear(this.autoPlayId);
+	    }
+	  };
+	
+	  BannerAnim.prototype.onMouseLeave = function onMouseLeave() {
+	    this.props.onMouseLeave();
+	    if (this.props.autoPlay) {
+	      this.autoPlay();
+	    }
+	  };
+	
+	  BannerAnim.prototype.onTouchStart = function onTouchStart(e) {
+	    this.mouseXY = {
+	      startX: e.touches === undefined ? e.clientX : e.touches[0].clientX,
+	      startY: e.touches === undefined ? e.clientY : e.touches[0].clientY
+	    };
+	  };
+	
+	  BannerAnim.prototype.onTouchMove = function onTouchMove(e) {
+	    if (!this.mouseXY) {
+	      return;
+	    }
+	    this.mouseXY.currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
+	    this.mouseXY.currentY = e.touches === undefined ? e.clientY : e.touches[0].clientY;
+	  };
+	
+	  BannerAnim.prototype.onTouchEnd = function onTouchEnd() {
+	    var differX = this.mouseXY.currentX - this.mouseXY.startX;
+	    var differY = this.mouseXY.currentY - this.mouseXY.startY;
+	    var r = Math.atan2(differY, differX);
+	    var angle = Math.round(r * 180 / Math.PI);
+	    angle = angle < 0 ? 360 - Math.abs(angle) : angle;
+	    if ((angle >= 0 && angle <= 45 || angle >= 315) && differX > this.state.domRect.width * 0.1) {
+	      this.next();
+	    } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
+	      this.prev();
+	    }
+	    delete this.mouseXY;
+	  };
+	
+	  BannerAnim.prototype.getRenderChildren = function getRenderChildren(children) {
+	    var _this2 = this;
+	
+	    var elem = [];
+	    var arrow = [];
+	    var thumb = void 0;
+	
+	    var _animType = this.getAnimType(this.props.type);
+	    (0, _utils.toArrayChildren)(children).forEach(function (item, i) {
+	      if (!item.key) {
+	        throw new Error('Please add key, key is required');
+	      }
+	      var itemProps = (0, _objectAssign2.default)({}, item.props);
+	      switch (item.type) {
+	        case _Element2.default:
+	          itemProps.key = item.key;
+	          itemProps.callBack = _this2.animEnd;
+	          itemProps.show = _this2.state.currentShow === i;
+	          itemProps.animType = _animType;
+	          itemProps.duration = _this2.props.duration;
+	          itemProps.ease = _this2.props.ease;
+	          itemProps.elemOffset = {
+	            top: _this2.state.domRect.top,
+	            width: _this2.state.domRect.width,
+	            height: _this2.state.wrapperHeight
+	          };
+	          itemProps.direction = _this2.state.direction;
+	          if (_this2.props.bgParallaxAll) {
+	            itemProps.bgParallax = _this2.props.bgParallaxAll;
+	          }
+	          elem.push(_react2.default.cloneElement(item, itemProps));
+	          break;
+	        case _Arrow2.default:
+	          itemProps.next = _this2.next;
+	          itemProps.prev = _this2.prev;
+	          itemProps.elemHeight = _this2.state.wrapperHeight;
+	          arrow.push(_react2.default.cloneElement(item, itemProps));
+	          break;
+	        case _Thumb2.default:
+	          itemProps.thumbClick = _this2.thumbClick;
+	          itemProps.active = _this2.state.currentShow;
+	          thumb = _react2.default.cloneElement(item, itemProps);
+	          break;
+	        default:
+	          break;
+	      }
+	    });
+	    if (elem.length > 1) {
+	      if (!arrow.length) {
+	        arrow.push(_react2.default.createElement(_Arrow2.default, { arrowType: 'prev', key: 'arrowPrev', next: this.next, prev: this.prev, 'default': true,
+	          elemHeight: this.state.wrapperHeight
+	        }), _react2.default.createElement(_Arrow2.default, { arrowType: 'next', key: 'arrowNext', next: this.next, prev: this.prev, 'default': true,
+	          elemHeight: this.state.wrapperHeight
+	        }));
+	      }
+	      if (!thumb) {
+	        thumb = _react2.default.createElement(_Thumb2.default, { length: elem.length, key: 'thumb',
+	          thumbClick: this.thumbClick,
+	          active: this.state.currentShow,
+	          'default': true
+	        });
+	      }
+	    }
+	    this.elemWrapper = elem;
+	    return elem.concat(arrow, thumb);
+	  };
+	
+	  BannerAnim.prototype.getDomDataSetToState = function getDomDataSetToState() {
+	    this.dom = _reactDom2.default.findDOMNode(this);
+	    var domRect = this.dom.getBoundingClientRect();
+	    // 获取宽度与定位，setState刷新；
+	    var wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
+	    var _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
+	    var thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
+	    this.setState({
+	      wrapperHeight: wrapperHeight,
+	      thumbHeight: thumbHeight,
+	      domRect: domRect
+	    });
+	    this.tweenBool = false;
+	  };
+	
+	  BannerAnim.prototype.getElementHeight = function getElementHeight(children) {
+	    var height = 0;
+	    for (var i = 0; i < children.length; i++) {
+	      var dom = children[i];
+	      var _height = dom.getBoundingClientRect().height;
+	      height = height > _height ? height : _height;
+	    }
+	    return height;
+	  };
+	
+	  BannerAnim.prototype.getAnimType = function getAnimType(type) {
+	    var typeArray = type ? (0, _utils.dataToArray)(type) : Object.keys(_anim2.default);
+	    var random = Math.round(Math.random() * (typeArray.length - 1));
+	    return _anim2.default[typeArray[random]];
+	  };
+	
+	  BannerAnim.prototype.autoPlay = function autoPlay() {
+	    this.autoPlayId = _ticker2.default.interval(this.next, this.props.autoPlaySpeed);
+	  };
+	
+	  BannerAnim.prototype.animTweenStart = function animTweenStart(show, type) {
+	    this.props.onChange('before', show);
+	    this.setState({
+	      currentShow: show,
+	      direction: type
+	    });
+	  };
+	
+	  BannerAnim.prototype.animEnd = function animEnd(type) {
+	    if (type === 'enter') {
 	      this.tweenBool = false;
+	      this.props.onChange('after', this.state.currentShow);
 	    }
-	  }, {
-	    key: 'getElementHeight',
-	    value: function getElementHeight(children) {
-	      var height = 0;
-	      for (var i = 0; i < children.length; i++) {
-	        var dom = children[i];
-	        var _height = dom.getBoundingClientRect().height;
-	        height = height > _height ? height : _height;
+	  };
+	
+	  BannerAnim.prototype.next = function next() {
+	    if (!this.tweenBool) {
+	      this.tweenBool = true;
+	      var newShow = this.state.currentShow;
+	      newShow++;
+	      if (newShow >= this.elemWrapper.length) {
+	        newShow = 0;
 	      }
-	      return height;
+	      this.animTweenStart(newShow, 'next');
 	    }
-	  }, {
-	    key: 'getAnimType',
-	    value: function getAnimType(type) {
-	      var typeArray = type ? (0, _utils.dataToArray)(type) : Object.keys(_anim2['default']);
-	      var random = Math.round(Math.random() * (typeArray.length - 1));
-	      return _anim2['default'][typeArray[random]];
+	  };
+	
+	  BannerAnim.prototype.prev = function prev() {
+	    if (!this.tweenBool) {
+	      this.tweenBool = true;
+	      var newShow = this.state.currentShow;
+	      newShow--;
+	      if (newShow < 0) {
+	        newShow = this.elemWrapper.length - 1;
+	      }
+	      this.animTweenStart(newShow, 'prev');
 	    }
-	  }, {
-	    key: 'autoPlay',
-	    value: function autoPlay() {
-	      this.autoPlayId = _rcTweenOneLibTicker2['default'].interval(this.next, this.props.autoPlaySpeed);
-	    }
-	  }, {
-	    key: 'animTweenStart',
-	    value: function animTweenStart(show, type) {
-	      this.props.onChange('before', show);
-	      this.setState({
-	        currentShow: show,
-	        direction: type
-	      });
-	    }
-	  }, {
-	    key: 'animEnd',
-	    value: function animEnd(type) {
-	      if (type === 'enter') {
-	        this.tweenBool = false;
-	        this.props.onChange('after', this.state.currentShow);
+	  };
+	
+	  BannerAnim.prototype.thumbClick = function thumbClick(i) {
+	    if (!this.tweenBool) {
+	      this.tweenBool = true;
+	      if (i !== this.state.currentShow) {
+	        var type = i > this.state.currentShow ? 'next' : 'prev';
+	        this.animTweenStart(i, type);
 	      }
 	    }
-	  }, {
-	    key: 'next',
-	    value: function next() {
-	      if (!this.tweenBool) {
-	        this.tweenBool = true;
-	        var newShow = this.state.currentShow;
-	        newShow++;
-	        if (newShow >= this.elemWrapper.length) {
-	          newShow = 0;
-	        }
-	        this.animTweenStart(newShow, 'next');
-	      }
+	  };
+	
+	  BannerAnim.prototype.render = function render() {
+	    var prefixCls = this.props.prefixCls;
+	    var props = (0, _objectAssign2.default)({}, this.props);
+	    var childrenToRender = this.getRenderChildren(props.children);
+	    props.className = (props.className + ' ' + (prefixCls || '')).trim();
+	    props.style = (0, _objectAssign2.default)({}, props.style);
+	    props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
+	    if (childrenToRender.length > 1) {
+	      props.onMouseEnter = this.onMouseEnter;
+	      props.onMouseLeave = this.onMouseLeave;
+	      props.onTouchStart = this.onTouchStart;
+	      props.onMouseDown = this.onTouchStart;
+	      props.onTouchMove = this.onTouchMove;
+	      props.onMouseMove = this.onTouchMove;
+	      props.onTouchEnd = this.onTouchEnd;
+	      props.onMouseUp = this.onTouchEnd;
 	    }
-	  }, {
-	    key: 'prev',
-	    value: function prev() {
-	      if (!this.tweenBool) {
-	        this.tweenBool = true;
-	        var newShow = this.state.currentShow;
-	        newShow--;
-	        if (newShow < 0) {
-	          newShow = this.elemWrapper.length - 1;
-	        }
-	        this.animTweenStart(newShow, 'prev');
-	      }
-	    }
-	  }, {
-	    key: 'thumbClick',
-	    value: function thumbClick(i) {
-	      if (!this.tweenBool) {
-	        this.tweenBool = true;
-	        if (i !== this.state.currentShow) {
-	          var type = i > this.state.currentShow ? 'next' : 'prev';
-	          this.animTweenStart(i, type);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var prefixCls = this.props.prefixCls;
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      var childrenToRender = this.getRenderChildren(props.children);
-	      props.className = (props.className + ' ' + (prefixCls || '')).trim();
-	      props.style = (0, _objectAssign2['default'])({}, props.style);
-	      props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
-	      if (childrenToRender.length > 1) {
-	        props.onMouseEnter = this.onMouseEnter;
-	        props.onMouseLeave = this.onMouseLeave;
-	        props.onTouchStart = this.onTouchStart;
-	        props.onMouseDown = this.onTouchStart;
-	        props.onTouchMove = this.onTouchMove;
-	        props.onMouseMove = this.onTouchMove;
-	        props.onTouchEnd = this.onTouchEnd;
-	        props.onMouseUp = this.onTouchEnd;
-	      }
-	      return _react2['default'].createElement(this.props.component, props, childrenToRender);
-	    }
-	  }]);
+	    return _react2.default.createElement(this.props.component, props, childrenToRender);
+	  };
 	
 	  return BannerAnim;
-	})(_react.Component);
+	}(_react.Component);
 	
 	var stringOrArray = _react.PropTypes.oneOfType([_react.PropTypes.array, _react.PropTypes.string]);
 	BannerAnim.propTypes = {
@@ -510,12 +534,12 @@
 	  onMouseEnter: function onMouseEnter() {},
 	  onMouseLeave: function onMouseLeave() {}
 	};
-	BannerAnim.Arrow = _Arrow2['default'];
-	BannerAnim.Element = _Element2['default'];
-	BannerAnim.Thumb = _Thumb2['default'];
-	BannerAnim.animType = _anim2['default'];
+	BannerAnim.Arrow = _Arrow2.default;
+	BannerAnim.Element = _Element2.default;
+	BannerAnim.Thumb = _Thumb2.default;
+	BannerAnim.animType = _anim2.default;
 	BannerAnim.setAnimCompToTagComp = _utils.setAnimCompToTagComp;
-	exports['default'] = BannerAnim;
+	exports.default = BannerAnim;
 	module.exports = exports['default'];
 
 /***/ },
@@ -627,6 +651,31 @@
 	// shim for using process in browser
 	
 	var process = module.exports = {};
+	
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+	
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+	
+	(function () {
+	  try {
+	    cachedSetTimeout = setTimeout;
+	  } catch (e) {
+	    cachedSetTimeout = function () {
+	      throw new Error('setTimeout is not defined');
+	    }
+	  }
+	  try {
+	    cachedClearTimeout = clearTimeout;
+	  } catch (e) {
+	    cachedClearTimeout = function () {
+	      throw new Error('clearTimeout is not defined');
+	    }
+	  }
+	} ())
 	var queue = [];
 	var draining = false;
 	var currentQueue;
@@ -651,7 +700,7 @@
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = setTimeout(cleanUpNextTick);
+	    var timeout = cachedSetTimeout(cleanUpNextTick);
 	    draining = true;
 	
 	    var len = queue.length;
@@ -668,7 +717,7 @@
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    clearTimeout(timeout);
+	    cachedClearTimeout(timeout);
 	}
 	
 	process.nextTick = function (fun) {
@@ -680,7 +729,7 @@
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
+	        cachedSetTimeout(drainQueue, 0);
 	    }
 	};
 	
@@ -1568,7 +1617,7 @@
 	var warning = emptyFunction;
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  warning = function (condition, format) {
+	  warning = function warning(condition, format) {
 	    for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
 	      args[_key - 2] = arguments[_key];
 	    }
@@ -1616,6 +1665,7 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * 
 	 */
 	
 	function makeEmptyFunction(arg) {
@@ -1629,7 +1679,7 @@
 	 * primarily useful idiomatically for overridable function endpoints which
 	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
 	 */
-	function emptyFunction() {}
+	var emptyFunction = function emptyFunction() {};
 	
 	emptyFunction.thatReturns = makeEmptyFunction;
 	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
@@ -2518,11 +2568,11 @@
 	 * because of Facebook's testing infrastructure.
 	 */
 	if (performance.now) {
-	  performanceNow = function () {
+	  performanceNow = function performanceNow() {
 	    return performance.now();
 	  };
 	} else {
-	  performanceNow = function () {
+	  performanceNow = function performanceNow() {
 	    return Date.now();
 	  };
 	}
@@ -3610,7 +3660,7 @@
 	 * @param {object} obj
 	 * @return {object}
 	 */
-	var keyMirror = function (obj) {
+	var keyMirror = function keyMirror(obj) {
 	  var ret = {};
 	  var key;
 	  !(obj instanceof Object && !Array.isArray(obj)) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'keyMirror(...): Argument must be an object.') : invariant(false) : void 0;
@@ -3682,7 +3732,7 @@
 	 * 'xa12' in that case. Resolve keys you want to use once at startup time, then
 	 * reuse those resolutions.
 	 */
-	var keyOf = function (oneKeyObj) {
+	var keyOf = function keyOf(oneKeyObj) {
 	  var key;
 	  for (key in oneKeyObj) {
 	    if (!oneKeyObj.hasOwnProperty(key)) {
@@ -12172,6 +12222,7 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * 
 	 * @typechecks static-only
 	 */
 	
@@ -12179,9 +12230,6 @@
 	
 	/**
 	 * Memoizes the return value of a function that accepts one string argument.
-	 *
-	 * @param {function} callback
-	 * @return {function}
 	 */
 	
 	function memoizeStringOnly(callback) {
@@ -17426,18 +17474,18 @@
 	   * @param {function} callback Callback function.
 	   * @return {object} Object with a `remove` method.
 	   */
-	  listen: function (target, eventType, callback) {
+	  listen: function listen(target, eventType, callback) {
 	    if (target.addEventListener) {
 	      target.addEventListener(eventType, callback, false);
 	      return {
-	        remove: function () {
+	        remove: function remove() {
 	          target.removeEventListener(eventType, callback, false);
 	        }
 	      };
 	    } else if (target.attachEvent) {
 	      target.attachEvent('on' + eventType, callback);
 	      return {
-	        remove: function () {
+	        remove: function remove() {
 	          target.detachEvent('on' + eventType, callback);
 	        }
 	      };
@@ -17452,11 +17500,11 @@
 	   * @param {function} callback Callback function.
 	   * @return {object} Object with a `remove` method.
 	   */
-	  capture: function (target, eventType, callback) {
+	  capture: function capture(target, eventType, callback) {
 	    if (target.addEventListener) {
 	      target.addEventListener(eventType, callback, true);
 	      return {
-	        remove: function () {
+	        remove: function remove() {
 	          target.removeEventListener(eventType, callback, true);
 	        }
 	      };
@@ -17470,7 +17518,7 @@
 	    }
 	  },
 	
-	  registerDefault: function () {}
+	  registerDefault: function registerDefault() {}
 	};
 	
 	module.exports = EventListener;
@@ -18166,7 +18214,7 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @typechecks
+	 * 
 	 */
 	
 	var isTextNode = __webpack_require__(148);
@@ -18175,10 +18223,6 @@
 	
 	/**
 	 * Checks if a given DOM node contains or is another DOM node.
-	 *
-	 * @param {?DOMNode} outerNode Outer DOM node.
-	 * @param {?DOMNode} innerNode Inner DOM node.
-	 * @return {boolean} True if `outerNode` contains or is `innerNode`.
 	 */
 	function containsNode(outerNode, innerNode) {
 	  if (!outerNode || !innerNode) {
@@ -18189,7 +18233,7 @@
 	    return false;
 	  } else if (isTextNode(innerNode)) {
 	    return containsNode(outerNode, innerNode.parentNode);
-	  } else if (outerNode.contains) {
+	  } else if ('contains' in outerNode) {
 	    return outerNode.contains(innerNode);
 	  } else if (outerNode.compareDocumentPosition) {
 	    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
@@ -20842,19 +20886,9 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -20864,45 +20898,51 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var Arrow = (function (_Component) {
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	var Arrow = function (_Component) {
 	  _inherits(Arrow, _Component);
 	
 	  function Arrow() {
-	    var _this = this;
-	
 	    _classCallCheck(this, Arrow);
 	
-	    _get(Object.getPrototypeOf(Arrow.prototype), 'constructor', this).apply(this, arguments);
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
 	    ['onClick'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(Arrow, [{
-	    key: 'onClick',
-	    value: function onClick() {
-	      this.props[this.props.arrowType]();
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var className = this.props.className;
-	      var defaultClass = className + '-default';
-	      className = (className + ' ' + (this.props.prefixCls || '')).trim();
-	      className = !this.props['default'] ? className : (className + ' ' + defaultClass).trim();
-	      className = className + ' ' + this.props.arrowType;
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      delete props.component;
-	      props.className = className;
-	      props.onClick = this.onClick;
-	      props.style = props.style || {};
-	      props.style.top = this.props.elemHeight / 2 + 'px';
-	      return _react2['default'].createElement(this.props.component, props, this.props.children);
-	    }
-	  }]);
+	  Arrow.prototype.onClick = function onClick() {
+	    this.props[this.props.arrowType]();
+	  };
+	
+	  Arrow.prototype.render = function render() {
+	    var className = this.props.className;
+	    var defaultClass = className + '-default';
+	    className = (className + ' ' + (this.props.prefixCls || '')).trim();
+	    className = !this.props.default ? className : (className + ' ' + defaultClass).trim();
+	    className = className + ' ' + this.props.arrowType;
+	    var props = (0, _objectAssign2.default)({}, this.props);
+	    delete props.component;
+	    props.className = className;
+	    props.onClick = this.onClick;
+	    props.style = props.style || {};
+	    props.style.top = this.props.elemHeight / 2 + 'px';
+	    return _react2.default.createElement(this.props.component, props, this.props.children);
+	  };
 	
 	  return Arrow;
-	})(_react.Component);
+	}(_react.Component);
 	
 	Arrow.propTypes = {
 	  children: _react.PropTypes.any,
@@ -20911,7 +20951,7 @@
 	  prefixCls: _react.PropTypes.string,
 	  component: _react.PropTypes.any,
 	  arrowType: _react.PropTypes.string,
-	  'default': _react.PropTypes.bool,
+	  default: _react.PropTypes.bool,
 	  next: _react.PropTypes.func,
 	  prev: _react.PropTypes.func,
 	  elemHeight: _react.PropTypes.number
@@ -20921,7 +20961,7 @@
 	  className: 'banner-anim-arrow'
 	};
 	
-	exports['default'] = Arrow;
+	exports.default = Arrow;
 	module.exports = exports['default'];
 
 /***/ },
@@ -20930,21 +20970,13 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -20958,38 +20990,47 @@
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
-	var _rcTweenOneLibTicker = __webpack_require__(182);
+	var _ticker = __webpack_require__(184);
 	
-	var _rcTweenOneLibTicker2 = _interopRequireDefault(_rcTweenOneLibTicker);
+	var _ticker2 = _interopRequireDefault(_ticker);
 	
 	var _objectAssign = __webpack_require__(172);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _tweenFunctions = __webpack_require__(180);
+	var _tweenFunctions = __webpack_require__(181);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _styleUtils = __webpack_require__(178);
+	var _styleUtils = __webpack_require__(179);
 	
-	var _anim = __webpack_require__(186);
+	var _anim = __webpack_require__(188);
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
-	var _utils = __webpack_require__(187);
+	var _utils = __webpack_require__(189);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
 	function noop() {}
 	
-	var Element = (function (_Component) {
+	var Element = function (_Component) {
 	  _inherits(Element, _Component);
 	
 	  function Element() {
-	    var _this = this;
-	
 	    _classCallCheck(this, Element);
 	
-	    _get(Object.getPrototypeOf(Element.prototype), 'constructor', this).apply(this, arguments);
-	    this.state = {
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
+	    _this.state = {
 	      bgParallaxAnim: null,
 	      videoRect: {
 	        width: 'auto',
@@ -20999,400 +21040,380 @@
 	      mouseXY: null,
 	      domWH: null,
 	      onMouseMove: null,
-	      show: this.props.show
+	      show: _this.props.show
 	    };
-	    this.tickerId = -1;
-	    this.isScroll = false;
-	    this.delayTimeout = null;
-	    this.tweenBool = false;
-	    this.show = this.state.show;
+	    _this.tickerId = -1;
+	    _this.isScroll = false;
+	    _this.delayTimeout = null;
+	    _this.tweenBool = false;
+	    _this.show = _this.state.show;
 	    ['onScroll', 'onResize', 'onMouseMove', 'onMouseEnter', 'getImgOrVideo', 'videoLoadedData', 'addScrollEvent', 'getFollowStyle', 'followAnalysisType', 'getFollowMouseMove', 'getChildren', 'animEnd', 'animChildren'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(Element, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.dom = _reactDom2['default'].findDOMNode(this);
-	      this.componentDidUpdate();
-	      if (this.props.bgType.indexOf('video') >= 0) {
-	        // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
-	        delete _anim2['default'].grid;
-	        delete _anim2['default'].gridBar;
-	        this.video = this.dom.children[0].children[0];
-	      }
+	  Element.prototype.componentDidMount = function componentDidMount() {
+	    this.dom = _reactDom2.default.findDOMNode(this);
+	    this.componentDidUpdate();
+	    if (this.props.bgType.indexOf('video') >= 0) {
+	      // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
+	      delete _anim2.default.grid;
+	      delete _anim2.default.gridBar;
+	      this.video = this.dom.children[0].children[0];
 	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var show = nextProps.show;
-	      this.setState({ show: show });
-	    }
-	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      if (this.props.bgParallax && !this.isScroll) {
-	        this.addScrollEvent(this.props);
-	      }
-	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      this.isScroll = false;
-	      this.cancelRequestAnimationFrame();
-	      if (window.addEventListener) {
-	        window.removeEventListener('resize', this.onResize);
-	        window.removeEventListener('scroll', this.onScroll);
-	      } else {
-	        window.detachEvent('onresize', this.onResize);
-	        window.detachEvent('onscroll', this.onScroll);
-	      }
-	    }
-	  }, {
-	    key: 'onMouseEnter',
-	    value: function onMouseEnter(e) {
-	      var domRect = this.dom.getBoundingClientRect();
-	      var scrollTop = (0, _utils.currentScrollTop)();
-	      var offsetTop = domRect.top + scrollTop;
-	      this.enterMouse = {
-	        x: e.pageX - domRect.left,
-	        y: e.pageY - offsetTop
-	      };
-	    }
-	  }, {
-	    key: 'onMouseMove',
-	    value: function onMouseMove(e) {
-	      var _this2 = this;
+	  };
 	
-	      var domRect = this.dom.getBoundingClientRect();
-	      var scrollTop = (0, _utils.currentScrollTop)();
-	      var offsetTop = domRect.top + scrollTop;
-	      var mouseXY = {
-	        x: e.pageX - domRect.left,
-	        y: e.pageY - offsetTop
-	      };
-	      var domWH = {
-	        w: domRect.width,
-	        h: domRect.height
-	      };
+	  Element.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var show = nextProps.show;
+	    this.setState({ show: show });
+	  };
 	
-	      if (this.props.followParallax && this.props.followParallax.ease) {
-	        (function () {
-	          _rcTweenOneLibTicker2['default'].clear(_this2.tickerId);
-	          _this2.tickerId = 'bannerElementTicker' + (Date.now() + Math.random());
-	          var startFrame = _rcTweenOneLibTicker2['default'].frame;
-	          _rcTweenOneLibTicker2['default'].wake(_this2.tickerId, function () {
-	            var moment = (_rcTweenOneLibTicker2['default'].frame - startFrame) * _rcTweenOneLibTicker2['default'].perFrame;
-	            var start = typeof _this2.props.followParallax.minMove === 'number' ? _this2.props.followParallax.minMove : 0.08;
-	            var ratio = _tweenFunctions2['default'][_this2.props.followParallax.ease === true ? 'easeInOutQuad' : _this2.props.followParallax.ease](moment, start, 1, 1000);
-	            _this2.enterMouse.x = _this2.enterMouse.x + (mouseXY.x - _this2.enterMouse.x) * ratio;
-	            _this2.enterMouse.y = _this2.enterMouse.y + (mouseXY.y - _this2.enterMouse.y) * ratio;
-	            _this2.setState({
-	              mouseXY: _this2.enterMouse,
-	              domWH: domWH
-	            });
-	            if (moment >= 1000) {
-	              _rcTweenOneLibTicker2['default'].clear(_this2.tickerId);
-	            }
+	  Element.prototype.componentDidUpdate = function componentDidUpdate() {
+	    if (this.props.bgParallax && !this.isScroll) {
+	      this.addScrollEvent(this.props);
+	    }
+	  };
+	
+	  Element.prototype.componentWillUnmount = function componentWillUnmount() {
+	    this.isScroll = false;
+	    this.cancelRequestAnimationFrame();
+	    if (window.addEventListener) {
+	      window.removeEventListener('resize', this.onResize);
+	      window.removeEventListener('scroll', this.onScroll);
+	    } else {
+	      window.detachEvent('onresize', this.onResize);
+	      window.detachEvent('onscroll', this.onScroll);
+	    }
+	  };
+	
+	  Element.prototype.onMouseEnter = function onMouseEnter(e) {
+	    var domRect = this.dom.getBoundingClientRect();
+	    var scrollTop = (0, _utils.currentScrollTop)();
+	    var offsetTop = domRect.top + scrollTop;
+	    this.enterMouse = {
+	      x: e.pageX - domRect.left,
+	      y: e.pageY - offsetTop
+	    };
+	  };
+	
+	  Element.prototype.onMouseMove = function onMouseMove(e) {
+	    var _this2 = this;
+	
+	    var domRect = this.dom.getBoundingClientRect();
+	    var scrollTop = (0, _utils.currentScrollTop)();
+	    var offsetTop = domRect.top + scrollTop;
+	    var mouseXY = {
+	      x: e.pageX - domRect.left,
+	      y: e.pageY - offsetTop
+	    };
+	    var domWH = {
+	      w: domRect.width,
+	      h: domRect.height
+	    };
+	
+	    if (this.props.followParallax && this.props.followParallax.ease) {
+	      (function () {
+	        _ticker2.default.clear(_this2.tickerId);
+	        _this2.tickerId = 'bannerElementTicker' + (Date.now() + Math.random());
+	        var startFrame = _ticker2.default.frame;
+	        _ticker2.default.wake(_this2.tickerId, function () {
+	          var moment = (_ticker2.default.frame - startFrame) * _ticker2.default.perFrame;
+	          var start = typeof _this2.props.followParallax.minMove === 'number' ? _this2.props.followParallax.minMove : 0.08;
+	          var ratio = _tweenFunctions2.default[_this2.props.followParallax.ease === true ? 'easeInOutQuad' : _this2.props.followParallax.ease](moment, start, 1, 1000);
+	          _this2.enterMouse.x = _this2.enterMouse.x + (mouseXY.x - _this2.enterMouse.x) * ratio;
+	          _this2.enterMouse.y = _this2.enterMouse.y + (mouseXY.y - _this2.enterMouse.y) * ratio;
+	          _this2.setState({
+	            mouseXY: _this2.enterMouse,
+	            domWH: domWH
 	          });
-	        })();
-	      } else {
-	        this.setState({
-	          mouseXY: mouseXY,
-	          domWH: domWH
+	          if (moment >= 1000) {
+	            _ticker2.default.clear(_this2.tickerId);
+	          }
 	        });
-	      }
-	    }
-	  }, {
-	    key: 'onResize',
-	    value: function onResize() {
-	      var domRect = this.dom.getBoundingClientRect();
-	      var videoDomRect = this.video.getBoundingClientRect();
-	      var scale = undefined;
-	      var videoRect = {
-	        display: 'block',
-	        position: 'relative',
-	        top: 0,
-	        left: 0
-	      };
-	      if (domRect.width / domRect.height > videoDomRect.width / videoDomRect.height) {
-	        scale = domRect.width / videoDomRect.width;
-	        videoRect.width = domRect.width;
-	        videoRect.height = videoDomRect.height * scale;
-	        videoRect.top = -(videoRect.height - domRect.height) / 2;
-	      } else {
-	        scale = domRect.height / videoDomRect.height;
-	        videoRect.height = domRect.height;
-	        videoRect.width = videoDomRect.width * scale;
-	        videoRect.left = -(videoRect.width - domRect.width) / 2;
-	      }
+	      })();
+	    } else {
 	      this.setState({
-	        videoRect: videoRect
+	        mouseXY: mouseXY,
+	        domWH: domWH
 	      });
 	    }
-	  }, {
-	    key: 'onScroll',
-	    value: function onScroll() {
-	      var _this3 = this;
+	  };
 	
-	      var scrollTop = (0, _utils.currentScrollTop)();
-	      var domHeight = this.props.elemOffset.height;
-	      var offsetTop = this.props.elemOffset.top;
-	      // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
-	      var scale = scrollTop / (domHeight + offsetTop);
-	      scale = scale >= 1 ? 1 : scale;
-	      var _css = {};
-	      Object.keys(this.props.bgParallax).forEach(function (_key) {
-	        var key = (0, _styleUtils.getGsapType)(_key);
-	        var item = _this3.props.bgParallax[_key];
-	        var cssName = (0, _styleUtils.isConvert)(key);
-	        if (!Array.isArray(item)) {
-	          _css[cssName] = item;
+	  Element.prototype.onResize = function onResize() {
+	    var domRect = this.dom.getBoundingClientRect();
+	    var videoDomRect = this.video.getBoundingClientRect();
+	    var scale = void 0;
+	    var videoRect = {
+	      display: 'block',
+	      position: 'relative',
+	      top: 0,
+	      left: 0
+	    };
+	    if (domRect.width / domRect.height > videoDomRect.width / videoDomRect.height) {
+	      scale = domRect.width / videoDomRect.width;
+	      videoRect.width = domRect.width;
+	      videoRect.height = videoDomRect.height * scale;
+	      videoRect.top = -(videoRect.height - domRect.height) / 2;
+	    } else {
+	      scale = domRect.height / videoDomRect.height;
+	      videoRect.height = domRect.height;
+	      videoRect.width = videoDomRect.width * scale;
+	      videoRect.left = -(videoRect.width - domRect.width) / 2;
+	    }
+	    this.setState({
+	      videoRect: videoRect
+	    });
+	  };
+	
+	  Element.prototype.onScroll = function onScroll() {
+	    var _this3 = this;
+	
+	    var scrollTop = (0, _utils.currentScrollTop)();
+	    var domHeight = this.props.elemOffset.height;
+	    var offsetTop = this.props.elemOffset.top;
+	    // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
+	    var scale = scrollTop / (domHeight + offsetTop);
+	    scale = scale >= 1 ? 1 : scale;
+	    var _css = {};
+	    Object.keys(this.props.bgParallax).forEach(function (_key) {
+	      var key = (0, _styleUtils.getGsapType)(_key);
+	      var item = _this3.props.bgParallax[_key];
+	      var cssName = (0, _styleUtils.isConvert)(key);
+	      if (!Array.isArray(item)) {
+	        _css[cssName] = item;
+	        return;
+	      }
+	      var cssData = item[0] - scale * (item[0] - item[1]);
+	      var unit = (0, _styleUtils.getUnit)(key, cssData);
+	      if (cssName === 'transform') {
+	        _css[cssName] = (0, _styleUtils.mergeStyle)(_css[cssName] || '', (0, _styleUtils.getValues)(key, cssData, unit));
+	      } else if (cssName === 'filter') {
+	        _css[(0, _styleUtils.checkStyleName)(cssName)] = (0, _styleUtils.mergeStyle)(_css[cssName] || '', (0, _styleUtils.getValues)(key, cssData, unit));
+	      } else {
+	        _css[cssName] = cssData;
+	      }
+	    });
+	    this.setState({
+	      bgParallaxAnim: _css
+	    });
+	  };
+	
+	  Element.prototype.getFollowStyle = function getFollowStyle(type, data) {
+	    var mouseData = this.state.mouseXY.x;
+	    var domData = this.state.domWH.w;
+	    var value = data.scale;
+	    if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
+	      mouseData = this.state.mouseXY.y;
+	      domData = this.state.domWH.h;
+	    }
+	    var d = -(mouseData - domData / 2) * value;
+	    if (type === 'opacity') {
+	      // 如果是透明度，，变换为value的区间，，最左边为 1 - value; 最右边为 1;
+	      d = mouseData / domData * value + 1 - value;
+	    }
+	    var unit = (0, _styleUtils.isConvert)(type) !== type ? (0, _styleUtils.getUnit)(type, d) : '';
+	    var css = (0, _styleUtils.isConvert)(type) !== type ? (0, _styleUtils.getValues)(type, d, unit) : d;
+	    return type.indexOf('backgroundPosition') >= 0 ? 'calc(' + (data.bgPosition || '50%') + ' + ' + css + 'px )' : css;
+	  };
+	
+	  Element.prototype.getImgOrVideo = function getImgOrVideo() {
+	    var _this4 = this;
+	
+	    var followObj = {};
+	    if (this.props.followParallax) {
+	      followObj.transition = this.props.followParallax.transition;
+	    }
+	    if (this.props.followParallax && this.state.domWH && this.state.mouseXY) {
+	      this.props.followParallax.data.forEach(function (item) {
+	        if (!item.key) {
 	          return;
 	        }
-	        var cssData = item[0] - scale * (item[0] - item[1]);
-	        var unit = (0, _styleUtils.getUnit)(key, cssData);
-	        if (cssName === 'transform') {
-	          _css[cssName] = (0, _styleUtils.mergeStyle)(_css[cssName] || '', (0, _styleUtils.getValues)(key, cssData, unit));
-	        } else if (cssName === 'filter') {
-	          _css[(0, _styleUtils.checkStyleName)(cssName)] = (0, _styleUtils.mergeStyle)(_css[cssName] || '', (0, _styleUtils.getValues)(key, cssData, unit));
-	        } else {
-	          _css[cssName] = cssData;
+	        if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
+	          (0, _utils.dataToArray)(item.type).map(_this4.followAnalysisType.bind(_this4, item)).forEach(function (_item) {
+	            return followObj[_item.cssName] = (0, _styleUtils.mergeStyle)(followObj[_item.cssName], _item.data);
+	          });
 	        }
 	      });
-	      this.setState({
-	        bgParallaxAnim: _css
-	      });
 	    }
-	  }, {
-	    key: 'getFollowStyle',
-	    value: function getFollowStyle(type, data) {
-	      var mouseData = this.state.mouseXY.x;
-	      var domData = this.state.domWH.w;
-	      var value = data.scale;
-	      if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
-	        mouseData = this.state.mouseXY.y;
-	        domData = this.state.domWH.h;
-	      }
-	      var d = -(mouseData - domData / 2) * value;
-	      if (type === 'opacity') {
-	        // 如果是透明度，，变换为value的区间，，最左边为 1 - value; 最右边为 1;
-	        d = mouseData / domData * value + 1 - value;
-	      }
-	      var unit = (0, _styleUtils.isConvert)(type) !== type ? (0, _styleUtils.getUnit)(type, d) : '';
-	      var css = (0, _styleUtils.isConvert)(type) !== type ? (0, _styleUtils.getValues)(type, d, unit) : d;
-	      return type.indexOf('backgroundPosition') >= 0 ? 'calc(' + (data.bgPosition || '50%') + ' + ' + css + 'px )' : css;
-	    }
-	  }, {
-	    key: 'getImgOrVideo',
-	    value: function getImgOrVideo() {
-	      var _this4 = this;
-	
-	      var followObj = {};
-	      if (this.props.followParallax) {
-	        followObj.transition = this.props.followParallax.transition;
-	      }
-	      if (this.props.followParallax && this.state.domWH && this.state.mouseXY) {
-	        this.props.followParallax.data.forEach(function (item) {
-	          if (!item.key) {
-	            return;
-	          }
-	          if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
-	            (0, _utils.dataToArray)(item.type).map(_this4.followAnalysisType.bind(_this4, item)).forEach(function (_item) {
-	              return followObj[_item.cssName] = (0, _styleUtils.mergeStyle)(followObj[_item.cssName], _item.data);
-	            });
-	          }
-	        });
-	      }
-	      var className = ('banner-anim-elem-background ' + (this.props.bgPrefixCls || '')).trim();
-	      var dom = this.props.bgType.indexOf('video') >= 0 ? _react2['default'].createElement(
-	        'div',
-	        { className: className,
-	          style: _extends({}, this.state.bgParallaxAnim, followObj),
-	          key: 'bgElem'
-	        },
-	        _react2['default'].createElement(
-	          'video',
-	          { loop: true, autoPlay: true,
-	            style: this.state.videoRect,
-	            onLoadedData: this.videoLoadedData
-	          },
-	          _react2['default'].createElement('source', { src: this.props.bg || this.props.img, type: this.props.bgType })
-	        )
-	      ) : _react2['default'].createElement('div', {
-	        className: className,
-	        style: _extends({
-	          backgroundImage: 'url(' + (this.props.bg || this.props.img) + ')'
-	        }, this.state.bgParallaxAnim, followObj),
+	    var className = ('banner-anim-elem-background ' + (this.props.bgPrefixCls || '')).trim();
+	    var dom = this.props.bgType.indexOf('video') >= 0 ? _react2.default.createElement(
+	      'div',
+	      { className: className,
+	        style: _extends({}, this.state.bgParallaxAnim, followObj),
 	        key: 'bgElem'
-	      });
-	      return dom;
-	    }
-	  }, {
-	    key: 'getFollowMouseMove',
-	    value: function getFollowMouseMove() {
-	      var _this5 = this;
+	      },
+	      _react2.default.createElement(
+	        'video',
+	        { loop: true, autoPlay: true,
+	          style: this.state.videoRect,
+	          onLoadedData: this.videoLoadedData
+	        },
+	        _react2.default.createElement('source', { src: this.props.bg || this.props.img, type: this.props.bgType })
+	      )
+	    ) : _react2.default.createElement('div', {
+	      className: className,
+	      style: _extends({
+	        backgroundImage: 'url(' + (this.props.bg || this.props.img) + ')'
+	      }, this.state.bgParallaxAnim, followObj),
+	      key: 'bgElem'
+	    });
+	    return dom;
+	  };
 	
-	      var onMouseMove = undefined;
-	      if (this.props.followParallax) {
-	        if (this.props.followParallax.delay) {
-	          onMouseMove = !this.delayTimeout ? null : this.state.onMouseMove;
-	          this.delayTimeout = this.delayTimeout || _rcTweenOneLibTicker2['default'].timeout(function () {
-	            _this5.setState({
-	              onMouseMove: _this5.onMouseMove
-	            });
-	          }, this.props.followParallax.delay);
-	        } else {
-	          onMouseMove = this.onMouseMove;
-	        }
-	      }
-	      return onMouseMove;
-	    }
-	  }, {
-	    key: 'getChildren',
-	    value: function getChildren() {
-	      var _this6 = this;
+	  Element.prototype.getFollowMouseMove = function getFollowMouseMove() {
+	    var _this5 = this;
 	
-	      if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
-	        return this.props.children;
-	      }
-	      var keys = this.props.followParallax.data.map(function (item) {
-	        return item.key;
-	      });
-	      var child = (0, _utils.toArrayChildren)(this.props.children).map(function (item) {
-	        var num = keys.indexOf(item.key);
-	        if (num >= 0) {
-	          var _ret2 = (function () {
-	            var props = (0, _objectAssign2['default'])({}, item.props);
-	            var style = (0, _objectAssign2['default'])({}, props.style);
-	            var data = _this6.props.followParallax.data[num];
-	            if (_this6.props.followParallax.transition) {
-	              style.transition = _this6.props.followParallax.transition;
-	            }
-	            (0, _utils.dataToArray)(data.type).map(_this6.followAnalysisType.bind(_this6, data)).forEach(function (_item) {
-	              return style[_item.cssName] = (0, _styleUtils.mergeStyle)(style[_item.cssName], _item.data);
-	            });
-	            props.style = style;
-	            return {
-	              v: _react2['default'].cloneElement(item, props)
-	            };
-	          })();
-	
-	          if (typeof _ret2 === 'object') return _ret2.v;
-	        }
-	        return item;
-	      });
-	      return child;
-	    }
-	  }, {
-	    key: 'animEnd',
-	    value: function animEnd() {
-	      var type = this.state.show ? 'enter' : 'leave';
-	      this.props.callBack(type);
-	      this.setState({ show: this.props.show });
-	    }
-	  }, {
-	    key: 'videoLoadedData',
-	    value: function videoLoadedData() {
-	      this.onResize();
-	      if (this.state.show) {
-	        if (window.addEventListener) {
-	          window.addEventListener('resize', this.onResize);
-	        } else {
-	          window.attachEvent('onresize', this.onResize);
-	        }
+	    var onMouseMove = void 0;
+	    if (this.props.followParallax) {
+	      if (this.props.followParallax.delay) {
+	        onMouseMove = !this.delayTimeout ? null : this.state.onMouseMove;
+	        this.delayTimeout = this.delayTimeout || _ticker2.default.timeout(function () {
+	          _this5.setState({
+	            onMouseMove: _this5.onMouseMove
+	          });
+	        }, this.props.followParallax.delay);
 	      } else {
-	        if (window.addEventListener) {
-	          window.removeEventListener('resize', this.onResize);
-	        } else {
-	          window.detachEvent('onresize', this.onResize);
-	        }
+	        onMouseMove = this.onMouseMove;
 	      }
 	    }
-	  }, {
-	    key: 'addScrollEvent',
-	    value: function addScrollEvent() {
-	      this.onScroll();
-	      this.isScroll = true;
+	    return onMouseMove;
+	  };
+	
+	  Element.prototype.getChildren = function getChildren() {
+	    var _this6 = this;
+	
+	    if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
+	      return this.props.children;
+	    }
+	    var keys = this.props.followParallax.data.map(function (item) {
+	      return item.key;
+	    });
+	    var child = (0, _utils.toArrayChildren)(this.props.children).map(function (item) {
+	      var num = keys.indexOf(item.key);
+	      if (num >= 0) {
+	        var _ret2 = function () {
+	          var props = (0, _objectAssign2.default)({}, item.props);
+	          var style = (0, _objectAssign2.default)({}, props.style);
+	          var data = _this6.props.followParallax.data[num];
+	          if (_this6.props.followParallax.transition) {
+	            style.transition = _this6.props.followParallax.transition;
+	          }
+	          (0, _utils.dataToArray)(data.type).map(_this6.followAnalysisType.bind(_this6, data)).forEach(function (_item) {
+	            return style[_item.cssName] = (0, _styleUtils.mergeStyle)(style[_item.cssName], _item.data);
+	          });
+	          props.style = style;
+	          return {
+	            v: _react2.default.cloneElement(item, props)
+	          };
+	        }();
+	
+	        if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+	      }
+	      return item;
+	    });
+	    return child;
+	  };
+	
+	  Element.prototype.animEnd = function animEnd() {
+	    var type = this.state.show ? 'enter' : 'leave';
+	    this.props.callBack(type);
+	    this.setState({ show: this.props.show });
+	  };
+	
+	  Element.prototype.videoLoadedData = function videoLoadedData() {
+	    this.onResize();
+	    if (this.state.show) {
 	      if (window.addEventListener) {
-	        window.addEventListener('scroll', this.onScroll);
+	        window.addEventListener('resize', this.onResize);
 	      } else {
-	        window.attachEvent('onscroll', this.onScroll);
+	        window.attachEvent('onresize', this.onResize);
+	      }
+	    } else {
+	      if (window.addEventListener) {
+	        window.removeEventListener('resize', this.onResize);
+	      } else {
+	        window.detachEvent('onresize', this.onResize);
 	      }
 	    }
-	  }, {
-	    key: 'followAnalysisType',
-	    value: function followAnalysisType(data, _type) {
-	      var type = (0, _styleUtils.getGsapType)(_type);
-	      var cssName = (0, _styleUtils.isConvert)(type);
-	      // 把 bgParallax 的合进来；
-	      var bgParallaxStyle = this.state.bgParallaxAnim || {};
-	      return {
-	        cssName: cssName,
-	        data: (0, _styleUtils.mergeStyle)(bgParallaxStyle[cssName] || '', this.getFollowStyle(type, data))
-	      };
-	    }
-	  }, {
-	    key: 'cancelRequestAnimationFrame',
-	    value: function cancelRequestAnimationFrame() {
-	      _rcTweenOneLibTicker2['default'].clear(this.timeoutID);
-	      _rcTweenOneLibTicker2['default'].clear(this.delayTimeout);
-	      this.delayTimeout = -1;
-	      this.timeoutID = -1;
-	    }
-	  }, {
-	    key: 'animChildren',
-	    value: function animChildren(props, style, bgElem) {
-	      if (this.tickerId) {
-	        _rcTweenOneLibTicker2['default'].clear(this.tickerId);
-	      }
-	      if (this.delayTimeout) {
-	        _rcTweenOneLibTicker2['default'].clear(this.delayTimeout);
-	        this.delayTimeout = null;
-	      }
-	      style.display = 'block';
-	      props.component = this.props.component;
-	      this.show = this.state.show;
-	      style.zIndex = this.state.show ? 1 : 0;
-	      props.children = this.props.show ? bgElem : [bgElem, this.getChildren()];
+	  };
 	
-	      var childrenToRender = _react2['default'].createElement(_rcTweenOne2['default'], props);
-	      var type = this.state.show ? 'enter' : 'leave';
-	      return this.props.animType(childrenToRender, type, this.props.direction, {
-	        ease: this.props.ease,
-	        duration: this.props.duration,
-	        onComplete: this.animEnd
-	      }, this.props.elemOffset);
+	  Element.prototype.addScrollEvent = function addScrollEvent() {
+	    this.onScroll();
+	    this.isScroll = true;
+	    if (window.addEventListener) {
+	      window.addEventListener('scroll', this.onScroll);
+	    } else {
+	      window.attachEvent('onscroll', this.onScroll);
 	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      var style = (0, _objectAssign2['default'])({}, props.style);
-	      style.display = props.show ? 'block' : 'none';
-	      style.position = 'absolute';
-	      style.width = '100%';
-	      props.style = style;
-	      props.className = ('banner-anim-elem ' + (this.props.prefixCls || '')).trim();
-	      delete props.direction;
-	      delete props.show;
-	      var bgElem = this.props.bg || this.props.img ? this.getImgOrVideo() : null;
-	      if (this.show === this.state.show) {
-	        style.transform = null;
-	        if (!this.state.show) {
-	          return _react2['default'].createElement(_rcTweenOne2['default'], props, bgElem);
-	        }
-	        props.onMouseEnter = this.onMouseEnter;
-	        props.onMouseMove = this.getFollowMouseMove();
-	        return _react2['default'].createElement(_rcTweenOne2['default'], props, [bgElem, this.getChildren()]);
+	  };
+	
+	  Element.prototype.followAnalysisType = function followAnalysisType(data, _type) {
+	    var type = (0, _styleUtils.getGsapType)(_type);
+	    var cssName = (0, _styleUtils.isConvert)(type);
+	    // 把 bgParallax 的合进来；
+	    var bgParallaxStyle = this.state.bgParallaxAnim || {};
+	    return {
+	      cssName: cssName,
+	      data: (0, _styleUtils.mergeStyle)(bgParallaxStyle[cssName] || '', this.getFollowStyle(type, data))
+	    };
+	  };
+	
+	  Element.prototype.cancelRequestAnimationFrame = function cancelRequestAnimationFrame() {
+	    _ticker2.default.clear(this.timeoutID);
+	    _ticker2.default.clear(this.delayTimeout);
+	    this.delayTimeout = -1;
+	    this.timeoutID = -1;
+	  };
+	
+	  Element.prototype.animChildren = function animChildren(props, style, bgElem) {
+	    if (this.tickerId) {
+	      _ticker2.default.clear(this.tickerId);
+	    }
+	    if (this.delayTimeout) {
+	      _ticker2.default.clear(this.delayTimeout);
+	      this.delayTimeout = null;
+	    }
+	    style.display = 'block';
+	    props.component = this.props.component;
+	    this.show = this.state.show;
+	    style.zIndex = this.state.show ? 1 : 0;
+	    props.children = this.props.show ? bgElem : [bgElem, this.getChildren()];
+	
+	    var childrenToRender = _react2.default.createElement(_rcTweenOne2.default, props);
+	    var type = this.state.show ? 'enter' : 'leave';
+	    return this.props.animType(childrenToRender, type, this.props.direction, {
+	      ease: this.props.ease,
+	      duration: this.props.duration,
+	      onComplete: this.animEnd
+	    }, this.props.elemOffset);
+	  };
+	
+	  Element.prototype.render = function render() {
+	    var props = (0, _objectAssign2.default)({}, this.props);
+	    var style = (0, _objectAssign2.default)({}, props.style);
+	    style.display = props.show ? 'block' : 'none';
+	    style.position = 'absolute';
+	    style.width = '100%';
+	    props.style = style;
+	    props.className = ('banner-anim-elem ' + (this.props.prefixCls || '')).trim();
+	    delete props.direction;
+	    delete props.show;
+	    var bgElem = this.props.bg || this.props.img ? this.getImgOrVideo() : null;
+	    if (this.show === this.state.show) {
+	      style.transform = null;
+	      if (!this.state.show) {
+	        return _react2.default.createElement(_rcTweenOne2.default, props, bgElem);
 	      }
-	      return this.animChildren(props, style, bgElem);
+	      props.onMouseEnter = this.onMouseEnter;
+	      props.onMouseMove = this.getFollowMouseMove();
+	      return _react2.default.createElement(_rcTweenOne2.default, props, [bgElem, this.getChildren()]);
 	    }
-	  }]);
+	    return this.animChildren(props, style, bgElem);
+	  };
 	
 	  return Element;
-	})(_react.Component);
+	}(_react.Component);
 	
 	Element.propTypes = {
 	  children: _react.PropTypes.any,
@@ -21420,7 +21441,7 @@
 	  callBack: noop
 	};
 	
-	exports['default'] = Element;
+	exports.default = Element;
 	module.exports = exports['default'];
 
 /***/ },
@@ -21430,7 +21451,7 @@
 	'use strict';
 	
 	var TweenOne = __webpack_require__(176);
-	TweenOne.TweenOneGroup = __webpack_require__(185);
+	TweenOne.TweenOneGroup = __webpack_require__(187);
 	module.exports = TweenOne;
 
 /***/ },
@@ -21439,19 +21460,9 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -21461,21 +21472,35 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _objectAssign = __webpack_require__(8);
+	var _objectAssign = __webpack_require__(177);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _util = __webpack_require__(177);
+	var _util = __webpack_require__(178);
 	
-	var _styleUtils = __webpack_require__(178);
+	var _styleUtils = __webpack_require__(179);
 	
-	var _TimeLine = __webpack_require__(179);
+	var _TimeLine = __webpack_require__(180);
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
-	var _ticker = __webpack_require__(182);
+	var _plugins = __webpack_require__(182);
+	
+	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	var _ticker = __webpack_require__(184);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
 	function noop() {}
 	
@@ -21483,175 +21508,166 @@
 	
 	var tickerIdNum = 0;
 	
-	var TweenOne = (function (_Component) {
+	var TweenOne = function (_Component) {
 	  _inherits(TweenOne, _Component);
 	
 	  function TweenOne() {
-	    var _this = this;
-	
 	    _classCallCheck(this, TweenOne);
 	
-	    _get(Object.getPrototypeOf(TweenOne.prototype), 'constructor', this).apply(this, arguments);
-	    this.rafID = -1;
-	    this.moment = this.props.moment || 0;
-	    this.state = {
-	      startMoment: this.props.moment,
-	      startFrame: _ticker2['default'].frame,
-	      paused: this.props.paused
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
+	    _this.rafID = -1;
+	    _this.moment = _this.props.moment || 0;
+	    _this.state = {
+	      startMoment: _this.props.moment,
+	      startFrame: _ticker2["default"].frame,
+	      paused: _this.props.paused
 	    };
 	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(TweenOne, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.dom = _reactDom2['default'].findDOMNode(this);
-	      this.start(this.props);
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var _this2 = this;
+	  TweenOne.prototype.componentDidMount = function componentDidMount() {
+	    this.dom = _reactDom2["default"].findDOMNode(this);
+	    this.start(this.props);
+	  };
 	
-	      var newStyle = nextProps.style;
-	      var styleEqual = (0, _util.objectEqual)(this.props.style, newStyle);
-	      // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
-	      if (!styleEqual) {
-	        if (this.rafID !== -1) {
-	          this.start(nextProps);
-	        }
-	      }
+	  TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var _this2 = this;
 	
-	      // 跳帧事件 moment;
-	      var newMoment = nextProps.moment;
-	      if (typeof newMoment === 'number' && newMoment !== this.moment) {
-	        this.setState({
-	          startMoment: newMoment,
-	          startFrame: _ticker2['default'].frame
-	        }, function () {
-	          if (_this2.rafID === -1 && !nextProps.paused) {
-	            (function () {
-	              _this2.timeLine.resetAnimData();
-	              var style = nextProps.style;
-	              _this2.dom.setAttribute('style', '');
-	              Object.keys(style).forEach(function (key) {
-	                _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
-	              });
-	              _this2.play();
-	            })();
-	          } else {
-	            _this2.raf();
-	          }
-	        });
-	      }
-	      // 动画处理
-	      var newAnimation = nextProps.animation;
-	      var currentAnimation = this.props.animation;
-	      var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
-	      if (!equal) {
-	        this.setState({
-	          startFrame: _ticker2['default'].frame
-	        }, function () {
-	          _this2.start(nextProps);
-	        });
-	      }
-	      // 暂停倒放
-	      if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-	        if (nextProps.paused) {
-	          this.cancelRequestAnimationFrame();
-	        } else {
-	          if (nextProps.reverse && nextProps.reverseDelay) {
-	            _ticker2['default'].timeout(this.restart, nextProps.reverseDelay);
-	          } else {
-	            this.restart();
-	          }
-	        }
+	    var newStyle = nextProps.style;
+	    var styleEqual = (0, _util.objectEqual)(this.props.style, newStyle);
+	    // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
+	    if (!styleEqual) {
+	      if (this.rafID !== -1) {
+	        this.start(nextProps);
 	      }
 	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      this.cancelRequestAnimationFrame();
-	    }
-	  }, {
-	    key: 'restart',
-	    value: function restart() {
-	      var _this3 = this;
 	
+	    // 跳帧事件 moment;
+	    var newMoment = nextProps.moment;
+	    if (typeof newMoment === 'number' && newMoment !== this.moment) {
 	      this.setState({
-	        startMoment: this.timeLine.progressTime,
-	        startFrame: _ticker2['default'].frame
+	        startMoment: newMoment,
+	        startFrame: _ticker2["default"].frame
 	      }, function () {
-	        _this3.play();
+	        if (_this2.rafID === -1 && !nextProps.paused) {
+	          (function () {
+	            _this2.timeLine.resetAnimData();
+	            var style = nextProps.style;
+	            _this2.dom.setAttribute('style', '');
+	            Object.keys(style).forEach(function (key) {
+	              _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	            });
+	            _this2.play();
+	          })();
+	        } else {
+	          _this2.raf();
+	        }
 	      });
 	    }
-	  }, {
-	    key: 'start',
-	    value: function start(props) {
-	      if (props.animation && Object.keys(props.animation).length) {
-	        this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation));
-	        // 开始动画
-	        this.play();
-	      }
+	    // 动画处理
+	    var newAnimation = nextProps.animation;
+	    var currentAnimation = this.props.animation;
+	    var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
+	    if (!equal) {
+	      this.setState({
+	        startFrame: _ticker2["default"].frame
+	      }, function () {
+	        _this2.start(nextProps);
+	      });
 	    }
-	  }, {
-	    key: 'play',
-	    value: function play() {
-	      this.cancelRequestAnimationFrame();
-	      this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
-	      this.raf();
-	      _ticker2['default'].wake(this.rafID, this.raf);
-	      tickerIdNum++;
-	    }
-	  }, {
-	    key: 'frame',
-	    value: function frame() {
-	      var moment = (_ticker2['default'].frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
-	      if (this.props.reverse) {
-	        moment = (this.state.startMoment || 0) - (_ticker2['default'].frame - this.state.startFrame) * perFrame;
-	      }
-	      moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
-	      moment = moment <= 0 ? 0 : moment;
-	      this.moment = moment;
-	      this.timeLine.onChange = this.props.onChange;
-	      this.timeLine.frame(moment);
-	    }
-	  }, {
-	    key: 'raf',
-	    value: function raf() {
-	      this.frame();
-	      if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
-	        return this.cancelRequestAnimationFrame();
-	      }
-	    }
-	  }, {
-	    key: 'cancelRequestAnimationFrame',
-	    value: function cancelRequestAnimationFrame() {
-	      _ticker2['default'].clear(this.rafID);
-	      this.rafID = -1;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      props.style = (0, _objectAssign2['default'])({}, this.props.style);
-	      for (var p in props.style) {
-	        if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
-	          // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
-	          var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
-	          for (var i = 0; i < transformArr.length; i++) {
-	            props.style[transformArr[i] + 'Filter'] = props.style[p];
-	          }
+	    // 暂停倒放
+	    if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
+	      if (nextProps.paused) {
+	        this.cancelRequestAnimationFrame();
+	      } else {
+	        if (nextProps.reverse && nextProps.reverseDelay) {
+	          _ticker2["default"].timeout(this.restart, nextProps.reverseDelay);
+	        } else {
+	          this.restart();
 	        }
 	      }
-	      return _react2['default'].createElement(this.props.component, props);
 	    }
-	  }]);
+	  };
+	
+	  TweenOne.prototype.componentWillUnmount = function componentWillUnmount() {
+	    this.cancelRequestAnimationFrame();
+	  };
+	
+	  TweenOne.prototype.restart = function restart() {
+	    var _this3 = this;
+	
+	    this.setState({
+	      startMoment: this.timeLine.progressTime,
+	      startFrame: _ticker2["default"].frame
+	    }, function () {
+	      _this3.play();
+	    });
+	  };
+	
+	  TweenOne.prototype.start = function start(props) {
+	    if (props.animation && Object.keys(props.animation).length) {
+	      this.timeLine = new _TimeLine2["default"](this.dom, (0, _util.dataToArray)(props.animation), this.props.attr);
+	      // 开始动画
+	      this.play();
+	    }
+	  };
+	
+	  TweenOne.prototype.play = function play() {
+	    this.cancelRequestAnimationFrame();
+	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
+	    this.raf();
+	    _ticker2["default"].wake(this.rafID, this.raf);
+	    tickerIdNum++;
+	  };
+	
+	  TweenOne.prototype.frame = function frame() {
+	    var moment = (_ticker2["default"].frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
+	    if (this.props.reverse) {
+	      moment = (this.state.startMoment || 0) - (_ticker2["default"].frame - this.state.startFrame) * perFrame;
+	    }
+	    moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
+	    moment = moment <= 0 ? 0 : moment;
+	    if (moment < this.moment) {
+	      this.timeLine.resetDefaultStyle();
+	    }
+	    this.moment = moment;
+	    this.timeLine.onChange = this.props.onChange;
+	    this.timeLine.frame(moment);
+	  };
+	
+	  TweenOne.prototype.raf = function raf() {
+	    this.frame();
+	    if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
+	      return this.cancelRequestAnimationFrame();
+	    }
+	  };
+	
+	  TweenOne.prototype.cancelRequestAnimationFrame = function cancelRequestAnimationFrame() {
+	    _ticker2["default"].clear(this.rafID);
+	    this.rafID = -1;
+	  };
+	
+	  TweenOne.prototype.render = function render() {
+	    var props = (0, _objectAssign2["default"])({}, this.props);
+	    props.style = (0, _objectAssign2["default"])({}, this.props.style);
+	    for (var p in props.style) {
+	      if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
+	        // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
+	        var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
+	        for (var i = 0; i < transformArr.length; i++) {
+	          props.style[transformArr[i] + 'Filter'] = props.style[p];
+	        }
+	      }
+	    }
+	    return _react2["default"].createElement(this.props.component, props);
+	  };
 	
 	  return TweenOne;
-	})(_react.Component);
+	}(_react.Component);
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	
@@ -21674,18 +21690,24 @@
 	  attr: 'style',
 	  onChange: noop
 	};
-	exports['default'] = TweenOne;
+	TweenOne.plugins = _plugins2["default"];
+	exports["default"] = TweenOne;
 	module.exports = exports['default'];
 
 /***/ },
 /* 177 */
+8,
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
 	exports.objectEqual = objectEqual;
@@ -21694,15 +21716,15 @@
 	exports.transformArguments = transformArguments;
 	exports.getChildrenFromProps = getChildrenFromProps;
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
 	function toArrayChildren(children) {
 	  var ret = [];
-	  _react2['default'].Children.forEach(children, function (c) {
+	  _react2["default"].Children.forEach(children, function (c) {
 	    ret.push(c);
 	  });
 	  return ret;
@@ -21732,7 +21754,7 @@
 	      var nextObj = obj2[i];
 	      for (var p in currentObj) {
 	        if (currentObj[p] !== nextObj[p]) {
-	          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
+	          if (_typeof(currentObj[p]) === 'object' && _typeof(nextObj[p]) === 'object') {
 	            equalBool = objectEqual(currentObj[p], nextObj[p]);
 	          } else {
 	            equalBool = false;
@@ -21749,7 +21771,7 @@
 	      return false;
 	    }
 	
-	    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+	    if (_typeof(obj1[key]) === 'object' && _typeof(obj2[key]) === 'object') {
 	      equalBool = objectEqual(obj1[key], obj2[key]);
 	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
 	      if (obj1[key].name !== obj2[key].name) {
@@ -21765,7 +21787,7 @@
 	      equalBool = false;
 	      return false;
 	    }
-	    if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
+	    if (_typeof(obj2[key]) === 'object' && _typeof(obj1[key]) === 'object') {
 	      equalBool = objectEqual(obj2[key], obj1[key]);
 	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
 	      if (obj1[key].name !== obj2[key].name) {
@@ -21836,7 +21858,7 @@
 	}
 	
 	function transformArguments(arg, key, i) {
-	  var result = undefined;
+	  var result = void 0;
 	  if (typeof arg === 'function') {
 	    result = arg({
 	      key: key,
@@ -21853,7 +21875,7 @@
 	}
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22273,40 +22295,44 @@
 
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Created by jljsj on 16/1/27.
-	 */
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _objectAssign = __webpack_require__(8);
+	var _objectAssign = __webpack_require__(177);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _tweenFunctions = __webpack_require__(180);
+	var _tweenFunctions = __webpack_require__(181);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _styleUtils = __webpack_require__(178);
+	var _plugins = __webpack_require__(182);
 	
-	var _styleUtils2 = _interopRequireDefault(_styleUtils);
+	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _BezierPlugin = __webpack_require__(181);
+	var _StylePlugin = __webpack_require__(183);
 	
-	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
+	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
 	
-	var DEFAULT_EASING = 'easeInOutQuad';
+	var _styleUtils = __webpack_require__(179);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	var DEFAULT_EASING = 'easeInOutQuad'; /* eslint-disable func-names */
+	/**
+	 * Created by jljsj on 16/1/27.
+	 */
+	
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
 	function noop() {}
+	_plugins2["default"].push(_StylePlugin2["default"]);
 	// 设置默认数据
 	function defaultData(vars, now) {
 	  return {
@@ -22325,8 +22351,11 @@
 	  };
 	}
 	
-	var timeLine = function timeLine(target, toData) {
+	var timeLine = function timeLine(target, toData, attr) {
+	  var _this = this;
+	
 	  this.target = target;
+	  this.attr = attr || 'style';
 	  // 记录总时间;
 	  this.totalTime = 0;
 	  // 记录当前时间;
@@ -22335,112 +22364,82 @@
 	  this.defaultData = [];
 	  // 每个的开始数据；
 	  this.start = {};
+	  // 开始默认的数据；
+	  this.startDefaultData = {};
+	  var data = [];
+	  toData.forEach(function (d, i) {
+	    var _d = (0, _objectAssign2["default"])({}, d);
+	    if (_this.attr === 'style') {
+	      data[i] = {};
+	      Object.keys(_d).forEach(function (key) {
+	        if (key in defaultData({}, 0)) {
+	          data[i][key] = _d[key];
+	          delete _d[key];
+	        }
+	      });
+	      data[i].style = _d;
+	      _this.startDefaultData.style = _this.target.getAttribute('style');
+	    } else if (_this.attr === 'attr') {
+	      Object.keys(_d).forEach(function (key) {
+	        if (key === 'style' && Array.isArray(d[key])) {
+	          throw new Error('Style should be the object.');
+	        }
+	        if (key === 'bezier') {
+	          _d.style = (0, _objectAssign2["default"])(_d.style || {}, { bezier: _d[key] });
+	          delete _d[key];
+	          _this.startDefaultData.style = _this.target.getAttribute('style');
+	        } else {
+	          _this.startDefaultData[key] = _this.target.getAttribute(key);
+	        }
+	      });
+	      data[i] = _d;
+	    }
+	  });
 	  // 动画过程
 	  this.tween = {};
 	  // 每帧的时间;
 	  this.perFrame = Math.round(1000 / 60);
 	  // 设置默认动画数据;
-	  this.setDefaultData(toData);
+	  this.setDefaultData(data);
 	};
 	var p = timeLine.prototype;
 	
-	p.getComputedStyle = function () {
-	  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-	};
-	
-	p.getTweenData = function (_key, vars) {
-	  var data = {
-	    data: {},
-	    dataType: {},
-	    dataUnit: {},
-	    dataCount: {}
-	  };
-	  var key = (0, _styleUtils.getGsapType)(_key);
-	  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-	    data.data[key] = (0, _styleUtils.parseColor)(vars);
-	    data.dataType[key] = 'color';
-	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
-	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
-	    data.dataType[key] = 'shadow';
-	  } else if (key === 'bezier') {
-	    data.data[key] = vars;
-	  } else if (key === 'scale') {
-	    data.data.scaleX = vars;
-	    data.data.scaleY = vars;
-	    data.dataType.scaleX = data.dataType.scaleY = 'other';
-	  } else {
-	    data.data[key] = vars;
-	    data.dataType[key] = 'other';
-	  }
-	  if (key !== 'bezier') {
-	    if (Array.isArray(data.data[key])) {
-	      data.dataUnit[key] = data.data[key].map(function (_item) {
-	        return _item.toString().replace(/[^a-z|%]/g, '');
-	      });
-	      data.dataCount[key] = data.data[key].map(function (_item) {
-	        return _item.toString().replace(/[^+|=|-]/g, '');
-	      });
-	      data.data[key] = data.data[key].map(function (_item) {
-	        return parseFloat(_item);
-	      });
-	    } else if (key === 'scale') {
-	      data.dataUnit.scaleX = data.data.scaleX.toString().replace(/[^a-z|%]/g, '');
-	      data.dataCount.scaleX = data.data.scaleX.toString().replace(/[^+|=|-]/g, '');
-	      data.data.scaleX = parseFloat(data.data.scaleX);
-	      data.dataUnit.scaleY = data.data.scaleY.toString().replace(/[^a-z|%]/g, '');
-	      data.dataCount.scaleY = data.data.scaleY.toString().replace(/[^+|=|-]/g, '');
-	      data.data.scaleY = parseFloat(data.data.scaleY);
-	    } else {
-	      data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
-	      data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-	      data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
-	    }
-	  }
-	  return data;
-	};
-	p.setDefaultData = function (vars) {
-	  var _this = this;
+	p.setDefaultData = function (_vars) {
+	  var _this2 = this;
 	
 	  var now = 0;
 	  var repeatMax = false;
-	  var data = vars.map(function (item) {
+	  var data = _vars.map(function (item) {
 	    now += item.delay || 0; // 加上延时，在没有播放过时；
 	    var tweenData = defaultData(item, now);
 	    tweenData.vars = {};
-	    tweenData.varsType = {};
-	    tweenData.varsUnit = {};
-	    tweenData.varsCount = {};
 	    Object.keys(item).forEach(function (_key) {
 	      if (!(_key in tweenData)) {
-	        var _data = _this.getTweenData(_key, item[_key]);
-	        var key = (0, _styleUtils.getGsapType)(_key);
-	        if (!(_key in _this.target) || _styleUtils2['default'].filter.indexOf(key) >= 0) {
-	          tweenData.vars.css = tweenData.vars.css || {};
-	          if (key === 'scale') {
-	            tweenData.vars.css.scaleX = _data.data.scaleX;
-	            tweenData.vars.css.scaleY = _data.data.scaleY;
-	          } else {
-	            tweenData.vars.css[key] = _data.data[key];
-	          }
-	        } else {
-	          tweenData.vars[key] = _data.data[key];
+	        var _data = item[_key];
+	        if (_key in _plugins2["default"]) {
+	          tweenData.vars[_key] = new _plugins2["default"][_key](_this2.target, _data, tweenData.type);
+	        } else if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+	          tweenData.vars[_key] = { type: 'color', vars: (0, _styleUtils.parseColor)(_data) };
+	        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
+	          var vars = parseFloat(_data);
+	          var unit = _data.toString().replace(/[^a-z|%]/g, '');
+	          var count = _data.toString().replace(/[^+|=|-]/g, '');
+	          tweenData.vars[_key] = { unit: unit, vars: vars, count: count };
+	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2["default"]) {
+	          /*
+	           * SVG 情况如下：
+	           * points: ***,*** ***,***
+	           * - split(' ') => ['***,***','***,**'] split(',') => [[***,***],[***,***]];
+	           * - array 里的 array.trim(',') => array.join(' ');
+	           * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
+	           * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
+	           */
+	          tweenData.vars[_key] = new _plugins2["default"].SVGMorph(_this2.target, _data, _key);
 	        }
-	        if (key === 'scale') {
-	          tweenData.varsType.scaleX = _data.dataType.scaleX;
-	          tweenData.varsUnit.scaleX = _data.dataUnit.scaleX;
-	          tweenData.varsCount.scaleX = _data.dataCount.scaleX;
-	          tweenData.varsType.scaleY = _data.dataType.scaleY;
-	          tweenData.varsUnit.scaleY = _data.dataUnit.scaleY;
-	          tweenData.varsCount.scaleY = _data.dataCount.scaleY;
-	          return;
-	        }
-	        tweenData.varsType[key] = _data.dataType[key];
-	        tweenData.varsUnit[key] = _data.dataUnit[key];
-	        tweenData.varsCount[key] = _data.dataCount[key];
 	      }
 	    });
 	    if (tweenData.yoyo && !tweenData.repeat) {
-	      console.warn('Warning: yoyo must be used together with repeat;');
+	      console.warn('Warning: yoyo must be used together with repeat;'); // eslint-disable-line
 	    }
 	    if (tweenData.repeat === -1) {
 	      repeatMax = true;
@@ -22451,6 +22450,7 @@
 	    } else {
 	      now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
 	    }
+	    tweenData.mode = '';
 	    return tweenData;
 	  });
 	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
@@ -22459,7 +22459,7 @@
 	p.convertToMarks = function (style, num, unit) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
 	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = undefined;
+	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
 	  } else {
@@ -22468,77 +22468,39 @@
 	  }
 	  return pix;
 	};
-	p.convertToMarksArray = function (unit, data, i) {
-	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
-	  var endUnit = unit[i];
-	  if (startUnit === endUnit) {
-	    return parseFloat(data);
+	p.convertToPixels = function (style, num, unit) {
+	  var horiz = /(?:Left|Right|Width)/i.test(style);
+	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
+	  var pix = void 0;
+	  if (unit === '%') {
+	    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+	  } else {
+	    pix = parseFloat(num) * 16;
 	  }
-	  return this.convertToMarks('shadow', data, endUnit);
+	  return pix;
 	};
-	p.getAnimStartCssData = function (vars, i) {
-	  var _this2 = this;
-	
-	  var computedStyle = this.getComputedStyle();
-	  var style = {};
-	  Object.keys(vars).forEach(function (_key) {
-	    var key = (0, _styleUtils.getGsapType)(_key);
-	    var cssName = (0, _styleUtils.isConvert)(key);
-	    var startData = computedStyle[cssName];
-	    if (!startData || startData === 'none' || startData === 'auto') {
-	      startData = '';
-	    }
-	    var transform = undefined;
-	    var endUnit = undefined;
-	    var startUnit = undefined;
-	    if (cssName === 'transform') {
-	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
-	      startData = computedStyle[_this2.transform];
-	      transform = (0, _styleUtils.getTransform)(startData);
-	      style.transform = transform;
-	    } else if (cssName === 'bezier') {
-	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
-	      startData = computedStyle[_this2.transform];
-	      var bezier = style.bezier = new _BezierPlugin2['default'](startData === 'none' ? '' : startData, vars.bezier);
-	      transform = vars.type === 'from' ? bezier.set(1) : bezier.set(0);
-	      transform = (0, _styleUtils.getTransform)(transform);
-	    } else if (cssName === 'filter') {
-	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
-	      startData = computedStyle[_this2.filterName];
-	      _this2.filterObject = (0, _objectAssign2['default'])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
-	      startData = _this2.filterObject[_key] || 0;
-	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
-	      endUnit = _this2.defaultData[i].varsUnit[_key];
-	      if (endUnit !== startUnit) {
-	        startData = _this2.convertToMarks(_key, startData, endUnit);
-	      }
-	      style[_key] = parseFloat(startData);
-	    } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-	      style[cssName] = (0, _styleUtils.parseColor)(startData);
-	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
-	      startData = (0, _styleUtils.parseShadow)(startData);
-	      endUnit = _this2.defaultData[i].varsUnit[_key];
-	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit));
-	      style[cssName] = startData;
-	    } else {
-	      // 计算单位， em rem % px;
-	      endUnit = _this2.defaultData[i].varsUnit[cssName];
-	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
-	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
-	        startData = _this2.convertToMarks(cssName, startData, endUnit);
-	      }
-	      style[cssName] = parseFloat(startData || 0);
-	    }
-	  });
-	  return style;
-	};
-	p.getAnimStartData = function (item, i) {
+	p.getAnimStartData = function (item) {
 	  var _this3 = this;
 	
 	  var start = {};
 	  Object.keys(item).forEach(function (_key) {
-	    if (_key === 'css') {
-	      start[_key] = _this3.getAnimStartCssData(item[_key], i);
+	    if (_key in _plugins2["default"] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	      start[_key] = item[_key].getAnimStart();
+	      return;
+	    }
+	    if (_this3.attr === 'attr') {
+	      // 除了d和这points外的标签动画；
+	      var attribute = _this3.target.getAttribute(_key);
+	      var data = attribute === 'null' || !attribute ? 0 : attribute;
+	      if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+	        data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
+	        data = (0, _styleUtils.parseColor)(data);
+	        start[_key] = data;
+	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
+	        var unit = data.toString().replace(/[^a-z|%]/g, '');
+	        start[_key] = unit !== item[_key].unit ? _this3.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
+	      }
+	      // start[_key] = data;
 	      return;
 	    }
 	    start[_key] = _this3.target[_key] || 0;
@@ -22548,222 +22510,103 @@
 	p.setAnimData = function (data) {
 	  var _this4 = this;
 	
-	  var style = this.target.style;
 	  Object.keys(data).forEach(function (key) {
-	    if (key === 'css') {
-	      var _ret = (function () {
-	        var _data = data[key];
-	        Object.keys(_data).forEach(function (_key) {
-	          if (_key === 'transform') {
-	            var t = _data[_key];
-	            var perspective = t.perspective;
-	            var angle = t.rotate;
-	            var rotateX = t.rotateX;
-	            var rotateY = t.rotateY;
-	            var sx = t.scaleX;
-	            var sy = t.scaleY;
-	            var sz = t.scaleZ;
-	            var skx = t.skewX;
-	            var sky = t.skewY;
-	            var translateX = t.translateX;
-	            var translateY = t.translateY;
-	            var translateZ = t.translateZ;
-	            var xPercent = t.xPercent || 0;
-	            var yPercent = t.yPercent || 0;
-	            var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
-	            var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
-	            var an = angle ? 'rotate(' + angle + 'deg)' : '';
-	            var ss = undefined;
-	            if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-	              var matrix = '1,0,0,1,' + translateX + ',' + translateY;
-	              ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	              // IE 9 没 3d;
-	              style[_this4.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
-	              return;
-	            }
-	            ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
-	            var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
-	            var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
-	            var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	            style[_this4.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
-	            return;
-	          } else if (_styleUtils2['default'].filter.indexOf(_key) >= 0) {
-	            _this4.filterObject[_key] = _data[_key];
-	            var filterStyle = '';
-	            Object.keys(_this4.filterObject).forEach(function (filterKey) {
-	              filterStyle += ' ' + filterKey + '(' + _this4.filterObject[filterKey] + ')';
-	            });
-	            style[_this4.filterName] = filterStyle.trim();
-	            return;
-	          }
-	          style[_key] = data[key][_key];
-	        });
-	        return {
-	          v: undefined
-	        };
-	      })();
-	
-	      if (typeof _ret === 'object') return _ret.v;
+	    if (key in _plugins2["default"] || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
+	      return;
 	    }
 	    _this4.target[key] = data[key];
 	  });
 	};
-	p.setArrayRatio = function (ratio, start, vars, unit, type) {
-	  var _vars = vars.map(function (endData, i) {
-	    var startData = start[i] || 0;
-	    return (endData - startData) * ratio + startData + unit[i];
-	  });
-	  if (type === 'color') {
-	    return (0, _styleUtils.getColor)(_vars);
-	  } else if (type === 'shadow') {
-	    var s = _vars.slice(0, 3);
-	    var c = _vars.slice(3, _vars.length);
-	    var color = (0, _styleUtils.getColor)(c);
-	    return s.join(' ') + ' ' + color;
-	  }
-	  return _vars;
-	};
-	
-	p.setStyleRatio = function (ratio, start, vars, unit, count, type) {
-	  var _this5 = this;
-	
-	  var style = {};
-	  if (start.transform) {
-	    style.transform = (0, _objectAssign2['default'])({}, start.transform, this.tween.css ? this.tween.css.transform : {});
-	  }
-	  Object.keys(vars).forEach(function (key) {
-	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
-	    var startVars = _isTransform ? start.transform[key] : start[key];
-	    var endVars = vars[key];
-	    var _unit = unit[key] ? unit[key] : 0;
-	    var _count = count[key];
-	    if (_isTransform) {
-	      if (_unit === '%' || _unit === 'em' || _unit === 'rem') {
-	        // translateX translateY => %
-	        var pName = undefined;
-	        var data = undefined;
-	        if (key === 'translateX') {
-	          data = start.transform.translateX;
-	          pName = 'xPercent';
-	        } else {
-	          data = start.transform.translateY;
-	          pName = 'yPercent';
-	        }
-	        if (_count.charAt(1) !== '=') {
-	          style.transform[key] = data - data * ratio;
-	        }
-	        style.transform[pName] = endVars * ratio + _unit;
-	      } else {
-	        if (_count.charAt(1) === '=') {
-	          style.transform[key] = startVars + endVars * ratio;
-	          return;
-	        }
-	        style.transform[key] = (endVars - startVars) * ratio + startVars;
-	      }
-	      return;
-	    } else if (key === 'bezier') {
-	      var bezier = start[key];
-	      style.transform = (0, _styleUtils.getTransform)(bezier.set(ratio));
-	      return;
-	    } else if (Array.isArray(endVars)) {
-	      var _type = type[key];
-	      style[key] = _this5.setArrayRatio(ratio, startVars, endVars, _unit, _type);
-	      return;
-	    }
-	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
-	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-	    _unit = _unit || (_styleUtils2['default'].filter.indexOf(key) >= 0 ? '' : styleUnit);
-	    if (_count.charAt(1) === '=') {
-	      style[key] = startVars + endVars * ratio + _unit;
-	      return;
-	    }
-	    style[key] = (endVars - startVars) * ratio + startVars + _unit;
-	  });
-	  return style;
-	};
 	
 	p.setRatio = function (ratio, endData, i) {
-	  var _this6 = this;
+	  var _this5 = this;
 	
 	  Object.keys(endData.vars).forEach(function (_key) {
-	    var key = (0, _styleUtils.getGsapType)(_key);
+	    if (_key in _plugins2["default"] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	      endData.vars[_key].setRatio(ratio, _this5.tween);
+	      return;
+	    }
 	    var endVars = endData.vars[_key];
-	    var startVars = _this6.start[i][key];
-	    var unit = _this6.defaultData[i].varsUnit;
-	    var count = _this6.defaultData[i].varsCount;
-	    var type = _this6.defaultData[i].varsType;
-	    if (typeof endVars === 'object' && _key === 'css') {
-	      _this6.tween.css = (0, _objectAssign2['default'])({}, _this6.tween.css, _this6.setStyleRatio(ratio, startVars, endVars, unit, count, type));
-	    } else if (Array.isArray(endVars)) {
-	      _this6.tween[key] = _this6.setArrayRatio(ratio, startVars, endVars, unit[key]);
-	    } else {
-	      _this6.tween[key] = count[key].charAt(1) === '=' ? startVars + endVars * ratio : (endVars - startVars) * ratio + startVars;
+	    var startVars = _this5.start[i][_key];
+	    var data = void 0;
+	    if (_this5.attr === 'attr') {
+	      // 除了d和这points外的标签动画；
+	      if (!endVars.type) {
+	        data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit : (endVars.vars - startVars) * ratio + startVars + endVars.unit;
+	        _this5.target.setAttribute(_key, data);
+	      } else if (endVars.type === 'color') {
+	        if (endVars.vars.length === 3 && startVars.length === 4) {
+	          endVars.vars[3] = 1;
+	        }
+	        data = endVars.vars.map(function (_endData, _i) {
+	          var startData = startVars[_i] || 0;
+	          return (_endData - startData) * ratio + startData;
+	        });
+	        _this5.target.setAttribute(_key, (0, _styleUtils.getColor)(data));
+	      }
 	    }
 	  });
 	  this.setAnimData(this.tween);
 	};
 	p.render = function () {
-	  var _this7 = this;
+	  var _this6 = this;
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this7.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
-	    repeatNum = _this7.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    repeatNum = _this6.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this7.progressTime - initTime;
-	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime < _this7.perFrame) {
-	      // 重新开始, 在第一秒触发时调用;
-	      item.onRepeat();
-	    }
+	    var progressTime = _this6.progressTime - initTime;
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay >= 0 && !_this7.start[i]) {
-	      _this7.start[i] = _this7.getAnimStartData(item.vars, i);
-	      _this7.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	    if (progressTime + fromDelay >= 0 && !_this6.start[i]) {
+	      _this6.start[i] = _this6.getAnimStartData(item.vars);
+	      // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
+	      var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay) || 0;
+	      st = st < 0 ? 0 : st;
+	      _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this7.perFrame) {
-	      // 状态
-	      var mode = 'onUpdate';
-	      // 开始 onStart
-	      if (progressTime < _this7.perFrame) {
-	        item.onStart();
-	        mode = 'onStart';
-	      }
-	      progressTime = progressTime < 0 ? 0 : progressTime;
-	      progressTime = progressTime > item.duration ? item.duration : progressTime;
-	      var ratio = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
-	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        ratio = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
-	      }
-	      // 当前点生成样式;
-	      _this7.setRatio(ratio, item, i);
-	
-	      mode = progressTime === item.duration ? 'onComplete' : mode;
-	
-	      if (mode === 'onUpdate') {
-	        // update 事件
-	        item.onUpdate(ratio);
-	      }
-	
-	      _this7.onChange({
-	        moment: _this7.progressTime,
-	        item: item,
-	        tween: _this7.tween,
-	        index: i,
-	        mode: mode
-	      });
-	      // complete 事件
-	      if (mode === 'onComplete') {
+	    // onRepeat 处理
+	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
+	      // 重新开始, 在第一秒触发时调用;
+	      item.onRepeat();
+	    }
+	    if (progressTime + fromDelay >= 0 && progressTime < _this6.perFrame && repeatNum <= 0) {
+	      item.mode = 'onStart';
+	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	      item.onStart();
+	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
+	      if (item.mode !== 'reset') {
 	        item.onComplete();
 	      }
+	      item.mode = 'onComplete';
+	    } else if (progressTime >= 0 && progressTime < item.duration) {
+	      item.mode = 'onUpdate';
+	      progressTime = progressTime < 0 ? 0 : progressTime;
+	      progressTime = progressTime > item.duration ? item.duration : progressTime;
+	      var ratio = _tweenFunctions2["default"][item.ease](progressTime, 0, 1, item.duration);
+	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
+	        ratio = _tweenFunctions2["default"][item.ease](progressTime, 1, 0, item.duration);
+	      }
+	      _this6.setRatio(ratio, item, i);
+	      item.onUpdate(ratio);
+	    }
+	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
+	      _this6.onChange({
+	        moment: _this6.progressTime,
+	        item: item,
+	        tween: _this6.tween,
+	        index: i,
+	        mode: item.mode
+	      });
 	    }
 	  });
 	};
@@ -22771,19 +22614,33 @@
 	p.frame = function (moment) {
 	  this.progressTime = moment;
 	  this.render();
-	  return this.animStyle;
 	};
 	p.resetAnimData = function () {
 	  this.tween = {};
 	  this.start = {};
 	};
 	
+	p.resetDefaultStyle = function () {
+	  var _this7 = this;
+	
+	  this.tween = {};
+	  this.defaultData = this.defaultData.map(function (item) {
+	    item.mode = 'reset';
+	    return item;
+	  });
+	  Object.keys(this.startDefaultData).forEach(function (key) {
+	    if (!(key in defaultData({}, 0))) {
+	      _this7.target.setAttribute(key, _this7.startDefaultData[key]);
+	    }
+	  });
+	};
+	
 	p.onChange = noop;
-	exports['default'] = timeLine;
+	exports["default"] = timeLine;
 	module.exports = exports['default'];
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23038,534 +22895,361 @@
 
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports) {
 
-	/**
-	 * Created by jljsj on 15/12/22.
-	 * The algorithm is GSAP BezierPlugin VERSION: beta 1.3.4
-	 */
-	'use strict';
+	"use strict";
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var _RAD2DEG = 180 / Math.PI;
-	var _r1 = [];
-	var _r2 = [];
-	var _r3 = [];
-	var _corProps = {};
-	var _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
-	function createMatrix(style) {
-	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || {};
-	}
-	
-	var GsapBezier = {
-	  Segment: function Segment(a, b, c, d) {
-	    this.a = a;
-	    this.b = b;
-	    this.c = c;
-	    this.d = d;
-	    this.da = d - a;
-	    this.ca = c - a;
-	    this.ba = b - a;
-	  },
-	  cubicToQuadratic: function cubicToQuadratic(a, b, c, d) {
-	    var q1 = { a: a };
-	    var q2 = {};
-	    var q3 = {};
-	    var q4 = { c: d };
-	    var mab = (a + b) / 2;
-	    var mbc = (b + c) / 2;
-	    var mcd = (c + d) / 2;
-	    var mabc = (mab + mbc) / 2;
-	    var mbcd = (mbc + mcd) / 2;
-	    var m8 = (mbcd - mabc) / 8;
-	    q1.b = mab + (a - mab) / 4;
-	    q2.b = mabc + m8;
-	    q1.c = q2.a = (q1.b + q2.b) / 2;
-	    q2.c = q3.a = (mabc + mbcd) / 2;
-	    q3.b = mbcd - m8;
-	    q4.b = mcd + (d - mcd) / 4;
-	    q3.c = q4.a = (q3.b + q4.b) / 2;
-	    return [q1, q2, q3, q4];
-	  },
-	  calculateControlPoints: function calculateControlPoints(a, curviness, quad, basic, correlate) {
-	    var l = a.length - 1;
-	    var i = undefined;
-	    var ii = 0;
-	    var p1 = undefined;
-	    var p2 = undefined;
-	    var p3 = undefined;
-	    var seg = undefined;
-	    var m1 = undefined;
-	    var m2 = undefined;
-	    var mm = undefined;
-	    var cp2 = undefined;
-	    var qb = undefined;
-	    var r1 = undefined;
-	    var r2 = undefined;
-	    var tl = undefined;
-	    var cp1 = a[0].a;
-	    for (i = 0; i < l; i++) {
-	      seg = a[ii];
-	      p1 = seg.a;
-	      p2 = seg.d;
-	      p3 = a[ii + 1].d;
-	
-	      if (correlate) {
-	        r1 = _r1[i];
-	        r2 = _r2[i];
-	        tl = (r2 + r1) * curviness * 0.25 / (basic ? 0.5 : _r3[i] || 0.5);
-	        var _aa = r1 !== 0 ? tl / r1 : 0;
-	        var _a = basic ? curviness * 0.5 : _aa;
-	        m1 = p2 - (p2 - p1) * _a;
-	        var bb = r2 !== 0 ? tl / r2 : 0;
-	        var b = basic ? curviness * 0.5 : bb;
-	        m2 = p2 + (p3 - p2) * b;
-	        mm = p2 - (m1 + ((m2 - m1) * (r1 * 3 / (r1 + r2) + 0.5) / 4 || 0));
-	      } else {
-	        m1 = p2 - (p2 - p1) * curviness * 0.5;
-	        m2 = p2 + (p3 - p2) * curviness * 0.5;
-	        mm = p2 - (m1 + m2) / 2;
-	      }
-	      m1 += mm;
-	      m2 += mm;
-	
-	      seg.c = cp2 = m1;
-	      if (i !== 0) {
-	        seg.b = cp1;
-	      } else {
-	        seg.b = cp1 = seg.a + (seg.c - seg.a) * 0.6;
-	      }
-	
-	      seg.da = p2 - p1;
-	      seg.ca = cp2 - p1;
-	      seg.ba = cp1 - p1;
-	
-	      if (quad) {
-	        qb = this.cubicToQuadratic(p1, cp1, cp2, p2);
-	        a.splice(ii, 1, qb[0], qb[1], qb[2], qb[3]);
-	        ii += 4;
-	      } else {
-	        ii++;
-	      }
-	
-	      cp1 = m2;
-	    }
-	    seg = a[ii];
-	    seg.b = cp1;
-	    seg.c = cp1 + (seg.d - cp1) * 0.4;
-	    seg.da = seg.d - seg.a;
-	    seg.ca = seg.c - seg.a;
-	    seg.ba = cp1 - seg.a;
-	    if (quad) {
-	      qb = this.cubicToQuadratic(seg.a, cp1, seg.c, seg.d);
-	      a.splice(ii, 1, qb[0], qb[1], qb[2], qb[3]);
-	    }
-	  },
-	  parseAnchors: function parseAnchors(_values, p, correlate, prepend) {
-	    var a = [];
-	    var l = undefined;
-	    var i = undefined;
-	    var p1 = undefined;
-	    var p2 = undefined;
-	    var p3 = undefined;
-	    var tmp = undefined;
-	    var values = _values;
-	    if (prepend) {
-	      values = [prepend].concat(values);
-	      i = values.length;
-	      while (--i > -1) {
-	        tmp = values[i][p];
-	        if (typeof tmp === 'string' && tmp.charAt(1) === '=') {
-	          values[i][p] = prepend[p] + Number(tmp.charAt(0) + tmp.substr(2));
-	        }
-	      }
-	    }
-	    l = values.length - 2;
-	    if (l < 0) {
-	      a[0] = new this.Segment(values[0][p], 0, 0, values[l < -1 ? 0 : 1][p]);
-	      return a;
-	    }
-	    for (i = 0; i < l; i++) {
-	      p1 = values[i][p];
-	      p2 = values[i + 1][p];
-	      a[i] = new this.Segment(p1, 0, 0, p2);
-	      if (correlate) {
-	        p3 = values[i + 2][p];
-	        _r1[i] = (_r1[i] || 0) + (p2 - p1) * (p2 - p1);
-	        _r2[i] = (_r2[i] || 0) + (p3 - p2) * (p3 - p2);
-	      }
-	    }
-	    a[i] = new this.Segment(values[i][p], 0, 0, values[i + 1][p]);
-	    return a;
-	  },
-	  bezierThrough: function bezierThrough(_values, _curviness, quadratic, basic, __correlate, _prepend) {
-	    var values = _values;
-	    var curviness = _curviness;
-	    var correlate = __correlate;
-	    var prepend = _prepend;
-	    var obj = {};
-	    var props = [];
-	    var first = prepend || values[0];
-	    var i = undefined;
-	    var p = undefined;
-	    var a = undefined;
-	    var j = undefined;
-	    var r = undefined;
-	    var l = undefined;
-	    var seamless = undefined;
-	    var last = undefined;
-	    correlate = typeof correlate === 'string' ? ',' + correlate + ',' : _correlate;
-	    if (curviness === null) {
-	      curviness = 1;
-	    }
-	    Object.keys(values[0]).forEach(function (key) {
-	      props.push(key);
-	    });
-	    if (values.length > 1) {
-	      last = values[values.length - 1];
-	      seamless = true;
-	      i = props.length;
-	      while (--i > -1) {
-	        p = props[i];
-	        if (Math.abs(first[p] - last[p]) > 0.05) {
-	          seamless = false;
-	          break;
-	        }
-	      }
-	      if (seamless) {
-	        values = values.concat();
-	        if (prepend) {
-	          values.unshift(prepend);
-	        }
-	        values.push(values[1]);
-	        prepend = values[values.length - 3];
-	      }
-	    }
-	    _r1.length = _r2.length = _r3.length = 0;
-	    i = props.length;
-	    while (--i > -1) {
-	      p = props[i];
-	      _corProps[p] = correlate.indexOf(',' + p + ',') !== -1;
-	      obj[p] = this.parseAnchors(values, p, _corProps[p], prepend);
-	    }
-	    i = _r1.length;
-	    while (--i > -1) {
-	      _r1[i] = Math.sqrt(_r1[i]);
-	      _r2[i] = Math.sqrt(_r2[i]);
-	    }
-	    if (!basic) {
-	      i = props.length;
-	      while (--i > -1) {
-	        if (_corProps[p]) {
-	          a = obj[props[i]];
-	          l = a.length - 1;
-	          for (j = 0; j < l; j++) {
-	            r = a[j + 1].da / _r2[j] + a[j].da / _r1[j];
-	            _r3[j] = (_r3[j] || 0) + r * r;
-	          }
-	        }
-	      }
-	      i = _r3.length;
-	      while (--i > -1) {
-	        _r3[i] = Math.sqrt(_r3[i]);
-	      }
-	    }
-	    i = props.length;
-	    j = quadratic ? 4 : 1;
-	    while (--i > -1) {
-	      p = props[i];
-	      a = obj[p];
-	      this.calculateControlPoints(a, curviness, quadratic, basic, _corProps[p]);
-	      if (seamless) {
-	        a.splice(0, j);
-	        a.splice(a.length - j, j);
-	      }
-	    }
-	    return obj;
-	  },
-	  parseBezierData: function parseBezierData(data) {
-	    var values = data.vars.concat();
-	    var type = data.type;
-	    var prepend = data.startPoint;
-	
-	    var obj = {};
-	    var inc = type === 'cubic' ? 3 : 2;
-	    var soft = type === 'soft';
-	    var a = undefined;
-	    var b = undefined;
-	    var c = undefined;
-	    var d = undefined;
-	    var cur = undefined;
-	    var l = undefined;
-	    var p = undefined;
-	    var cnt = undefined;
-	    var tmp = undefined;
-	    if (soft) {
-	      values.splice(0, 0, prepend);
-	    }
-	
-	    if (values === null || values.length < inc + 1) {
-	      return console.error('invalid Bezier data');
-	    }
-	    for (var i = 1; i >= 0; i--) {
-	      p = i ? 'x' : 'y';
-	      obj[p] = cur = [];
-	      cnt = 0;
-	      for (var j = 0; j < values.length; j++) {
-	        tmp = values[j][p];
-	        var _a = typeof tmp === 'string' && tmp.charAt(1) === '=' ? prepend[p] + Number(tmp.charAt(0) + tmp.substr(2)) : Number(tmp);
-	        a = prepend === null ? values[j][p] : _a;
-	        if (soft && j > 1 && j < values.length - 1) {
-	          cur[cnt++] = (a + cur[cnt - 2]) / 2;
-	        }
-	        cur[cnt++] = a;
-	      }
-	      l = cnt - inc + 1;
-	      cnt = 0;
-	      for (var jj = 0; jj < l; jj += inc) {
-	        a = cur[jj];
-	        b = cur[jj + 1];
-	        c = cur[jj + 2];
-	        d = inc === 2 ? 0 : cur[jj + 3];
-	        cur[cnt++] = tmp = inc === 3 ? new this.Segment(a, b, c, d) : new this.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
-	      }
-	      cur.length = cnt;
-	    }
-	    return obj;
-	  },
-	  addCubicLengths: function addCubicLengths(a, steps, resolution) {
-	    var inc = 1 / resolution;
-	    var j = a.length;
-	    var d = undefined;
-	    var d1 = undefined;
-	    var s = undefined;
-	    var da = undefined;
-	    var ca = undefined;
-	    var ba = undefined;
-	    var p = undefined;
-	    var i = undefined;
-	    var inv = undefined;
-	    var bez = undefined;
-	    var index = undefined;
-	    while (--j > -1) {
-	      bez = a[j];
-	      s = bez.a;
-	      da = bez.d - s;
-	      ca = bez.c - s;
-	      ba = bez.b - s;
-	      d = d1 = 0;
-	      for (i = 1; i <= resolution; i++) {
-	        p = inc * i;
-	        inv = 1 - p;
-	        d = d1 - (d1 = (p * p * da + 3 * inv * (p * ca + inv * ba)) * p);
-	        index = j * resolution + i - 1;
-	        steps[index] = (steps[index] || 0) + d * d;
-	      }
-	    }
-	  },
-	  parseLengthData: function parseLengthData(obj, _resolution) {
-	    var _this = this;
-	
-	    var resolution = _resolution || 6;
-	    var a = [];
-	    var lengths = [];
-	    var threshold = resolution - 1;
-	    var segments = [];
-	    var d = 0;
-	    var total = 0;
-	    var curLS = [];
-	    Object.keys(obj).forEach(function (key) {
-	      _this.addCubicLengths(obj[key], a, resolution);
-	    });
-	    a.forEach(function (c, i) {
-	      d += Math.sqrt(c);
-	      var index = i % resolution;
-	      curLS[index] = d;
-	      if (index === threshold) {
-	        total += d;
-	        index = i / resolution >> 0;
-	        segments[index] = curLS;
-	        lengths[index] = total;
-	        d = 0;
-	        curLS = [];
-	      }
-	    });
-	    return { length: total, lengths: lengths, segments: segments };
-	  }
+	/* eslint-disable func-names */
+	var Plugins = function Plugins() {};
+	var p = Plugins.prototype;
+	p.push = function (plugin) {
+	  this[plugin.prototype.name] = plugin;
 	};
-	
-	function Bezier(transform, obj) {
-	  this.defaultData = this.getDefaultData(obj);
-	  var matrix = createMatrix(transform || '');
-	  // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
-	  this.defaultData.startPoint = { x: matrix.e, y: matrix.f };
-	  this.init();
-	}
-	Bezier.prototype = {
-	  getDefaultData: function getDefaultData(obj) {
-	    return {
-	      type: obj.type || 'soft',
-	      autoRotate: obj.autoRotate || false,
-	      vars: obj.vars || {},
-	      startPoint: null
-	    };
-	  },
-	  init: function init() {
-	    var vars = this.defaultData;
-	    var autoRotate = vars.autoRotate;
-	    this._timeRes = !vars.timeResolution ? 6 : parseInt(vars.timeResolution, 10);
-	    var a = autoRotate === true ? 0 : Number(autoRotate);
-	    var b = autoRotate instanceof Array ? autoRotate : [['x', 'y', 'rotation', a || 0]];
-	    this._autoRotate = autoRotate ? b : null;
-	    this._beziers = vars.type !== 'cubic' && vars.type !== 'quadratic' && vars.type !== 'soft' ? GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ? 1 : vars.curviness, false, vars.type === 'thruBasic', vars.correlate, vars.startPoint) : GsapBezier.parseBezierData(vars);
-	    this._segCount = this._beziers.x.length;
-	    if (this._timeRes) {
-	      var ld = GsapBezier.parseLengthData(this._beziers, this._timeRes);
-	      this._length = ld.length;
-	      this._lengths = ld.lengths;
-	      this._segments = ld.segments;
-	      this._l1 = this._li = this._s1 = this._si = 0;
-	      this._l2 = this._lengths[0];
-	      this._curSeg = this._segments[0];
-	      this._s2 = this._curSeg[0];
-	      this._prec = 1 / this._curSeg.length;
-	    }
-	  },
-	  set: function set(v) {
-	    var segments = this._segCount;
-	    var XYobj = {};
-	    var curIndex = undefined;
-	    var inv = undefined;
-	    var i = undefined;
-	    var p = undefined;
-	    var b = undefined;
-	    var t = undefined;
-	    var val = undefined;
-	    var lengths = undefined;
-	    var curSeg = undefined;
-	    var value = undefined;
-	    var rotate = undefined;
-	    if (!this._timeRes) {
-	      var _cur = v >= 1 ? segments - 1 : segments * v >> 0;
-	      curIndex = v < 0 ? 0 : _cur;
-	      t = (v - curIndex * (1 / segments)) * segments;
-	    } else {
-	      lengths = this._lengths;
-	      curSeg = this._curSeg;
-	      value = v * this._length;
-	      i = this._li;
-	      if (value > this._l2 && i < segments) {
-	        this._l2 = lengths[++i];
-	        this._l1 = lengths[i - 1];
-	        this._li = i;
-	        this._curSeg = curSeg = this._segments[i];
-	        this._s2 = curSeg[this._s1 = this._si = 0];
-	      } else if (value < this._l1 && i > 0) {
-	        this._l1 = lengths[--i];
-	        if (i === 0 && value < this._l1) {
-	          this._l1 = 0;
-	        } else {
-	          i++;
-	        }
-	        this._l2 = lengths[i];
-	        this._li = i;
-	        this._curSeg = curSeg = this._segments[i];
-	        this._s1 = curSeg[(this._si = curSeg.length - 1) - 1] || 0;
-	        this._s2 = curSeg[this._si];
-	      }
-	      curIndex = i;
-	      value -= this._l1;
-	      i = this._si;
-	      if (value > this._s2 && i < curSeg.length - 1) {
-	        this._s2 = curSeg[++i];
-	        this._s1 = curSeg[i - 1];
-	        this._si = i;
-	      } else if (value < this._s1 && i > 0) {
-	        this._s1 = curSeg[--i];
-	        if (i === 0 && value < this._s1) {
-	          this._s1 = 0;
-	        } else {
-	          i++;
-	        }
-	        this._s2 = curSeg[i];
-	        this._si = i;
-	      }
-	      t = (i + (value - this._s1) / (this._s2 - this._s1)) * this._prec;
-	    }
-	    inv = 1 - t;
-	    for (i = 1; i >= 0; i--) {
-	      p = i ? 'x' : 'y';
-	      b = this._beziers[p][curIndex];
-	      val = (t * t * b.da + 3 * inv * (t * b.ca + inv * b.ba)) * t + b.a;
-	      XYobj[p] = val;
-	    }
-	    if (this._autoRotate) {
-	      var ar = this._autoRotate;
-	      var b2 = undefined;
-	      var x1 = undefined;
-	      var y1 = undefined;
-	      var x2 = undefined;
-	      var y2 = undefined;
-	      var add = undefined;
-	      var conv = undefined;
-	      i = ar.length;
-	      while (--i > -1) {
-	        p = ar[i][2];
-	        add = ar[i][3] || 0;
-	        conv = ar[i][4] === true ? 1 : _RAD2DEG;
-	        b = this._beziers[ar[i][0]];
-	        b2 = this._beziers[ar[i][1]];
-	
-	        if (b && b2) {
-	          b = b[curIndex];
-	          b2 = b2[curIndex];
-	
-	          x1 = b.a + (b.b - b.a) * t;
-	          x2 = b.b + (b.c - b.b) * t;
-	          x1 += (x2 - x1) * t;
-	          x2 += (b.c + (b.d - b.c) * t - x2) * t;
-	
-	          y1 = b2.a + (b2.b - b2.a) * t;
-	          y2 = b2.b + (b2.c - b2.b) * t;
-	          y1 += (y2 - y1) * t;
-	          y2 += (b2.c + (b2.d - b2.c) * t - y2) * t;
-	          var _r = Math.atan2(y2 - y1, x2 - x1) * conv;
-	          rotate = _r + add;
-	        }
-	      }
-	    }
-	    return rotate ? 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px) rotate(' + rotate + 'deg)' : 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px)';
-	  }
-	};
-	Bezier.bezierThrough = GsapBezier.bezierThrough;
-	Bezier.cubicToQuadratic = GsapBezier.cubicToQuadratic;
-	Bezier.quadraticToCubic = function (a, b, c) {
-	  return new GsapBezier.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
-	};
-	
-	exports['default'] = Bezier;
+	exports["default"] = new Plugins();
 	module.exports = exports['default'];
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	var _styleUtils = __webpack_require__(179);
 	
-	var _raf = __webpack_require__(183);
+	var _styleUtils2 = _interopRequireDefault(_styleUtils);
+	
+	var _objectAssign = __webpack_require__(177);
+	
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
+	var _plugins = __webpack_require__(182);
+	
+	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	var StylePlugin = function StylePlugin(target, vars, type) {
+	  this.target = target;
+	  this.vars = vars;
+	  this.type = type;
+	  this.propsData = {};
+	  this.setDefaultData();
+	}; /* eslint-disable func-names */
+	
+	var p = StylePlugin.prototype = {
+	  name: 'style'
+	};
+	p.getComputedStyle = function () {
+	  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+	};
+	p.getTweenData = function (key, vars) {
+	  var data = {
+	    data: {},
+	    dataType: {},
+	    dataUnit: {},
+	    dataCount: {},
+	    dataSplitStr: {}
+	  };
+	  if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	    data.data[key] = (0, _styleUtils.parseColor)(vars);
+	    data.dataType[key] = 'color';
+	  } else if (key.match(/shadow/i)) {
+	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
+	    data.dataType[key] = 'shadow';
+	  } else if (typeof vars === 'string' && vars.split(/[\s|,]/).length > 1) {
+	    data.data[key] = vars.split(/[\s|,]/);
+	    data.dataSplitStr[key] = vars.replace(/[^\s|,]/g, '');
+	    data.dataType[key] = 'string';
+	  } else {
+	    data.data[key] = vars;
+	    data.dataType[key] = 'other';
+	  }
+	  if (Array.isArray(data.data[key])) {
+	    data.dataUnit[key] = data.data[key].map(function (_item) {
+	      return _item.toString().replace(/[^a-z|%]/g, '');
+	    });
+	    data.dataCount[key] = data.data[key].map(function (_item) {
+	      return _item.toString().replace(/[^+|=|-]/g, '');
+	    });
+	
+	    data.data[key] = data.data[key].map(function (_item) {
+	      return parseFloat(_item);
+	    });
+	  } else {
+	    data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
+	    data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
+	    data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
+	  }
+	  return data;
+	};
+	p.setDefaultData = function () {
+	  var _this = this;
+	
+	  this.propsData.data = {};
+	  this.propsData.dataType = {};
+	  this.propsData.dataUnit = {};
+	  this.propsData.dataCount = {};
+	  this.propsData.dataSplitStr = {};
+	  Object.keys(this.vars).forEach(function (_key) {
+	    if (_key in _plugins2["default"]) {
+	      _this.propsData.data[_key] = new _plugins2["default"][_key](_this.target, _this.vars[_key]);
+	      return;
+	    }
+	    var key = (0, _styleUtils.getGsapType)(_key);
+	    var _data = _this.getTweenData(key, _this.vars[_key]);
+	    _this.propsData.data[key] = _data.data[key];
+	    _this.propsData.dataType[key] = _data.dataType[key];
+	    _this.propsData.dataUnit[key] = _data.dataUnit[key];
+	    _this.propsData.dataCount[key] = _data.dataCount[key];
+	    if (_data.dataSplitStr[key]) {
+	      _this.propsData.dataSplitStr[key] = _data.dataSplitStr[key];
+	    }
+	  });
+	};
+	p.convertToMarks = function (style, num, unit, isOrigin) {
+	  var horiz = /(?:Left|Right|Width)/i.test(style);
+	  var t = style.indexOf('border') !== -1 || style === 'transformOrigin' ? this.target : this.target.parentNode || document.body;
+	  var pix = void 0;
+	  if (unit === '%') {
+	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
+	  } else {
+	    // em rem
+	    pix = parseFloat(num) / 16;
+	  }
+	  return pix;
+	};
+	p.convertToMarksArray = function (unit, key, data, i) {
+	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
+	  var endUnit = unit[i];
+	  if (startUnit === endUnit) {
+	    return parseFloat(data);
+	  }
+	  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
+	};
+	p.getAnimStart = function () {
+	  var _this2 = this;
+	
+	  var computedStyle = this.getComputedStyle();
+	  var style = {};
+	  Object.keys(this.propsData.data).forEach(function (key) {
+	    var cssName = (0, _styleUtils.isConvert)(key);
+	    var startData = computedStyle[cssName];
+	    if (!startData || startData === 'none' || startData === 'auto') {
+	      startData = '';
+	    }
+	    var transform = void 0;
+	    var endUnit = void 0;
+	    var startUnit = void 0;
+	    if (key in _plugins2["default"]) {
+	      if (key === 'bezier') {
+	        _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	      }
+	      _this2.propsData.data[key].getAnimStart();
+	    } else if (cssName === 'transform') {
+	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	      startData = computedStyle[_this2.transform];
+	      transform = (0, _styleUtils.getTransform)(startData);
+	      style.transform = transform;
+	    } else if (cssName === 'filter') {
+	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
+	      startData = computedStyle[_this2.filterName];
+	      _this2.filterObject = (0, _objectAssign2["default"])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
+	      startData = _this2.filterObject[key] || 0;
+	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
+	      endUnit = _this2.propsData.dataUnit[key];
+	      if (endUnit !== startUnit) {
+	        startData = _this2.convertToMarks(key, startData, endUnit);
+	      }
+	      style[key] = parseFloat(startData);
+	    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	      startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
+	      style[cssName] = (0, _styleUtils.parseColor)(startData);
+	    } else if (key.match(/shadow/i)) {
+	      startData = (0, _styleUtils.parseShadow)(startData);
+	      endUnit = _this2.propsData.dataUnit[key];
+	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit, key));
+	      style[cssName] = startData;
+	    } else if (Array.isArray(_this2.propsData.data[key])) {
+	      startData = startData.split(/[\s|,]/);
+	      endUnit = _this2.propsData.dataUnit[key];
+	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit, key));
+	      style[cssName] = startData;
+	    } else {
+	      // 计算单位， em rem % px;
+	      endUnit = _this2.propsData.dataUnit[cssName];
+	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
+	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
+	        startData = _this2.convertToMarks(cssName, startData, endUnit);
+	      }
+	      style[cssName] = parseFloat(startData || 0);
+	    }
+	  });
+	  this.start = style;
+	  return style;
+	};
+	p.setAnimData = function (data) {
+	  var _this3 = this;
+	
+	  var style = this.target.style;
+	  Object.keys(data).forEach(function (_key) {
+	    if (_key === 'transform') {
+	      var t = data[_key];
+	      var perspective = t.perspective;
+	      var angle = t.rotate;
+	      var rotateX = t.rotateX;
+	      var rotateY = t.rotateY;
+	      var sx = t.scaleX;
+	      var sy = t.scaleY;
+	      var sz = t.scaleZ;
+	      var skx = t.skewX;
+	      var sky = t.skewY;
+	      var translateX = t.translateX;
+	      var translateY = t.translateY;
+	      var translateZ = t.translateZ;
+	      var xPercent = t.xPercent || 0;
+	      var yPercent = t.yPercent || 0;
+	      var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
+	      var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+	      var an = angle ? 'rotate(' + angle + 'deg)' : '';
+	      var ss = void 0;
+	      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+	        var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	        ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	        // IE 9 没 3d;
+	        style[_this3.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
+	        return;
+	      }
+	      ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+	      var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+	      var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+	      var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+	      style[_this3.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
+	      return;
+	    } else if (_styleUtils2["default"].filter.indexOf(_key) >= 0) {
+	      if (!_this3.filterObject) {
+	        return;
+	      }
+	      _this3.filterObject[_key] = data[_key];
+	      var filterStyle = '';
+	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
+	        filterStyle += ' ' + filterKey + '(' + _this3.filterObject[filterKey] + ')';
+	      });
+	      style[_this3.filterName] = filterStyle.trim();
+	      return;
+	    }
+	    style[_key] = data[_key];
+	  });
+	};
+	p.setArrayRatio = function (ratio, start, vars, unit, type) {
+	  if (type === 'color' && start.length === 4 && vars.length === 3) {
+	    vars[3] = 1;
+	  }
+	  var _vars = vars.map(function (endData, i) {
+	    var startData = start[i] || 0;
+	    return (endData - startData) * ratio + startData + (unit[i] || 0);
+	  });
+	  if (type === 'color') {
+	    return (0, _styleUtils.getColor)(_vars);
+	  } else if (type === 'shadow') {
+	    var s = _vars.slice(0, 3);
+	    var c = _vars.slice(3, _vars.length);
+	    var color = (0, _styleUtils.getColor)(c);
+	    return s.join(' ') + ' ' + color;
+	  }
+	  return _vars;
+	};
+	
+	p.setRatio = function (ratio, tween) {
+	  var _this4 = this;
+	
+	  tween.style = tween.style || {};
+	  if (this.start.transform) {
+	    tween.style.transform = (0, _objectAssign2["default"])({}, this.start.transform, tween.style.transform || {});
+	  }
+	  Object.keys(this.propsData.data).forEach(function (key) {
+	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
+	    var startVars = _isTransform ? _this4.start.transform[key] : _this4.start[key];
+	    var endVars = _this4.propsData.data[key];
+	    var unit = _this4.propsData.dataUnit[key];
+	    var count = _this4.propsData.dataCount[key];
+	    if (key in _plugins2["default"]) {
+	      _this4.propsData.data[key].setRatio(ratio, tween);
+	      return;
+	    } else if (_isTransform) {
+	      if (unit === '%' || unit === 'em' || unit === 'rem') {
+	        var pName = key === 'translateX' ? 'xPercent' : 'yPercent';
+	        var data = key === 'translateX' ? _this4.start.transform.translateX : _this4.start.transform.translateY;
+	        if (count.charAt(1) === '=') {
+	          tween.style.transform[key] = data - data * ratio;
+	        }
+	        tween.style.transform[pName] = endVars * ratio + unit;
+	        return;
+	      } else if (key === 'scale') {
+	        var xStart = _this4.start.transform.scaleX;
+	        var yStart = _this4.start.transform.scaleY;
+	        if (count.charAt(1) === '=') {
+	          tween.style.transform.scaleX = xStart + endVars * ratio;
+	          tween.style.transform.scaleY = yStart + endVars * ratio;
+	          return;
+	        }
+	        tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
+	        tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
+	        return;
+	      }
+	      if (count.charAt(1) === '=') {
+	        tween.style.transform[key] = startVars + endVars * ratio;
+	        return;
+	      }
+	      tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+	      return;
+	    } else if (Array.isArray(endVars)) {
+	      var _type = _this4.propsData.dataType[key];
+	      tween.style[key] = _this4.setArrayRatio(ratio, startVars, endVars, unit, _type);
+	      if (_type === 'string') {
+	        tween.style[key] = tween.style[key].join(_this4.propsData.dataSplitStr[key]);
+	      }
+	      return;
+	    }
+	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
+	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+	    unit = unit || (_styleUtils2["default"].filter.indexOf(key) >= 0 ? '' : styleUnit);
+	    if (count.charAt(1) === '=') {
+	      tween.style[key] = startVars + endVars * ratio + unit;
+	      return;
+	    }
+	    tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	  });
+	  this.setAnimData(tween.style);
+	};
+	exports["default"] = StylePlugin;
+	module.exports = exports['default'];
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _raf = __webpack_require__(185);
 	
 	var _raf2 = _interopRequireDefault(_raf);
 	
-	var Ticker = function Ticker() {};
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	var Ticker = function Ticker() {}; /* eslint-disable func-names */
+	
 	var p = Ticker.prototype = {
 	  tickFnObject: {},
 	  id: -1,
@@ -23576,14 +23260,14 @@
 	p.wake = function (key, fn) {
 	  this.tickFnObject[key] = fn;
 	  if (this.id === -1) {
-	    this.id = (0, _raf2['default'])(this.tick);
+	    this.id = (0, _raf2["default"])(this.tick);
 	  }
 	};
 	p.clear = function (key) {
 	  delete this.tickFnObject[key];
 	};
 	p.sleep = function () {
-	  _raf2['default'].cancel(this.id);
+	  _raf2["default"].cancel(this.id);
 	  this.id = -1;
 	};
 	var ticker = new Ticker();
@@ -23599,14 +23283,14 @@
 	    return ticker.sleep();
 	  }
 	  ticker.frame++;
-	  ticker.id = (0, _raf2['default'])(ticker.tick);
+	  ticker.id = (0, _raf2["default"])(ticker.tick);
 	};
 	var timeoutIdNumber = 0;
 	p.timeout = function (fn, time) {
 	  var _this = this;
 	
 	  if (!(typeof fn === 'function')) {
-	    return console.warn('Is no function');
+	    return console.warn('Is no function'); // eslint-disable-line
 	  }
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
@@ -23625,7 +23309,8 @@
 	  var _this2 = this;
 	
 	  if (!(typeof fn === 'function')) {
-	    return console.warn('Is no function');
+	    console.warn('Is no function'); // eslint-disable-line
+	    return null;
 	  }
 	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
 	  var starFrame = this.frame;
@@ -23639,14 +23324,14 @@
 	  intervalIdNumber++;
 	  return intervalID;
 	};
-	exports['default'] = ticker;
+	exports["default"] = ticker;
 	module.exports = exports['default'];
 
 /***/ },
-/* 183 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(184)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(186)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -23722,7 +23407,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 184 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
@@ -23761,26 +23446,16 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ },
-/* 185 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -23790,144 +23465,164 @@
 	
 	var _TweenOne2 = _interopRequireDefault(_TweenOne);
 	
-	var _util = __webpack_require__(177);
+	var _util = __webpack_require__(178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
 	function noop() {}
 	
-	var TweenOneGroup = (function (_Component) {
+	var TweenOneGroup = function (_Component) {
 	  _inherits(TweenOneGroup, _Component);
 	
 	  function TweenOneGroup() {
-	    var _this = this;
-	
 	    _classCallCheck(this, TweenOneGroup);
 	
-	    _get(Object.getPrototypeOf(TweenOneGroup.prototype), 'constructor', this).apply(this, arguments);
-	    this.keysToEnter = [];
-	    this.keysToLeave = [];
-	    this.onEnterBool = false;
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
+	    _this.keysToEnter = [];
+	    _this.keysToLeave = [];
+	    _this.onEnterBool = false;
+	    _this.enterAnimEnd = false;
 	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
-	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(_this.props));
 	    children.forEach(function (child) {
 	      if (!child || !child.key) {
 	        return;
 	      }
 	      _this.keysToEnter.push(child.key);
 	    });
-	    this.originalChildren = children;
-	    this.state = {
+	    _this.originalChildren = children;
+	    _this.state = {
 	      children: children
 	    };
 	    ['getChildrenToRender', 'getCoverAnimation', 'onChange'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(TweenOneGroup, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.onEnterBool = true;
+	  TweenOneGroup.prototype.componentDidMount = function componentDidMount() {
+	    this.onEnterBool = true;
+	  };
+	
+	  TweenOneGroup.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var _this2 = this;
+	
+	    var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
+	    var currentChildren = this.originalChildren;
+	    var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
+	
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	    nextChildren.forEach(function (c) {
+	      if (!c) {
+	        return;
+	      }
+	      var key = c.key;
+	      var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
+	      if (!hasPrev && key) {
+	        _this2.keysToEnter.push(key);
+	      }
+	    });
+	
+	    currentChildren.forEach(function (c) {
+	      if (!c) {
+	        return;
+	      }
+	      var key = c.key;
+	      var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
+	      if (!hasNext && key) {
+	        _this2.keysToLeave.push(key);
+	      }
+	    });
+	    if (this.keysToEnter.length || this.keysToLeave.length) {
+	      this.enterAnimEnd = false;
 	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var _this2 = this;
+	    this.setState({
+	      children: newChildren
+	    });
+	  };
 	
-	      var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
-	      var currentChildren = this.originalChildren;
-	      var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
+	  TweenOneGroup.prototype.componentDidUpdate = function componentDidUpdate() {
+	    this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	  };
 	
-	      this.keysToEnter = [];
-	      this.keysToLeave = [];
-	      nextChildren.forEach(function (c) {
-	        if (!c) {
-	          return;
-	        }
-	        var key = c.key;
-	        var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
-	        if (!hasPrev && key) {
-	          _this2.keysToEnter.push(key);
-	        }
-	      });
-	
-	      currentChildren.forEach(function (c) {
-	        if (!c) {
-	          return;
-	        }
-	        var key = c.key;
-	        var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
-	        if (!hasNext && key) {
-	          _this2.keysToLeave.push(key);
-	        }
-	      });
+	  TweenOneGroup.prototype.onChange = function onChange(animation, key, type, obj) {
+	    var length = (0, _util.dataToArray)(animation).length;
+	    if (obj.index === length - 1 && obj.mode === 'onComplete') {
+	      var children = void 0;
+	      if (type === 'enter') {
+	        children = this.state.children;
+	        this.enterAnimEnd = true;
+	      } else {
+	        children = this.state.children.filter(function (child) {
+	          return key !== child.key;
+	        });
+	      }
 	      this.setState({
-	        children: newChildren
+	        children: children
 	      });
+	      var _obj = { key: key, type: type };
+	      this.props.onEnd(_obj);
 	    }
-	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
-	    }
-	  }, {
-	    key: 'onChange',
-	    value: function onChange(animation, key, type, obj) {
-	      var length = (0, _util.dataToArray)(animation).length;
-	      if (obj.index === length - 1 && obj.mode === 'onComplete') {
-	        if (type === 'leave') {
-	          var children = this.state.children.filter(function (child) {
-	            return child.key !== key;
-	          });
-	          this.setState({
-	            children: children
-	          });
-	        }
-	        var _obj = { key: key, type: type };
-	        this.props.onEnd(_obj);
+	  };
+	
+	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
+	    var animation = void 0;
+	    var onChange = void 0;
+	    var className = child.props.className || '';
+	    if (type) {
+	      animation = type === 'leave' ? this.props.leave : this.props.enter;
+	      onChange = this.onChange.bind(this, animation, child.key, type);
+	      if (!this.enterAnimEnd) {
+	        className = (className + ' ' + (type === 'leave' ? this.props.animatingClassName[1] : this.props.animatingClassName[0])).trim();
 	      }
 	    }
-	  }, {
-	    key: 'getCoverAnimation',
-	    value: function getCoverAnimation(child, i, type) {
-	      var animation = type === 'leave' ? this.props.leave : this.props.enter;
-	      var onChange = this.onChange.bind(this, animation, child.key, type);
-	      return _react2['default'].createElement(_TweenOne2['default'], _extends({}, child.props, {
-	        key: child.key,
-	        component: child.type,
-	        animation: (0, _util.transformArguments)(animation, child.key, i),
-	        onChange: onChange
-	      }));
-	    }
-	  }, {
-	    key: 'getChildrenToRender',
-	    value: function getChildrenToRender(children) {
-	      var _this3 = this;
+	    return _react2["default"].createElement(_TweenOne2["default"], _extends({}, child.props, {
+	      key: child.key,
+	      component: child.type,
+	      animation: (0, _util.transformArguments)(animation, child.key, i),
+	      onChange: onChange,
+	      className: className
+	    }));
+	  };
 	
-	      return children.map(function (child, i) {
-	        if (!child || !child.key) {
-	          return child;
-	        }
-	        var key = child.key;
-	        if (_this3.keysToLeave.indexOf(key) >= 0) {
-	          return _this3.getCoverAnimation(child, i, 'leave');
-	        }
-	        var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
+	  TweenOneGroup.prototype.getChildrenToRender = function getChildrenToRender(children) {
+	    var _this3 = this;
+	
+	    return children.map(function (child, i) {
+	      if (!child || !child.key) {
+	        return child;
+	      }
+	      var key = child.key;
+	      if (_this3.keysToLeave.indexOf(key) >= 0) {
+	        return _this3.getCoverAnimation(child, i, 'leave');
+	      }
+	      var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
+	      if (_this3.keysToEnter.indexOf(key) >= 0) {
 	        if (appear || _this3.onEnterBool) {
 	          return _this3.getCoverAnimation(child, i, 'enter');
 	        }
-	        return child.type === _TweenOne2['default'] ? (0, _react.createElement)(child.props.component, _extends({}, child.props, { key: child.key })) : child;
-	      });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var childrenToRender = this.getChildrenToRender(this.state.children);
-	      return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
-	    }
-	  }]);
+	      }
+	      return _this3.getCoverAnimation(child, i);
+	    });
+	  };
+	
+	  TweenOneGroup.prototype.render = function render() {
+	    var childrenToRender = this.getChildrenToRender(this.state.children);
+	    return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
+	  };
 	
 	  return TweenOneGroup;
-	})(_react.Component);
+	}(_react.Component);
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	var objectOrArrayOrFunc = _react.PropTypes.oneOfType([objectOrArray, _react.PropTypes.func]);
@@ -23939,32 +23634,32 @@
 	  appear: _react.PropTypes.bool,
 	  enter: objectOrArrayOrFunc,
 	  leave: objectOrArrayOrFunc,
+	  animatingClassName: _react.PropTypes.array,
 	  onEnd: _react.PropTypes.func
 	};
 	
 	TweenOneGroup.defaultProps = {
 	  component: 'div',
 	  appear: true,
+	  animatingClassName: ['tween-one-entering', 'tween-one-leaving'],
 	  enter: { x: 50, opacity: 0, type: 'from' },
 	  leave: { x: -50, opacity: 0 },
 	  onEnd: noop
 	};
-	exports['default'] = TweenOneGroup;
+	exports["default"] = TweenOneGroup;
 	module.exports = exports['default'];
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -23974,16 +23669,18 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _utils = __webpack_require__(187);
+	var _utils = __webpack_require__(189);
 	
-	var _rcTweenOneLibTicker = __webpack_require__(182);
+	var _ticker = __webpack_require__(184);
 	
-	var _rcTweenOneLibTicker2 = _interopRequireDefault(_rcTweenOneLibTicker);
+	var _ticker2 = _interopRequireDefault(_ticker);
 	
-	exports['default'] = {
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
 	  across: function across(elem, type, direction, animData) {
-	    var _x = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var _x = void 0;
+	    var props = (0, _objectAssign2.default)({}, elem.props);
 	    var children = props.children;
 	    if (type === 'enter') {
 	      _x = direction === 'next' ? '100%' : '-100%';
@@ -24000,8 +23697,8 @@
 	    }), children);
 	  },
 	  vertical: function vertical(elem, type, direction, animData) {
-	    var _y = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var _y = void 0;
+	    var props = (0, _objectAssign2.default)({}, elem.props);
 	    var children = props.children;
 	    if (type === 'enter') {
 	      _y = direction === 'next' ? '-100%' : '100%';
@@ -24018,8 +23715,8 @@
 	    }), children);
 	  },
 	  acrossOverlay: function acrossOverlay(elem, type, direction, animData) {
-	    var _x = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var _x = void 0;
+	    var props = (0, _objectAssign2.default)({}, elem.props);
 	    var children = props.children;
 	    if (type === 'enter') {
 	      _x = direction === 'next' ? '100%' : '-100%';
@@ -24035,8 +23732,8 @@
 	    }), children);
 	  },
 	  verticalOverlay: function verticalOverlay(elem, type, direction, animData) {
-	    var _y = undefined;
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var _y = void 0;
+	    var props = (0, _objectAssign2.default)({}, elem.props);
 	    var children = props.children;
 	    if (type === 'enter') {
 	      _y = direction === 'next' ? '-100%' : '100%';
@@ -24052,12 +23749,12 @@
 	    }), children);
 	  },
 	  gridBar: function gridBar(elem, type, direction, animData, elemOffset) {
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var props = (0, _objectAssign2.default)({}, elem.props);
 	    var animChild = [];
 	    var girdNum = 10;
 	    var girdSize = 100 / girdNum;
 	
-	    var _y = undefined;
+	    var _y = void 0;
 	    var children = props.children;
 	    if (type === 'enter') {
 	      _y = direction === 'next' ? '-100%' : '100%';
@@ -24066,12 +23763,12 @@
 	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
 	    }
 	    for (var i = 0; i < girdNum; i++) {
-	      var style = (0, _objectAssign2['default'])({}, props.style);
+	      var style = (0, _objectAssign2.default)({}, props.style);
 	      style.width = girdSize + '%';
 	      style.left = i * girdSize + 0.01 + '%';
 	      style.position = 'absolute';
 	      style.overflow = 'hidden';
-	      var _style = (0, _objectAssign2['default'])({}, props.style);
+	      var _style = (0, _objectAssign2.default)({}, props.style);
 	      _style.width = elemOffset.width + 'px';
 	      _style.float = 'left';
 	      _style.position = 'relative';
@@ -24084,39 +23781,39 @@
 	        onComplete: i === girdNum - 1 ? animData.onComplete : null
 	      });
 	
-	      var mask = _react2['default'].createElement(
+	      var mask = _react2.default.createElement(
 	        'div',
 	        { style: style, key: i },
 	        (0, _react.cloneElement)(elem, props, children)
 	      );
 	      animChild.push(mask);
 	    }
-	    var animSlot = _react2['default'].createElement(
+	    var animSlot = _react2.default.createElement(
 	      'div',
 	      { style: { width: '100%', position: 'absolute', top: 0 } },
 	      animChild
 	    );
-	    var _props = (0, _objectAssign2['default'])({}, elem.props);
+	    var _props = (0, _objectAssign2.default)({}, elem.props);
 	    _props.children = animSlot;
 	    return (0, _react.cloneElement)(elem, _props);
 	  },
 	  grid: function grid(elem, type, direction, animData, elemOffset) {
-	    var props = (0, _objectAssign2['default'])({}, elem.props);
+	    var props = (0, _objectAssign2.default)({}, elem.props);
 	    var animChild = [];
 	    var gridNum = 10;
 	    var gridWidth = elemOffset.width / gridNum;
 	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
 	    if (type === 'leave') {
 	      var _delay = (gridNum * gridNumH - 1) % gridNum * 50 + Math.floor((gridNum * gridNumH - 1) / gridNum) * 50;
-	      _rcTweenOneLibTicker2['default'].timeout(function () {
+	      _ticker2.default.timeout(function () {
 	        animData.onComplete();
 	      }, _delay + animData.duration);
 	      props.children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
-	      return _react2['default'].cloneElement(elem, props);
+	      return _react2.default.cloneElement(elem, props);
 	    }
 	    for (var i = 0; i < gridNum * gridNumH; i++) {
 	      // mask样式
-	      var style = (0, _objectAssign2['default'])({}, props.style);
+	      var style = (0, _objectAssign2.default)({}, props.style);
 	      style.position = 'absolute';
 	      style.overflow = 'hidden';
 	      style.width = gridWidth + 1 + 'px';
@@ -24124,28 +23821,28 @@
 	      style.left = i % gridNum * gridWidth;
 	      style.top = Math.floor(i / gridNum) * gridWidth;
 	      // clone 的样式
-	      var _style = (0, _objectAssign2['default'])({}, props.style);
+	      var _style = (0, _objectAssign2.default)({}, props.style);
 	      _style.width = elemOffset.width + 'px';
 	      _style.position = 'relative';
 	      _style.left = -i % gridNum * gridWidth;
 	      _style.top = -Math.floor(i / gridNum) * gridWidth;
 	      props.style = _style;
 	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-	      var _length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
+	      var length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
 	      var animation = _extends({}, animData, {
 	        opacity: 0,
 	        type: 'from',
 	        delay: delay,
-	        onComplete: i === _length ? animData.onComplete : null
+	        onComplete: i === length ? animData.onComplete : null
 	      });
-	      var mask = _react2['default'].createElement(
+	      var mask = _react2.default.createElement(
 	        elem.type,
 	        { style: style, key: i, animation: animation },
 	        (0, _react.cloneElement)(elem, props)
 	      );
 	      animChild.push(mask);
 	    }
-	    var _props = (0, _objectAssign2['default'])({}, elem.props);
+	    var _props = (0, _objectAssign2.default)({}, elem.props);
 	    _props.children = animChild;
 	    return (0, _react.cloneElement)(elem, _props);
 	  }
@@ -24153,20 +23850,18 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 187 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
 	exports.setAnimCompToTagComp = setAnimCompToTagComp;
 	exports.currentScrollTop = currentScrollTop;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -24180,9 +23875,11 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function toArrayChildren(children) {
 	  var ret = [];
-	  _react2['default'].Children.forEach(children, function (c) {
+	  _react2.default.Children.forEach(children, function (c) {
 	    ret.push(c);
 	  });
 	  return ret;
@@ -24202,26 +23899,25 @@
 	  if (!item) {
 	    return null;
 	  }
-	  var props = (0, _objectAssign2['default'])({}, item.props);
+	  var props = (0, _objectAssign2.default)({}, item.props);
 	  props.key = item.key || i;
 	  // 压缩后名称不一样了。
 	  var propTypes = item.type.propTypes;
-	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || item.type === _rcTweenOne2['default'] || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation || props.name === 'QueueAnim' || props.name === 'TweenOne' || props.name === 'Animate')) {
+	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || item.type === _rcTweenOne2.default || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation || props.name === 'QueueAnim' || props.name === 'TweenOne' || props.name === 'Animate')) {
 	    // queueAnim or tweeOne or animate;
 	
-	    var style = (0, _objectAssign2['default'])({}, props.style);
+	    var style = (0, _objectAssign2.default)({}, props.style);
 	    style.position = 'relative';
 	    props.style = style;
-	    return _react2['default'].createElement(props.component, props);
+	    return _react2.default.createElement(props.component, props);
 	  }
-	  return _react2['default'].cloneElement(item, props, item.props.children);
+	  return _react2.default.cloneElement(item, props, item.props.children);
 	}
-	
 	setAnimCompToTagComp.propTypes = {
-	  key: _react2['default'].PropTypes.string,
-	  style: _react2['default'].PropTypes.object,
-	  component: _react2['default'].PropTypes.any,
-	  name: _react2['default'].PropTypes.string
+	  key: _react2.default.PropTypes.string,
+	  style: _react2.default.PropTypes.object,
+	  component: _react2.default.PropTypes.any,
+	  name: _react2.default.PropTypes.string
 	};
 	
 	function currentScrollTop() {
@@ -24232,86 +23928,82 @@
 	}
 
 /***/ },
-/* 188 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _utils = __webpack_require__(187);
+	var _utils = __webpack_require__(189);
 	
 	var _objectAssign = __webpack_require__(172);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var Thumb = (function (_Component) {
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	var Thumb = function (_Component) {
 	  _inherits(Thumb, _Component);
 	
 	  function Thumb() {
-	    var _this = this;
-	
 	    _classCallCheck(this, Thumb);
 	
-	    _get(Object.getPrototypeOf(Thumb.prototype), 'constructor', this).apply(this, arguments);
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
 	    ['getDefaultThumb'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(Thumb, [{
-	    key: 'getDefaultThumb',
-	    value: function getDefaultThumb() {
-	      var children = [];
-	      for (var i = 0; i < this.props.length; i++) {
-	        children.push(_react2['default'].createElement('span', { key: i }));
-	      }
-	      return children;
+	  Thumb.prototype.getDefaultThumb = function getDefaultThumb() {
+	    var children = [];
+	    for (var i = 0; i < this.props.length; i++) {
+	      children.push(_react2.default.createElement('span', { key: i }));
 	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
+	    return children;
+	  };
 	
-	      var className = 'banner-anim-thumb';
-	      var defaultClass = className + '-default';
-	      className = (className + ' ' + (this.props.prefixCls || '')).trim();
-	      className = !this.props['default'] ? className : (className + ' ' + defaultClass).trim();
-	      var children = this.props['default'] ? this.getDefaultThumb() : this.props.children;
-	      if (this.props.length && (0, _utils.toArrayChildren)(children).length !== this.props.length) {
-	        console.warn('The thumbnail length and the images length different.');
-	      }
-	      var childToRender = (0, _utils.toArrayChildren)(children).map(function (item, i) {
-	        var props = (0, _objectAssign2['default'])({}, item.props);
-	        props.onClick = _this2.props.thumbClick.bind(_this2, i);
-	        props.className = ((props.className || '') + ' ' + (_this2.props.active === i ? 'active' : '')).trim();
-	        return _react2['default'].cloneElement(item, props);
-	      });
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      delete props.component;
-	      props.className = className;
-	      return _react2['default'].createElement(this.props.component, props, childToRender);
+	  Thumb.prototype.render = function render() {
+	    var _this2 = this;
+	
+	    var className = 'banner-anim-thumb';
+	    var defaultClass = className + '-default';
+	    className = (className + ' ' + (this.props.prefixCls || '')).trim();
+	    className = !this.props.default ? className : (className + ' ' + defaultClass).trim();
+	    var children = this.props.default ? this.getDefaultThumb() : this.props.children;
+	    if (this.props.length && (0, _utils.toArrayChildren)(children).length !== this.props.length) {
+	      console.warn('The thumbnail length and the images length different.'); // eslint-disable-line
 	    }
-	  }]);
+	    var childToRender = (0, _utils.toArrayChildren)(children).map(function (item, i) {
+	      var props = (0, _objectAssign2.default)({}, item.props);
+	      props.onClick = _this2.props.thumbClick.bind(_this2, i);
+	      props.className = ((props.className || '') + ' ' + (_this2.props.active === i ? 'active' : '')).trim();
+	      return _react2.default.cloneElement(item, props);
+	    });
+	    var props = (0, _objectAssign2.default)({}, this.props);
+	    delete props.component;
+	    props.className = className;
+	    return _react2.default.createElement(this.props.component, props, childToRender);
+	  };
 	
 	  return Thumb;
-	})(_react.Component);
+	}(_react.Component);
 	
 	Thumb.propTypes = {
 	  children: _react.PropTypes.any,
@@ -24319,7 +24011,7 @@
 	  prefixCls: _react.PropTypes.string,
 	  component: _react.PropTypes.any,
 	  thumbClick: _react.PropTypes.func,
-	  'default': _react.PropTypes.bool,
+	  default: _react.PropTypes.bool,
 	  length: _react.PropTypes.number,
 	  active: _react.PropTypes.number
 	};
@@ -24328,54 +24020,44 @@
 	  thumbClick: function thumbClick() {}
 	};
 	
-	exports['default'] = Thumb;
+	exports.default = Thumb;
 	module.exports = exports['default'];
 
 /***/ },
-/* 189 */
+/* 191 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// export this package's api
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _QueueAnim = __webpack_require__(191);
+	var _QueueAnim = __webpack_require__(193);
 	
 	var _QueueAnim2 = _interopRequireDefault(_QueueAnim);
 	
-	exports['default'] = _QueueAnim2['default'];
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	exports["default"] = _QueueAnim2["default"]; // export this package's api
+	
 	module.exports = exports['default'];
 
 /***/ },
-/* 191 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate) {'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -24383,11 +24065,21 @@
 	
 	var _reactDom = __webpack_require__(42);
 	
-	var _utils = __webpack_require__(193);
+	var _utils = __webpack_require__(195);
 	
-	var _animTypes = __webpack_require__(194);
+	var _animTypes = __webpack_require__(196);
 	
 	var _animTypes2 = _interopRequireDefault(_animTypes);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
 	var _ease = {
 	  easeInElastic: function easeInElastic(_p, o, t) {
@@ -24455,10 +24147,10 @@
 	  }
 	};
 	
-	var velocity = undefined;
+	var velocity = void 0;
 	if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 	  // only load velocity on the client
-	  velocity = __webpack_require__(195);
+	  velocity = __webpack_require__(197);
 	  Object.keys(_ease).forEach(function (key) {
 	    if (velocity.Easings) {
 	      velocity.Easings[key] = _ease[key];
@@ -24471,7 +24163,7 @@
 	    // call after stack flushes
 	    // in case you app depends on the asyncron nature of this function
 	    setImmediate(function () {
-	      callback();
+	      return callback();
 	    });
 	  };
 	}
@@ -24484,23 +24176,21 @@
 	
 	var placeholderKeyPrefix = 'ant-queue-anim-placeholder-';
 	
-	var QueueAnim = (function (_React$Component) {
+	var QueueAnim = function (_React$Component) {
 	  _inherits(QueueAnim, _React$Component);
 	
 	  function QueueAnim() {
-	    var _this = this;
-	
 	    _classCallCheck(this, QueueAnim);
 	
-	    _get(Object.getPrototypeOf(QueueAnim.prototype), 'constructor', this).apply(this, arguments);
+	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
 	
-	    this.keysToEnter = [];
-	    this.keysToLeave = [];
-	    this.keysAnimating = [];
-	    this.placeholderTimeoutIds = {};
+	    _this.keysToEnter = [];
+	    _this.keysToLeave = [];
+	    _this.keysAnimating = [];
+	    _this.placeholderTimeoutIds = {};
 	
 	    // 第一次进入，默认进场
-	    var children = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(this.props));
+	    var children = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(_this.props));
 	    children.forEach(function (child) {
 	      if (!child || !child.key) {
 	        return;
@@ -24508,9 +24198,9 @@
 	      _this.keysToEnter.push(child.key);
 	    });
 	
-	    this.originalChildren = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(this.props));
+	    _this.originalChildren = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(_this.props));
 	
-	    this.state = {
+	    _this.state = {
 	      children: children,
 	      childrenShow: {}
 	    };
@@ -24518,287 +24208,268 @@
 	    ['performEnter', 'performLeave', 'enterBegin', 'leaveComplete'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(QueueAnim, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.componentDidUpdate();
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var _this2 = this;
+	  QueueAnim.prototype.componentDidMount = function componentDidMount() {
+	    this.componentDidUpdate();
+	  };
 	
-	      var nextChildren = (0, _utils.toArrayChildren)(nextProps.children);
-	      var currentChildren = this.originalChildren;
-	      var newChildren = (0, _utils.mergeChildren)(currentChildren, nextChildren);
+	  QueueAnim.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var _this2 = this;
 	
-	      this.keysToEnter = [];
-	      this.keysToLeave = [];
-	      this.keysAnimating = [];
+	    var nextChildren = (0, _utils.toArrayChildren)(nextProps.children);
+	    var currentChildren = this.originalChildren;
+	    var newChildren = (0, _utils.mergeChildren)(currentChildren, nextChildren);
 	
-	      // need render to avoid update
-	      this.setState({
-	        children: newChildren
-	      });
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	    this.keysAnimating = [];
 	
-	      nextChildren.forEach(function (c) {
-	        if (!c) {
-	          return;
-	        }
-	        var key = c.key;
-	        var hasPrev = (0, _utils.findChildInChildrenByKey)(currentChildren, key);
-	        if (!hasPrev && key) {
-	          _this2.keysToEnter.push(key);
-	        }
-	      });
+	    // need render to avoid update
+	    this.setState({
+	      children: newChildren
+	    });
 	
-	      currentChildren.forEach(function (c) {
-	        if (!c) {
-	          return;
-	        }
-	        var key = c.key;
-	        var hasNext = (0, _utils.findChildInChildrenByKey)(nextChildren, key);
-	        if (!hasNext && key) {
-	          _this2.keysToLeave.push(key);
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      this.originalChildren = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(this.props));
-	      var keysToEnter = Array.prototype.slice.call(this.keysToEnter);
-	      var keysToLeave = Array.prototype.slice.call(this.keysToLeave);
-	      if (this.keysAnimating.length === 0) {
-	        this.keysAnimating = keysToEnter.concat(keysToLeave);
-	      }
-	      keysToEnter.forEach(this.performEnter);
-	      keysToLeave.forEach(this.performLeave);
-	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      var _this3 = this;
-	
-	      if (this.originalChildren && this.originalChildren.length > 0) {
-	        this.originalChildren.forEach(function (child) {
-	          if (_this3.refs[child.key]) {
-	            velocity((0, _reactDom.findDOMNode)(_this3.refs[child.key]), 'stop');
-	          }
-	        });
-	        Object.keys(this.placeholderTimeoutIds).forEach(function (key) {
-	          clearTimeout(_this3.placeholderTimeoutIds[key]);
-	        });
-	      }
-	    }
-	  }, {
-	    key: 'getVelocityConfig',
-	    value: function getVelocityConfig(index) {
-	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        args[_key - 1] = arguments[_key];
-	      }
-	
-	      if (this.props.animConfig) {
-	        return _utils.transformArguments.apply(undefined, [this.props.animConfig].concat(args))[index];
-	      }
-	      return _animTypes2['default'][_utils.transformArguments.apply(undefined, [this.props.type].concat(args))[index]];
-	    }
-	  }, {
-	    key: 'getVelocityEnterConfig',
-	    value: function getVelocityEnterConfig() {
-	      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	        args[_key2] = arguments[_key2];
-	      }
-	
-	      return this.getVelocityConfig.apply(this, [0].concat(args));
-	    }
-	  }, {
-	    key: 'getVelocityLeaveConfig',
-	    value: function getVelocityLeaveConfig() {
-	      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-	        args[_key3] = arguments[_key3];
-	      }
-	
-	      var config = this.getVelocityConfig.apply(this, [1].concat(args));
-	      var ret = {};
-	      Object.keys(config).forEach(function (key) {
-	        if (Array.isArray(config[key])) {
-	          ret[key] = Array.prototype.slice.call(config[key]).reverse();
-	        } else {
-	          ret[key] = config[key];
-	        }
-	      });
-	      return ret;
-	    }
-	  }, {
-	    key: 'getVelocityEasing',
-	    value: function getVelocityEasing() {
-	      for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-	        args[_key4] = arguments[_key4];
-	      }
-	
-	      return _utils.transformArguments.apply(undefined, [this.props.ease].concat(args)).map(function (easeName) {
-	        if (typeof easeName === 'string') {
-	          return BackEase[easeName] || easeName;
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'performEnter',
-	    value: function performEnter(key, i) {
-	      var interval = (0, _utils.transformArguments)(this.props.interval, key, i)[0];
-	      var delay = (0, _utils.transformArguments)(this.props.delay, key, i)[0];
-	      this.placeholderTimeoutIds[key] = setTimeout(this.performEnterBegin.bind(this, key, i), interval * i + delay);
-	      if (this.keysToEnter.indexOf(key) >= 0) {
-	        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
-	      }
-	    }
-	  }, {
-	    key: 'performEnterBegin',
-	    value: function performEnterBegin(key, i) {
-	      var childrenShow = this.state.childrenShow;
-	      childrenShow[key] = true;
-	      this.setState({ childrenShow: childrenShow }, this.realPerformEnter.bind(this, key, i));
-	    }
-	  }, {
-	    key: 'realPerformEnter',
-	    value: function realPerformEnter(key, i) {
-	      var node = (0, _reactDom.findDOMNode)(this.refs[key]);
-	      if (!node) {
+	    nextChildren.forEach(function (c) {
+	      if (!c) {
 	        return;
 	      }
-	      var duration = (0, _utils.transformArguments)(this.props.duration, key, i)[0];
-	      node.style.visibility = 'hidden';
-	      velocity(node, 'stop');
-	      velocity(node, this.getVelocityEnterConfig(key, i), {
-	        duration: duration,
-	        easing: this.getVelocityEasing(key, i)[0],
-	        visibility: 'visible',
-	        begin: this.enterBegin.bind(this, key),
-	        complete: this.enterComplete.bind(this, key)
-	      });
-	    }
-	  }, {
-	    key: 'performLeave',
-	    value: function performLeave(key, i) {
-	      clearTimeout(this.placeholderTimeoutIds[key]);
-	      delete this.placeholderTimeoutIds[key];
-	      var node = (0, _reactDom.findDOMNode)(this.refs[key]);
-	      if (!node) {
+	      var key = c.key;
+	      var hasPrev = (0, _utils.findChildInChildrenByKey)(currentChildren, key);
+	      if (!hasPrev && key) {
+	        _this2.keysToEnter.push(key);
+	      }
+	    });
+	
+	    currentChildren.forEach(function (c) {
+	      if (!c) {
 	        return;
 	      }
-	      var interval = (0, _utils.transformArguments)(this.props.interval, key, i)[1];
-	      var delay = (0, _utils.transformArguments)(this.props.delay, key, i)[1];
-	      var duration = (0, _utils.transformArguments)(this.props.duration, key, i)[1];
-	      var order = this.props.leaveReverse ? this.keysToLeave.length - i - 1 : i;
-	      velocity(node, 'stop');
-	      velocity(node, this.getVelocityLeaveConfig(key, i), {
-	        delay: interval * order + delay,
-	        duration: duration,
-	        easing: this.getVelocityEasing(key, i)[1],
-	        begin: this.leaveBegin.bind(this),
-	        complete: this.leaveComplete.bind(this, key)
-	      });
-	    }
-	  }, {
-	    key: 'enterBegin',
-	    value: function enterBegin(key, elements) {
-	      var _this4 = this;
-	
-	      elements.forEach(function (elem) {
-	        var animatingClassName = _this4.props.animatingClassName;
-	        elem.className = elem.className.replace(animatingClassName[1], '');
-	        if (elem.className.indexOf(animatingClassName[0]) === -1) {
-	          elem.className += ' ' + animatingClassName[0];
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'enterComplete',
-	    value: function enterComplete(key, elements) {
-	      var _this5 = this;
-	
-	      if (this.keysAnimating.indexOf(key) >= 0) {
-	        this.keysAnimating.splice(this.keysAnimating.indexOf(key), 1);
+	      var key = c.key;
+	      var hasNext = (0, _utils.findChildInChildrenByKey)(nextChildren, key);
+	      if (!hasNext && key) {
+	        _this2.keysToLeave.push(key);
 	      }
-	      elements.forEach(function (elem) {
-	        elem.className = elem.className.replace(_this5.props.animatingClassName[0], '').trim();
-	      });
-	    }
-	  }, {
-	    key: 'leaveBegin',
-	    value: function leaveBegin(elements) {
-	      var _this6 = this;
+	    });
+	  };
 	
-	      elements.forEach(function (elem) {
-	        var animatingClassName = _this6.props.animatingClassName;
-	        elem.className = elem.className.replace(animatingClassName[0], '');
-	        if (elem.className.indexOf(animatingClassName[1]) === -1) {
-	          elem.className += ' ' + animatingClassName[1];
-	        }
-	      });
+	  QueueAnim.prototype.componentDidUpdate = function componentDidUpdate() {
+	    this.originalChildren = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(this.props));
+	    var keysToEnter = Array.prototype.slice.call(this.keysToEnter);
+	    var keysToLeave = Array.prototype.slice.call(this.keysToLeave);
+	    if (this.keysAnimating.length === 0) {
+	      this.keysAnimating = keysToEnter.concat(keysToLeave);
 	    }
-	  }, {
-	    key: 'leaveComplete',
-	    value: function leaveComplete(key, elements) {
-	      var _this7 = this;
+	    keysToEnter.forEach(this.performEnter);
+	    keysToLeave.forEach(this.performLeave);
+	  };
 	
-	      if (this.keysAnimating.indexOf(key) < 0) {
-	        return;
+	  QueueAnim.prototype.componentWillUnmount = function componentWillUnmount() {
+	    var _this3 = this;
+	
+	    [].concat(this.keysToEnter, this.keysToLeave, this.keysAnimating).forEach(function (key) {
+	      return _this3.refs[key] && velocity((0, _reactDom.findDOMNode)(_this3.refs[key]), 'stop');
+	    });
+	    Object.keys(this.placeholderTimeoutIds).forEach(function (key) {
+	      clearTimeout(_this3.placeholderTimeoutIds[key]);
+	    });
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	    this.keysAnimating = [];
+	  };
+	
+	  QueueAnim.prototype.getVelocityConfig = function getVelocityConfig(index) {
+	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      args[_key - 1] = arguments[_key];
+	    }
+	
+	    if (this.props.animConfig) {
+	      return _utils.transformArguments.apply(undefined, [this.props.animConfig].concat(args))[index];
+	    }
+	    return _animTypes2["default"][_utils.transformArguments.apply(undefined, [this.props.type].concat(args))[index]];
+	  };
+	
+	  QueueAnim.prototype.getVelocityEnterConfig = function getVelocityEnterConfig() {
+	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	      args[_key2] = arguments[_key2];
+	    }
+	
+	    return this.getVelocityConfig.apply(this, [0].concat(args));
+	  };
+	
+	  QueueAnim.prototype.getVelocityLeaveConfig = function getVelocityLeaveConfig() {
+	    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	      args[_key3] = arguments[_key3];
+	    }
+	
+	    var config = this.getVelocityConfig.apply(this, [1].concat(args));
+	    var ret = {};
+	    Object.keys(config).forEach(function (key) {
+	      if (Array.isArray(config[key])) {
+	        ret[key] = Array.prototype.slice.call(config[key]).reverse();
+	      } else {
+	        ret[key] = config[key];
 	      }
+	    });
+	    return ret;
+	  };
+	
+	  QueueAnim.prototype.getVelocityEasing = function getVelocityEasing() {
+	    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	      args[_key4] = arguments[_key4];
+	    }
+	
+	    return _utils.transformArguments.apply(undefined, [this.props.ease].concat(args)).map(function (easeName) {
+	      if (typeof easeName === 'string') {
+	        return BackEase[easeName] || easeName;
+	      }
+	    });
+	  };
+	
+	  QueueAnim.prototype.performEnter = function performEnter(key, i) {
+	    var interval = (0, _utils.transformArguments)(this.props.interval, key, i)[0];
+	    var delay = (0, _utils.transformArguments)(this.props.delay, key, i)[0];
+	    this.placeholderTimeoutIds[key] = setTimeout(this.performEnterBegin.bind(this, key, i), interval * i + delay);
+	    if (this.keysToEnter.indexOf(key) >= 0) {
+	      this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
+	    }
+	  };
+	
+	  QueueAnim.prototype.performEnterBegin = function performEnterBegin(key, i) {
+	    var childrenShow = this.state.childrenShow;
+	    childrenShow[key] = true;
+	    this.setState({ childrenShow: childrenShow }, this.realPerformEnter.bind(this, key, i));
+	  };
+	
+	  QueueAnim.prototype.realPerformEnter = function realPerformEnter(key, i) {
+	    var node = (0, _reactDom.findDOMNode)(this.refs[key]);
+	    if (!node) {
+	      return;
+	    }
+	    var duration = (0, _utils.transformArguments)(this.props.duration, key, i)[0];
+	    node.style.visibility = 'hidden';
+	    velocity(node, 'stop');
+	    velocity(node, this.getVelocityEnterConfig(key, i), {
+	      duration: duration,
+	      easing: this.getVelocityEasing(key, i)[0],
+	      visibility: 'visible',
+	      begin: this.enterBegin.bind(this, key),
+	      complete: this.enterComplete.bind(this, key)
+	    });
+	  };
+	
+	  QueueAnim.prototype.performLeave = function performLeave(key, i) {
+	    clearTimeout(this.placeholderTimeoutIds[key]);
+	    delete this.placeholderTimeoutIds[key];
+	    var node = (0, _reactDom.findDOMNode)(this.refs[key]);
+	    if (!node) {
+	      return;
+	    }
+	    var interval = (0, _utils.transformArguments)(this.props.interval, key, i)[1];
+	    var delay = (0, _utils.transformArguments)(this.props.delay, key, i)[1];
+	    var duration = (0, _utils.transformArguments)(this.props.duration, key, i)[1];
+	    var order = this.props.leaveReverse ? this.keysToLeave.length - i - 1 : i;
+	    velocity(node, 'stop');
+	    velocity(node, this.getVelocityLeaveConfig(key, i), {
+	      delay: interval * order + delay,
+	      duration: duration,
+	      easing: this.getVelocityEasing(key, i)[1],
+	      begin: this.leaveBegin.bind(this),
+	      complete: this.leaveComplete.bind(this, key)
+	    });
+	  };
+	
+	  QueueAnim.prototype.enterBegin = function enterBegin(key, elements) {
+	    var _this4 = this;
+	
+	    elements.forEach(function (elem) {
+	      var animatingClassName = _this4.props.animatingClassName;
+	      elem.className = elem.className.replace(animatingClassName[1], '');
+	      if (elem.className.indexOf(animatingClassName[0]) === -1) {
+	        elem.className += ' ' + animatingClassName[0];
+	      }
+	    });
+	  };
+	
+	  QueueAnim.prototype.enterComplete = function enterComplete(key, elements) {
+	    var _this5 = this;
+	
+	    if (this.keysAnimating.indexOf(key) >= 0) {
 	      this.keysAnimating.splice(this.keysAnimating.indexOf(key), 1);
-	      var childrenShow = this.state.childrenShow;
-	      childrenShow[key] = false;
-	      if (this.keysToLeave.indexOf(key) >= 0) {
-	        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-	      }
-	      var needLeave = this.keysToLeave.some(function (c) {
-	        return childrenShow[c];
-	      });
-	      if (!needLeave) {
-	        var currentChildren = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(this.props));
-	        this.setState({
-	          children: currentChildren,
-	          childrenShow: childrenShow
-	        });
-	      }
-	      elements.forEach(function (elem) {
-	        elem.className = elem.className.replace(_this7.props.animatingClassName[1], '').trim();
-	      });
 	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this8 = this;
+	    elements.forEach(function (elem) {
+	      elem.className = elem.className.replace(_this5.props.animatingClassName[0], '').trim();
+	    });
+	  };
 	
-	      var childrenToRender = (0, _utils.toArrayChildren)(this.state.children).map(function (child) {
-	        if (!child || !child.key) {
-	          return child;
-	        }
-	        return _this8.state.childrenShow[child.key] ? (0, _react.cloneElement)(child, {
-	          ref: child.key,
-	          key: child.key
-	        }) : (0, _react.createElement)('div', {
-	          ref: placeholderKeyPrefix + child.key,
-	          key: placeholderKeyPrefix + child.key
-	        });
-	      });
-	      return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
+	  QueueAnim.prototype.leaveBegin = function leaveBegin(elements) {
+	    var _this6 = this;
+	
+	    elements.forEach(function (elem) {
+	      var animatingClassName = _this6.props.animatingClassName;
+	      elem.className = elem.className.replace(animatingClassName[0], '');
+	      if (elem.className.indexOf(animatingClassName[1]) === -1) {
+	        elem.className += ' ' + animatingClassName[1];
+	      }
+	    });
+	  };
+	
+	  QueueAnim.prototype.leaveComplete = function leaveComplete(key, elements) {
+	    var _this7 = this;
+	
+	    if (this.keysAnimating.indexOf(key) < 0) {
+	      return;
 	    }
-	  }]);
+	    this.keysAnimating.splice(this.keysAnimating.indexOf(key), 1);
+	    var childrenShow = this.state.childrenShow;
+	    childrenShow[key] = false;
+	    if (this.keysToLeave.indexOf(key) >= 0) {
+	      this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
+	    }
+	    var needLeave = this.keysToLeave.some(function (c) {
+	      return childrenShow[c];
+	    });
+	    if (!needLeave) {
+	      var currentChildren = (0, _utils.toArrayChildren)((0, _utils.getChildrenFromProps)(this.props));
+	      this.setState({
+	        children: currentChildren,
+	        childrenShow: childrenShow
+	      });
+	    }
+	    elements.forEach(function (elem) {
+	      elem.className = elem.className.replace(_this7.props.animatingClassName[1], '').trim();
+	    });
+	  };
+	
+	  QueueAnim.prototype.render = function render() {
+	    var _this8 = this;
+	
+	    var childrenToRender = (0, _utils.toArrayChildren)(this.state.children).map(function (child) {
+	      if (!child || !child.key) {
+	        return child;
+	      }
+	      return _this8.state.childrenShow[child.key] ? (0, _react.cloneElement)(child, {
+	        ref: child.key,
+	        key: child.key
+	      }) : (0, _react.createElement)('div', {
+	        ref: placeholderKeyPrefix + child.key,
+	        key: placeholderKeyPrefix + child.key
+	      });
+	    });
+	    return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
+	  };
 	
 	  return QueueAnim;
-	})(_react2['default'].Component);
+	}(_react2["default"].Component);
 	
-	var numberOrArray = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.number, _react2['default'].PropTypes.array]);
-	var stringOrArray = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.array]);
-	var objectOrArray = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.object, _react2['default'].PropTypes.array]);
-	var funcOrString = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.func, _react2['default'].PropTypes.string]);
-	var funcOrStringOrArray = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.func, stringOrArray]);
-	var funcOrObjectOrArray = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.func, objectOrArray]);
-	var funcOrNumberOrArray = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.func, numberOrArray]);
+	var numberOrArray = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.number, _react2["default"].PropTypes.array]);
+	var stringOrArray = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.string, _react2["default"].PropTypes.array]);
+	var objectOrArray = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.object, _react2["default"].PropTypes.array]);
+	var funcOrString = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.func, _react2["default"].PropTypes.string]);
+	var funcOrStringOrArray = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.func, stringOrArray]);
+	var funcOrObjectOrArray = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.func, objectOrArray]);
+	var funcOrNumberOrArray = _react2["default"].PropTypes.oneOfType([_react2["default"].PropTypes.func, numberOrArray]);
 	
 	QueueAnim.propTypes = {
 	  component: funcOrString,
@@ -24808,14 +24479,14 @@
 	  type: funcOrStringOrArray,
 	  animConfig: funcOrObjectOrArray,
 	  ease: funcOrStringOrArray,
-	  leaveReverse: _react2['default'].PropTypes.bool,
-	  animatingClassName: _react2['default'].PropTypes.array
+	  leaveReverse: _react2["default"].PropTypes.bool,
+	  animatingClassName: _react2["default"].PropTypes.array
 	};
 	
 	QueueAnim.defaultProps = {
 	  component: 'div',
 	  interval: 100,
-	  duration: 500,
+	  duration: 450,
 	  delay: 0,
 	  type: 'right',
 	  animConfig: null,
@@ -24824,12 +24495,12 @@
 	  animatingClassName: ['queue-anim-entering', 'queue-anim-leaving']
 	};
 	
-	exports['default'] = QueueAnim;
+	exports["default"] = QueueAnim;
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(192).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(194).setImmediate))
 
 /***/ },
-/* 192 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(7).nextTick;
@@ -24908,15 +24579,15 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(192).setImmediate, __webpack_require__(192).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(194).setImmediate, __webpack_require__(194).clearImmediate))
 
 /***/ },
-/* 193 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	exports.toArrayChildren = toArrayChildren;
@@ -24925,15 +24596,15 @@
 	exports.transformArguments = transformArguments;
 	exports.getChildrenFromProps = getChildrenFromProps;
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
 	function toArrayChildren(children) {
 	  var ret = [];
-	  _react2['default'].Children.forEach(children, function (c) {
+	  _react2["default"].Children.forEach(children, function (c) {
 	    ret.push(c);
 	  });
 	  return ret;
@@ -24996,7 +24667,7 @@
 	}
 	
 	function transformArguments(arg, key, i) {
-	  var result = undefined;
+	  var result = void 0;
 	  if (typeof arg === 'function') {
 	    result = arg({
 	      key: key,
@@ -25016,7 +24687,7 @@
 	}
 
 /***/ },
-/* 194 */
+/* 196 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -25061,10 +24732,10 @@
 	    scaleY: [1, 0]
 	  }
 	};
-	module.exports = exports["default"];
+	module.exports = exports['default'];
 
 /***/ },
-/* 195 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! VelocityJS.org (1.2.3). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
@@ -28955,11 +28626,7 @@
 	will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
 
 /***/ },
-/* 196 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ }
-/******/ ]);
+/* 198 */
+191
+/******/ ])));
 //# sourceMappingURL=common.js.map
