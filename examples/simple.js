@@ -12,7 +12,7 @@ const { Element } = BannerAnim;
 class Demo extends React.Component {
   render() {
     return (
-      <BannerAnim>
+      <BannerAnim prefixCls="banner-user">
         <Element key="aaa"
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"

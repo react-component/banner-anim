@@ -269,7 +269,6 @@ class BannerAnim extends Component {
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = assign({}, props.style);
-    props.style.height = `${this.state.wrapperHeight + this.state.thumbHeight}px`;
     if (childrenToRender.length > 1) {
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseLeave = this.onMouseLeave;

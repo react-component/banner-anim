@@ -104,6 +104,7 @@ export default {
       style.overflow = 'hidden';
       const _style = assign({}, props.style);
       _style.width = `${elemOffset.width}px`;
+      _style.height = `${elemOffset.height}px`;
       _style.float = 'left';
       _style.position = 'relative';
       _style.left = `${-i * girdSize / 100 * elemOffset.width}px`;
@@ -155,6 +156,7 @@ export default {
       // clone 的样式
       const _style = assign({}, props.style);
       _style.width = `${elemOffset.width}px`;
+      _style.height = `${elemOffset.height}px`;
       _style.position = 'relative';
       _style.left = -i % gridNum * gridWidth;
       _style.top = -Math.floor(i / gridNum) * gridWidth;
