@@ -57,15 +57,6 @@ describe('rc-banner-anim', () => {
     expect(childrenSpan.length).to.be(3);
   });
 
-  it('banner animation thumbFloat', () => {
-    const instance = createBannerAnimInstance({
-      thumbFloat: false,
-      type: 'across',
-    });
-    const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
-    expect(children.getBoundingClientRect().height).to.be(140);
-  });
-
   it('banner animation initShow', () => {
     const instance = createBannerAnimInstance({
       initShow: 1,

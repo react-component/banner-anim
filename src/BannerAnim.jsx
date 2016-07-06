@@ -32,7 +32,6 @@ class BannerAnim extends Component {
       currentShow: this.props.initShow,
       direction: null,
       wrapperHeight: 0,
-      thumbHeight: 0,
       domRect: {},
     };
     this.tweenBool = false;
@@ -182,12 +181,8 @@ class BannerAnim extends Component {
     // 获取宽度与定位，setState刷新；
     const wrapperHeight = this.getElementHeight(
       this.dom.getElementsByClassName('banner-anim-elem'));
-    const _tHeight = this.thumbIsDefault ? 40 :
-      this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
-    const thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
     this.setState({
       wrapperHeight,
-      thumbHeight,
       domRect,
     });
     this.tweenBool = false;
@@ -298,7 +293,6 @@ BannerAnim.propTypes = {
   autoPlay: PropTypes.bool,
   autoPlaySpeed: PropTypes.number,
   onChange: PropTypes.func,
-  thumbFloat: PropTypes.bool,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
   bgParallaxAll: PropTypes.object,
@@ -311,7 +305,6 @@ BannerAnim.defaultProps = {
   ease: 'easeInOutQuad',
   arrow: true,
   thumb: true,
-  thumbFloat: true,
   autoPlaySpeed: 5000,
   onChange: () => {
   },

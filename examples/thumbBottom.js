@@ -12,7 +12,7 @@ const { Element } = BannerAnim;
 class Demo extends React.Component {
   render() {
     return (
-      <BannerAnim thumbFloat={false}>
+      <BannerAnim thumbFloat={false} prefixCls="banner-thumb-bottom">
         <Element key="aaa"
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
