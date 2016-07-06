@@ -61,7 +61,7 @@ webpackJsonp([7],{
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
 	      _rcBannerAnim2.default,
-	      null,
+	      { prefixCls: 'banner-user' },
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'aaa',

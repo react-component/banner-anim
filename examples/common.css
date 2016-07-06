@@ -1,5 +1,8 @@
-.banner-anim-elem.banner-user-elem {
+.banner-user,
+.banner-anim {
   height: 600px;
+}
+.banner-anim-elem.banner-user-elem {
   color: #fff;
 }
 ul,
@@ -8,12 +11,19 @@ li {
   margin: 0;
   padding: 0;
 }
+.banner-thumb-bottom .banner-anim-elem {
+  height: 560px;
+}
+.banner-thumb-bottom .banner-anim-thumb {
+  background: #999;
+}
 .banner-anim {
   position: relative;
   overflow: hidden;
+  min-height: 100px;
 }
 .banner-anim-elem {
-  min-height: 100px;
+  height: 100%;
 }
 .banner-anim-elem > * {
   position: relative;

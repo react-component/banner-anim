@@ -97,7 +97,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"autoplay","1":"bgParallax","2":"change","3":"customAnimType","4":"customArrow","5":"customThumb","6":"followMouse","7":"simple","8":"thumbNoFloat","9":"videoBg"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"autoplay","1":"bgParallax","2":"change","3":"customAnimType","4":"customArrow","5":"customThumb","6":"followMouse","7":"simple","8":"thumbBottom","9":"videoBg"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -246,7 +246,6 @@
 	      currentShow: _this.props.initShow,
 	      direction: null,
 	      wrapperHeight: 0,
-	      thumbHeight: 0,
 	      domRect: {}
 	    };
 	    _this.tweenBool = false;
@@ -395,11 +394,8 @@
 	    var domRect = this.dom.getBoundingClientRect();
 	    // 获取宽度与定位，setState刷新；
 	    var wrapperHeight = this.getElementHeight(this.dom.getElementsByClassName('banner-anim-elem'));
-	    var _tHeight = this.thumbIsDefault ? 40 : this.getElementHeight(this.dom.getElementsByClassName('banner-anim-thumb'));
-	    var thumbHeight = this.props.thumbFloat ? 0 : _tHeight;
 	    this.setState({
 	      wrapperHeight: wrapperHeight,
-	      thumbHeight: thumbHeight,
 	      domRect: domRect
 	    });
 	    this.tweenBool = false;
@@ -480,7 +476,6 @@
 	    var childrenToRender = this.getRenderChildren(props.children);
 	    props.className = (props.className + ' ' + (prefixCls || '')).trim();
 	    props.style = (0, _objectAssign2.default)({}, props.style);
-	    props.style.height = this.state.wrapperHeight + this.state.thumbHeight + 'px';
 	    if (childrenToRender.length > 1) {
 	      props.onMouseEnter = this.onMouseEnter;
 	      props.onMouseLeave = this.onMouseLeave;
@@ -513,7 +508,6 @@
 	  autoPlay: _react.PropTypes.bool,
 	  autoPlaySpeed: _react.PropTypes.number,
 	  onChange: _react.PropTypes.func,
-	  thumbFloat: _react.PropTypes.bool,
 	  onMouseEnter: _react.PropTypes.func,
 	  onMouseLeave: _react.PropTypes.func,
 	  bgParallaxAll: _react.PropTypes.object
@@ -526,7 +520,6 @@
 	  ease: 'easeInOutQuad',
 	  arrow: true,
 	  thumb: true,
-	  thumbFloat: true,
 	  autoPlaySpeed: 5000,
 	  onChange: function onChange() {},
 	  onMouseEnter: function onMouseEnter() {},
@@ -23768,6 +23761,7 @@
 	      style.overflow = 'hidden';
 	      var _style = (0, _objectAssign2.default)({}, props.style);
 	      _style.width = elemOffset.width + 'px';
+	      _style.height = elemOffset.height + 'px';
 	      _style.float = 'left';
 	      _style.position = 'relative';
 	      _style.left = -i * girdSize / 100 * elemOffset.width + 'px';
@@ -23821,6 +23815,7 @@
 	      // clone 的样式
 	      var _style = (0, _objectAssign2.default)({}, props.style);
 	      _style.width = elemOffset.width + 'px';
+	      _style.height = elemOffset.height + 'px';
 	      _style.position = 'relative';
 	      _style.left = -i % gridNum * gridWidth;
 	      _style.top = -Math.floor(i / gridNum) * gridWidth;

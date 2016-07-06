@@ -61,7 +61,7 @@ webpackJsonp([8],{
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
 	      _rcBannerAnim2.default,
-	      { thumbFloat: false },
+	      { thumbFloat: false, prefixCls: 'banner-thumb-bottom' },
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'aaa',
@@ -125,4 +125,4 @@ webpackJsonp([8],{
 /***/ }
 
 });
-//# sourceMappingURL=thumbNoFloat.js.map
+//# sourceMappingURL=thumbBottom.js.map
