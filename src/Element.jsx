@@ -392,6 +392,8 @@ class Element extends Component {
     [
       `prefixCls`, `img`, `bgType`, `callBack`,
       `animType`, `duration`, `ease`, `elemOffset`,
+      'bg', 'bgType', 'bgParallax', 'followParallax',
+      'show', 'bgPrefixCls', 'type',
     ].forEach(key => delete props[key]);
     const style = assign({}, props.style);
     style.display = props.show ? 'block' : 'none';

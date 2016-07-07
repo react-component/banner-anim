@@ -270,6 +270,7 @@ class BannerAnim extends Component {
       `arrow`,
       `thumb`,
       `autoPlaySpeed`,
+      'autoPlay',
     ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
