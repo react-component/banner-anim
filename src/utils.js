@@ -66,7 +66,7 @@ export function setAnimCompToTagComp(item, i) {
     ].forEach(key => delete props[key]);
     return React.createElement(component, props);
   }
-  return React.cloneElement(item, props, item.props.children);
+  return item;
 }
 setAnimCompToTagComp.propTypes = {
   key: React.PropTypes.string,
