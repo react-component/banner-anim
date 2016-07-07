@@ -40,11 +40,31 @@ export function setAnimCompToTagComp(item, i) {
       || props.name === 'Animate'
     )) {
     // queueAnim or tweeOne or animate;
-
     const style = assign({}, props.style);
     style.position = 'relative';
     props.style = style;
-    return React.createElement(props.component, props);
+    const component = props.component;
+    [
+      `component`,
+      `interval`,
+      `duration`,
+      `delay`,
+      `animConfig`,
+      `ease`,
+      `leaveReverse`,
+      `animatingClassName`,
+      `animation`,
+      `reverseDelay`,
+      `attr`,
+      `showProp`,
+      `exclusive`,
+      `transitionName`,
+      `transitionAppear`,
+      `transitionEnter`,
+      `transitionLeave`,
+      `onEnd`,
+    ].forEach(key => delete props[key]);
+    return React.createElement(component, props);
   }
   return React.cloneElement(item, props, item.props.children);
 }

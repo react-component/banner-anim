@@ -16,7 +16,6 @@ export default {
       children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
     return cloneElement(elem, {
-      ...props,
       animation: {
         ...animData,
         x: _x,

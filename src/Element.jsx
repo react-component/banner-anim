@@ -373,7 +373,6 @@ class Element extends Component {
     this.show = this.state.show;
     style.zIndex = this.state.show ? 1 : 0;
     props.children = this.props.show ? bgElem : [bgElem, this.getChildren()];
-
     const childrenToRender = React.createElement(TweenOne, props);
     const type = this.state.show ? 'enter' : 'leave';
     return this.props.animType(childrenToRender,
@@ -390,6 +389,10 @@ class Element extends Component {
 
   render() {
     const props = assign({}, this.props);
+    [
+      `prefixCls`, `img`, `bgType`, `callBack`,
+      `animType`, `duration`, `ease`, `elemOffset`,
+    ].forEach(key => delete props[key]);
     const style = assign({}, props.style);
     style.display = props.show ? 'block' : 'none';
     style.position = 'absolute';

@@ -261,6 +261,16 @@ class BannerAnim extends Component {
   render() {
     const prefixCls = this.props.prefixCls;
     const props = assign({}, this.props);
+    [
+      `prefixCls`,
+      `component`,
+      `initShow`,
+      `duration`,
+      `ease`,
+      `arrow`,
+      `thumb`,
+      `autoPlaySpeed`,
+    ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = assign({}, props.style);
