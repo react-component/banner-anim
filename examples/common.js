@@ -473,7 +473,7 @@
 	  BannerAnim.prototype.render = function render() {
 	    var prefixCls = this.props.prefixCls;
 	    var props = (0, _objectAssign2.default)({}, this.props);
-	    ['prefixCls', 'component', 'initShow', 'duration', 'ease', 'arrow', 'thumb', 'autoPlaySpeed'].forEach(function (key) {
+	    ['prefixCls', 'component', 'initShow', 'duration', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    var childrenToRender = this.getRenderChildren(props.children);
@@ -21549,7 +21549,7 @@
 	    className = !this.props.default ? className : (className + ' ' + defaultClass).trim();
 	    className = className + ' ' + this.props.arrowType;
 	    var props = (0, _objectAssign2.default)({}, this.props);
-	    ['arrowType', 'next', 'prev', 'elemHeight', 'component'].forEach(function (key) {
+	    ['arrowType', 'next', 'prev', 'elemHeight', 'component', 'default'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    props.className = className;
@@ -22008,7 +22008,7 @@
 	
 	  Element.prototype.render = function render() {
 	    var props = (0, _objectAssign2.default)({}, this.props);
-	    ['prefixCls', 'img', 'bgType', 'callBack', 'animType', 'duration', 'ease', 'elemOffset'].forEach(function (key) {
+	    ['prefixCls', 'img', 'bgType', 'callBack', 'animType', 'duration', 'ease', 'elemOffset', 'bg', 'bgType', 'bgParallax', 'followParallax', 'show', 'bgPrefixCls', 'type'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    var style = (0, _objectAssign2.default)({}, props.style);
