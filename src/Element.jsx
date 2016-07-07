@@ -389,12 +389,6 @@ class Element extends Component {
 
   render() {
     const props = assign({}, this.props);
-    [
-      `prefixCls`, `img`, `bgType`, `callBack`,
-      `animType`, `duration`, `ease`, `elemOffset`,
-      'bg', 'bgType', 'bgParallax', 'followParallax',
-      'show', 'bgPrefixCls', 'type',
-    ].forEach(key => delete props[key]);
     const style = assign({}, props.style);
     style.display = props.show ? 'block' : 'none';
     style.position = 'absolute';
@@ -405,6 +399,12 @@ class Element extends Component {
     delete props.show;
     const bgElem = this.props.bg || this.props.img ?
       this.getImgOrVideo() : null;
+    [
+      `prefixCls`, `img`, `bgType`, `callBack`,
+      `animType`, `duration`, `ease`, `elemOffset`,
+      'bg', 'bgType', 'bgParallax', 'followParallax',
+      'show', 'bgPrefixCls', 'type',
+    ].forEach(key => delete props[key]);
     if (this.show === this.state.show) {
       style.transform = null;
       if (!this.state.show) {
