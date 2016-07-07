@@ -22008,9 +22008,6 @@
 	
 	  Element.prototype.render = function render() {
 	    var props = (0, _objectAssign2.default)({}, this.props);
-	    ['prefixCls', 'img', 'bgType', 'callBack', 'animType', 'duration', 'ease', 'elemOffset', 'bg', 'bgType', 'bgParallax', 'followParallax', 'show', 'bgPrefixCls', 'type'].forEach(function (key) {
-	      return delete props[key];
-	    });
 	    var style = (0, _objectAssign2.default)({}, props.style);
 	    style.display = props.show ? 'block' : 'none';
 	    style.position = 'absolute';
@@ -22020,6 +22017,9 @@
 	    delete props.direction;
 	    delete props.show;
 	    var bgElem = this.props.bg || this.props.img ? this.getImgOrVideo() : null;
+	    ['prefixCls', 'img', 'bgType', 'callBack', 'animType', 'duration', 'ease', 'elemOffset', 'bg', 'bgType', 'bgParallax', 'followParallax', 'show', 'bgPrefixCls', 'type'].forEach(function (key) {
+	      return delete props[key];
+	    });
 	    if (this.show === this.state.show) {
 	      style.transform = null;
 	      if (!this.state.show) {
