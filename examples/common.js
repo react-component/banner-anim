@@ -315,9 +315,9 @@
 	    var angle = Math.round(r * 180 / Math.PI);
 	    angle = angle < 0 ? 360 - Math.abs(angle) : angle;
 	    if ((angle >= 0 && angle <= 45 || angle >= 315) && differX > this.state.domRect.width * 0.1) {
-	      this.next();
-	    } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
 	      this.prev();
+	    } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
+	      this.next();
 	    }
 	    delete this.mouseXY;
 	  };
@@ -21549,7 +21549,7 @@
 	    className = !this.props.default ? className : (className + ' ' + defaultClass).trim();
 	    className = className + ' ' + this.props.arrowType;
 	    var props = (0, _objectAssign2.default)({}, this.props);
-	    ['arrowType', 'next', 'prev', 'elemHeight', 'component', 'default'].forEach(function (key) {
+	    ['arrowType', 'next', 'prev', 'elemHeight', 'component', 'default', 'prefixCls'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    props.className = className;
@@ -24670,7 +24670,7 @@
 	      return _react2.default.cloneElement(item, props);
 	    });
 	    var props = (0, _objectAssign2.default)({}, this.props);
-	    ['length', 'thumbClick', 'active', 'default', 'component'].forEach(function (key) {
+	    ['length', 'thumbClick', 'active', 'default', 'component', 'prefixCls'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    props.className = className;
