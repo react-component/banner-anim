@@ -100,9 +100,9 @@ class BannerAnim extends Component {
     let angle = Math.round(r * 180 / Math.PI);
     angle = angle < 0 ? 360 - Math.abs(angle) : angle;
     if ((angle >= 0 && angle <= 45 || angle >= 315) && differX > this.state.domRect.width * 0.1) {
-      this.next();
-    } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
       this.prev();
+    } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
+      this.next();
     }
     delete this.mouseXY;
   }

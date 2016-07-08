@@ -22,7 +22,7 @@ class Arrow extends Component {
     const props = assign({}, this.props);
     [
       `arrowType`, `next`, `prev`,
-      `elemHeight`, 'component', 'default',
+      `elemHeight`, 'component', 'default', 'prefixCls',
     ].forEach(key => delete props[key]);
     props.className = className;
     props.onClick = this.onClick;
