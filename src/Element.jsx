@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import TweenOne from 'rc-tween-one';
 import ticker from 'rc-tween-one/lib/ticker';
-import assign from 'object-assign';
 import ease from 'tween-functions';
 import {
   getUnit,
@@ -290,8 +289,8 @@ class Element extends Component {
     const child = toArrayChildren(this.props.children).map(item => {
       const num = keys.indexOf(item.key);
       if (num >= 0) {
-        const props = assign({}, item.props);
-        const style = assign({}, props.style);
+        const props = { ...item.props };
+        const style = { ...props.style };
         const data = this.props.followParallax.data[num];
         if (this.props.followParallax.transition) {
           style.transition = this.props.followParallax.transition;
@@ -388,8 +387,8 @@ class Element extends Component {
   }
 
   render() {
-    const props = assign({}, this.props);
-    const style = assign({}, props.style);
+    const props = { ...this.props };
+    const style = { ...props.style };
     style.display = props.show ? 'block' : 'none';
     style.position = 'absolute';
     style.width = '100%';

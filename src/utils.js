@@ -1,6 +1,5 @@
 import React from 'react';
 import TweenOne from 'rc-tween-one';
-import assign from 'object-assign';
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -24,7 +23,7 @@ export function setAnimCompToTagComp(item, i) {
   if (!item) {
     return null;
   }
-  const props = assign({}, item.props);
+  const props = { ...item.props };
   props.key = item.key || i;
   // 压缩后名称不一样了。
   const propTypes = item.type.propTypes;
@@ -40,7 +39,7 @@ export function setAnimCompToTagComp(item, i) {
       || props.name === 'Animate'
     )) {
     // queueAnim or tweeOne or animate;
-    const style = assign({}, props.style);
+    const style = { ...props.style };
     style.position = 'relative';
     props.style = style;
     const component = props.component;

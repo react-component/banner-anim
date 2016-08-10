@@ -1,12 +1,11 @@
 import React, { cloneElement } from 'react';
-import assign from 'object-assign';
 import { toArrayChildren, setAnimCompToTagComp } from './utils';
 import ticker from 'rc-tween-one/lib/ticker';
 
 export default {
   across(elem, type, direction, animData) {
     let _x;
-    const props = assign({}, elem.props);
+    const props = { ...elem.props };
     let children = props.children;
     if (type === 'enter') {
       _x = direction === 'next' ? '100%' : '-100%';
@@ -25,7 +24,7 @@ export default {
   },
   vertical(elem, type, direction, animData) {
     let _y;
-    const props = assign({}, elem.props);
+    const props = { ...elem.props };
     let children = props.children;
     if (type === 'enter') {
       _y = direction === 'next' ? '-100%' : '100%';
@@ -45,7 +44,7 @@ export default {
   },
   acrossOverlay(elem, type, direction, animData) {
     let _x;
-    const props = assign({}, elem.props);
+    const props = { ...elem.props };
     let children = props.children;
     if (type === 'enter') {
       _x = direction === 'next' ? '100%' : '-100%';
@@ -64,7 +63,7 @@ export default {
   },
   verticalOverlay(elem, type, direction, animData) {
     let _y;
-    const props = assign({}, elem.props);
+    const props = { ...elem.props };
     let children = props.children;
     if (type === 'enter') {
       _y = direction === 'next' ? '-100%' : '100%';
@@ -82,7 +81,7 @@ export default {
     }, children);
   },
   gridBar(elem, type, direction, animData, elemOffset) {
-    const props = assign({}, elem.props);
+    const props = { ...elem.props };
     const animChild = [];
     const girdNum = 10;
     const girdSize = 100 / girdNum;
@@ -96,12 +95,12 @@ export default {
       children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
     for (let i = 0; i < girdNum; i++) {
-      const style = assign({}, props.style);
+      const style = { ...props.style };
       style.width = `${girdSize}%`;
       style.left = `${i * girdSize + 0.01}%`;
       style.position = 'absolute';
       style.overflow = 'hidden';
-      const _style = assign({}, props.style);
+      const _style = { ...props.style };
       _style.width = `${elemOffset.width}px`;
       _style.height = `${elemOffset.height}px`;
       _style.float = 'left';
@@ -124,12 +123,12 @@ export default {
     const animSlot = (<div style={{ width: '100%', position: 'absolute', top: 0 }}>
       {animChild}
     </div>);
-    const _props = assign({}, elem.props);
+    const _props = { ...elem.props };
     _props.children = animSlot;
     return cloneElement(elem, _props);
   },
   grid(elem, type, direction, animData, elemOffset) {
-    const props = assign({}, elem.props);
+    const props = { ...elem.props };
     const animChild = [];
     const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
@@ -145,7 +144,7 @@ export default {
     }
     for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
-      const style = assign({}, props.style);
+      const style = { ...props.style };
       style.position = 'absolute';
       style.overflow = 'hidden';
       style.width = `${gridWidth + 1}px`;
@@ -153,7 +152,7 @@ export default {
       style.left = i % gridNum * gridWidth;
       style.top = Math.floor(i / gridNum) * gridWidth;
       // clone 的样式
-      const _style = assign({}, props.style);
+      const _style = { ...props.style };
       _style.width = `${elemOffset.width}px`;
       _style.height = `${elemOffset.height}px`;
       _style.position = 'relative';
@@ -175,7 +174,7 @@ export default {
       </elem.type>);
       animChild.push(mask);
     }
-    const _props = assign({}, elem.props);
+    const _props = { ...elem.props };
     _props.children = animChild;
     return cloneElement(elem, _props);
   },

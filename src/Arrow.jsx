@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import assign from 'object-assign';
 
 class Arrow extends Component {
   constructor() {
@@ -19,7 +18,7 @@ class Arrow extends Component {
     className = `${className} ${this.props.prefixCls || ''}`.trim();
     className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
     className = `${className} ${this.props.arrowType}`;
-    const props = assign({}, this.props);
+    const props = { ...this.props };
     [
       `arrowType`, `next`, `prev`,
       `elemHeight`, 'component', 'default', 'prefixCls',

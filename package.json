@@ -48,9 +48,8 @@
     "rc-queue-anim": "0.11.x"
   },
   "dependencies": {
-    "object-assign": "~4.0.1",
-    "rc-tween-one": "~0.6.20",
-    "style-utils": "~0.1.2",
+    "rc-tween-one": "~0.8.0",
+    "style-utils": "~0.1.6",
     "tween-functions": "1.x"
   },
   "pre-commit": [

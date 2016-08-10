@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import assign from 'object-assign';
 import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
@@ -94,6 +93,9 @@ class BannerAnim extends Component {
   }
 
   onTouchEnd() {
+    if (this.mouseXY) {
+      return;
+    }
     const differX = this.mouseXY.currentX - this.mouseXY.startX;
     const differY = this.mouseXY.currentY - this.mouseXY.startY;
     const r = Math.atan2(differY, differX);
@@ -117,7 +119,7 @@ class BannerAnim extends Component {
       if (!item.key) {
         throw new Error('Please add key, key is required');
       }
-      const itemProps = assign({}, item.props);
+      const itemProps = { ...item.props };
       switch (item.type) {
         case Element:
           itemProps.key = item.key;
@@ -260,7 +262,7 @@ class BannerAnim extends Component {
 
   render() {
     const prefixCls = this.props.prefixCls;
-    const props = assign({}, this.props);
+    const props = { ...this.props };
     [
       `prefixCls`,
       `component`,
@@ -274,7 +276,7 @@ class BannerAnim extends Component {
     ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
-    props.style = assign({}, props.style);
+    props.style = { ...props.style };
     if (childrenToRender.length > 1) {
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseLeave = this.onMouseLeave;

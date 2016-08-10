@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { toArrayChildren } from './utils';
-import assign from 'object-assign';
 
 class Thumb extends Component {
   constructor() {
@@ -28,13 +27,13 @@ class Thumb extends Component {
       console.warn('The thumbnail length and the images length different.'); // eslint-disable-line
     }
     const childToRender = toArrayChildren(children).map((item, i) => {
-      const props = assign({}, item.props);
+      const props = { ...item.props };
       props.onClick = this.props.thumbClick.bind(this, i);
       props.className = `${props.className || ''} ${this.props.active === i ? 'active' : ''}`
         .trim();
       return React.cloneElement(item, props);
     });
-    const props = assign({}, this.props);
+    const props = { ...this.props };
     [`length`, `thumbClick`, `active`, 'default', 'component', 'prefixCls']
       .forEach(key => delete props[key]);
     props.className = className;

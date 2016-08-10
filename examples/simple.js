@@ -16,6 +16,7 @@ class Demo extends React.Component {
         <Element key="aaa"
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
+          id="1"
         >
           <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
@@ -28,6 +29,7 @@ class Demo extends React.Component {
         <Element key="bbb"
           prefixCls="banner-user-elem"
           img="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"
+          id="2"
         >
           <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
