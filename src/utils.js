@@ -75,9 +75,21 @@ setAnimCompToTagComp.propTypes = {
 };
 
 export function currentScrollTop() {
-  const supportPageOffset = window.pageXOffset !== undefined;
+  const supportPageOffset = window.pageYOffset !== undefined;
+  if (supportPageOffset) {
+    return window.pageYOffset;
+  }
   const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
-  const isCSS1ScrollTop = isCSS1Compat ?
+  return isCSS1Compat ?
     document.documentElement.scrollTop : document.body.scrollTop;
-  return supportPageOffset ? window.pageYOffset : isCSS1ScrollTop;
+}
+
+export function currentScrollLeft() {
+  const supportPageOffset = window.pageXOffset !== undefined;
+  if (supportPageOffset) {
+    return window.pageXOffset;
+  }
+  const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
+  return isCSS1Compat ?
+    document.documentElement.scrollLeft : document.body.scrollLeft;
 }

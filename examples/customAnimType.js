@@ -33,31 +33,48 @@ animType.custom = (elem, type, direction, animData) => {
 };
 
 const { Element } = BannerAnim;
+const BgElement = Element.BgElement;
 class Demo extends React.Component {
   render() {
     return (
       <BannerAnim type="custom">
         <Element key="aaa"
           prefixCls="banner-user-elem"
-          img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
         >
+          <BgElement
+            key="bg"
+            className="bg"
+            style={{
+              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne">
             Ant Motion Demo.Ant Motion Demo
           </TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
-          img="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"
         >
+          <BgElement
+            key="bg"
+            className="bg"
+            style={{
+              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} name="TweenOne">
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne">
             Ant Motion Demo.Ant Motion Demo
           </TweenOne>
         </Element>

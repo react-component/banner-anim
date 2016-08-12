@@ -10,6 +10,7 @@ import './assets/arrow.less';
 import '../assets/index.less';
 
 const { Element, Arrow } = BannerAnim;
+const BgElement = Element.BgElement;
 class Demo extends React.Component {
   constructor() {
     super(...arguments);
@@ -82,25 +83,49 @@ class Demo extends React.Component {
       <BannerAnim onChange={this.onChange}>
         <Element key="aaa"
           prefixCls="banner-user-elem"
-          img={this.imgArray[0]}
         >
+          <BgElement
+            key="bg"
+            className="bg"
+            style={{
+              backgroundImage: `url(${this.imgArray[0]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           <QueueAnim key="1" name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">
+          <TweenOne
+            animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }}
+            key="2"
+            name="TweenOne"
+          >
             Ant Motion Demo.Ant Motion Demo
           </TweenOne>
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
-          img={this.imgArray[1]}
         >
+          <BgElement
+            key="bg"
+            className="bg"
+            style={{
+              backgroundImage: `url(${this.imgArray[1]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           <QueueAnim key="1" name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from' }} key="2" name="TweenOne">
+          <TweenOne
+            animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }}
+            key="2"
+            name="TweenOne"
+          >
             Ant Motion Demo.Ant Motion Demo
           </TweenOne>
         </Element>
@@ -125,7 +150,7 @@ class Demo extends React.Component {
           animation={{ right: this.state.nextEnter ? 0 : -120 }}
         >
           <div className="arrow"></div>
-          <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }}
+          <TweenOneGroup enter={{ opacity: 0, type: 'from', delay: 200 }} leave={{ opacity: 0 }}
             className="img-wrapper" component="ul"
           >
             <li

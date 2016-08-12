@@ -84,9 +84,9 @@ React.render(<BannerAnim>
 | autoPlay |      boolean    |      `false`  | auto play |
 | autoPlaySpeed |  number    |    5000       | auto play delay |
 | onChange |     func        |    -          | onChange(`before` or `after`, currentShowInt) |
-| bgParallaxAll |  object    |   null        |  with `bgParallax`, All Element `bgParallax`  |
 | prefixCls |    string      |   -           |  user class |
 | children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
+| component | string | 'div' | component tag        |
 
 ### Element 
 
@@ -96,20 +96,26 @@ React.render(<BannerAnim>
 |----------|-----------------|--------------|-----------------------|
 | key      |     string      |      -       |  must                 |
 | prefixCls |     string      |   -           |  user class |
-| bg      |     string      |    null      |  bg image or video src           |
-| bgType  |      string     |    `img`     |  img or video/xxx     |
-| bgParallax |  object      |   null       |   { y: [0, 300] },  [ scrollTop is 0, page to top ] |
-| bgPrefixCls | string      |   -          | bg user class |
 | followParallax | object   |  null        | follow mouse anim  |
+| component | string | 'div' | component tag        |
 
 #### followParallax is object
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | delay    |     number      |  null        | open followParallax delay |
-| data     | array           |  null        | content: { key: string, scale: number, type: array or string, bgPosition: string }; key: dom key, banner bg key is `bgElem`, scale: Animation value = banner.width / 2 ＊ scale, type: style or `x` `y`, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid. |
+| data     | array           |  null        | content: { key: string, value: number, type: array or string, bgPosition: string }; key: children key; value: animation interval value, example: value is 20 => [left: -20, center: 0 , right: 20] ; type: style or `x` `y`, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid. |
 | ease | string        | false         | `true` is `easeInOutQuad`   |
 | minMove    |   number        |  null        | ease.easeInOutQuad(start, minMove, 1, end); The mouse to move once, the minimum point of moving graphics, a second to reach the position of the mouse. |
 
+### Element.BgElement
+
+|   name   |      type       |   default    |        description    |
+|----------|-----------------|--------------|-----------------------|
+| key      |  string         | -            |  must                 |
+| className | string         | -            | className             |
+| scrollParallax | object | null | { y: 100 },  scroll Element y to 100 | 
+| videoResize | boolean | true | children is video, video follow window resize |
+| component | string | 'div' | component tag        |
 
 ### Arrow or Thumb
 

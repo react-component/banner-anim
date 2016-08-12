@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
+import BgElement from './BgElement';
 import TweenOne from 'rc-tween-one';
 import ticker from 'rc-tween-one/lib/ticker';
 import ease from 'tween-functions';
@@ -9,11 +10,10 @@ import {
   isConvert,
   getValues,
   mergeStyle,
-  checkStyleName,
 } from 'style-utils';
-import animType from './anim';
 import {
   currentScrollTop,
+  currentScrollLeft,
   dataToArray,
   toArrayChildren,
 } from './utils';
@@ -25,33 +25,12 @@ class Element extends Component {
   constructor() {
     super(...arguments);
     this.state = {
-      bgParallaxAnim: null,
-      videoRect: {
-        width: 'auto',
-        height: 'auto',
-        display: 'block',
-      },
-      mouseXY: null,
-      domWH: null,
-      onMouseMove: null,
       show: this.props.show,
     };
     this.tickerId = -1;
-    this.isScroll = false;
     this.delayTimeout = null;
-    this.tweenBool = false;
     this.show = this.state.show;
     [
-      'onScroll',
-      'onResize',
-      'onMouseMove',
-      'onMouseEnter',
-      'getImgOrVideo',
-      'videoLoadedData',
-      'addScrollEvent',
-      'getFollowStyle',
-      'followAnalysisType',
-      'getFollowMouseMove',
       'getChildren',
       'animEnd',
       'animChildren',
@@ -60,13 +39,6 @@ class Element extends Component {
 
   componentDidMount() {
     this.dom = ReactDOM.findDOMNode(this);
-    this.componentDidUpdate();
-    if (this.props.bgType.indexOf('video') >= 0) {
-      // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
-      delete animType.grid;
-      delete animType.gridBar;
-      this.video = this.dom.children[0].children[0];
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -74,196 +46,71 @@ class Element extends Component {
     this.setState({ show });
   }
 
-  componentDidUpdate() {
-    if (this.props.bgParallax && !this.isScroll) {
-      this.addScrollEvent(this.props);
-    }
-  }
-
   componentWillUnmount() {
-    this.isScroll = false;
-    this.cancelRequestAnimationFrame();
-    if (window.addEventListener) {
-      window.removeEventListener('resize', this.onResize);
-      window.removeEventListener('scroll', this.onScroll);
-    } else {
-      window.detachEvent('onresize', this.onResize);
-      window.detachEvent('onscroll', this.onScroll);
-    }
+    ticker.clear(this.timeoutID);
+    ticker.clear(this.delayTimeout);
+    this.delayTimeout = -1;
+    this.timeoutID = -1;
   }
 
-  onMouseEnter(e) {
+
+  onMouseEnter = () => {
     const domRect = this.dom.getBoundingClientRect();
-    const scrollTop = currentScrollTop();
-    const offsetTop = domRect.top + scrollTop;
-    this.enterMouse = {
-      x: e.pageX - domRect.left,
-      y: e.pageY - offsetTop,
+    this.enterMouse = this.enterMouse || {
+      x: domRect.width / 2,
+      y: domRect.height / 2,
     };
   }
 
-  onMouseMove(e) {
+  onMouseMove = (e) => {
     const domRect = this.dom.getBoundingClientRect();
-    const scrollTop = currentScrollTop();
-    const offsetTop = domRect.top + scrollTop;
+    const offsetTop = domRect.top + currentScrollTop();
+    const offsetLeft = domRect.left + currentScrollLeft();
     const mouseXY = {
-      x: e.pageX - domRect.left,
+      x: e.pageX - offsetLeft,
       y: e.pageY - offsetTop,
     };
     const domWH = {
       w: domRect.width,
       h: domRect.height,
     };
-
-    if (this.props.followParallax && this.props.followParallax.ease) {
-      ticker.clear(this.tickerId);
-      this.tickerId = `bannerElementTicker${Date.now() + Math.random()}`;
-      const startFrame = ticker.frame;
-      ticker.wake(this.tickerId, () => {
-        const moment = (ticker.frame - startFrame) * ticker.perFrame;
-        const start = typeof this.props.followParallax.minMove === 'number' ?
-          this.props.followParallax.minMove : 0.08;
-        const ratio = ease[this.props.followParallax.ease === true ? 'easeInOutQuad'
-          : this.props.followParallax.ease](moment, start, 1, 1000);
-        this.enterMouse.x = this.enterMouse.x + (mouseXY.x - this.enterMouse.x) * ratio;
-        this.enterMouse.y = this.enterMouse.y + (mouseXY.y - this.enterMouse.y) * ratio;
-        this.setState({
-          mouseXY: this.enterMouse,
-          domWH,
-        });
-        if (moment >= 1000) {
-          ticker.clear(this.tickerId);
-        }
-      });
-    } else {
+    ticker.clear(this.tickerId);
+    this.tickerId = `bannerElementTicker${Date.now() + Math.random()}`;
+    const startFrame = ticker.frame;
+    ticker.wake(this.tickerId, () => {
+      const moment = (ticker.frame - startFrame) * ticker.perFrame;
+      const start = typeof this.props.followParallax.minMove === 'number' ?
+        this.props.followParallax.minMove : 0.08;
+      const ratio = ease[this.props.followParallax.ease ||
+      'easeInOutQuad'](moment, start, 1, 1000);
+      this.enterMouse.x = this.enterMouse.x + (mouseXY.x - this.enterMouse.x) * ratio;
+      this.enterMouse.y = this.enterMouse.y + (mouseXY.y - this.enterMouse.y) * ratio;
       this.setState({
-        mouseXY,
+        mouseXY: this.enterMouse,
         domWH,
       });
-    }
-  }
-
-  onResize() {
-    const domRect = this.dom.getBoundingClientRect();
-    const videoDomRect = this.video.getBoundingClientRect();
-    let scale;
-    const videoRect = {
-      display: 'block',
-      position: 'relative',
-      top: 0,
-      left: 0,
-    };
-    if (domRect.width / domRect.height > videoDomRect.width / videoDomRect.height) {
-      scale = domRect.width / videoDomRect.width;
-      videoRect.width = domRect.width;
-      videoRect.height = videoDomRect.height * scale;
-      videoRect.top = -(videoRect.height - domRect.height) / 2;
-    } else {
-      scale = domRect.height / videoDomRect.height;
-      videoRect.height = domRect.height;
-      videoRect.width = videoDomRect.width * scale;
-      videoRect.left = -(videoRect.width - domRect.width) / 2;
-    }
-    this.setState({
-      videoRect,
-    });
-  }
-
-  onScroll() {
-    const scrollTop = currentScrollTop();
-    const domHeight = this.props.elemOffset.height;
-    const offsetTop = this.props.elemOffset.top;
-    // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
-    let scale = scrollTop / (domHeight + offsetTop);
-    scale = scale >= 1 ? 1 : scale;
-    const _css = {};
-    Object.keys(this.props.bgParallax).forEach((_key) => {
-      const key = getGsapType(_key);
-      const item = this.props.bgParallax[_key];
-      const cssName = isConvert(key);
-      if (!Array.isArray(item)) {
-        _css[cssName] = item;
-        return;
-      }
-      const cssData = item[0] - scale * (item[0] - item[1]);
-      const unit = getUnit(key, cssData);
-      if (cssName === 'transform') {
-        _css[cssName] = mergeStyle(_css[cssName] || '', getValues(key, cssData, unit));
-      } else if (cssName === 'filter') {
-        _css[checkStyleName(cssName)] = mergeStyle(_css[cssName] || '',
-          getValues(key, cssData, unit));
-      } else {
-        _css[cssName] = cssData;
+      if (moment >= 1000) {
+        ticker.clear(this.tickerId);
       }
     });
-    this.setState({
-      bgParallaxAnim: _css,
-    });
-  }
+  };
 
-  getFollowStyle(type, data) {
+  getFollowStyle = (type, data) => {
     let mouseData = this.state.mouseXY.x;
     let domData = this.state.domWH.w;
-    const value = data.scale;
+    const value = data.value;
     if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
       mouseData = this.state.mouseXY.y;
       domData = this.state.domWH.h;
     }
-    let d = -(mouseData - domData / 2) * value;
-    if (type === 'opacity') {
-      // 如果是透明度，，变换为value的区间，，最左边为 1 - value; 最右边为 1;
-      d = (mouseData / domData) * value + 1 - value;
-    }
+    const d = (mouseData - domData / 2) / (domData / 2) * value;
     const unit = isConvert(type) !== type ? getUnit(type, d) : '';
     const css = isConvert(type) !== type ? getValues(type, d, unit) : d;
     return type.indexOf('backgroundPosition') >= 0 ?
       `calc(${ data.bgPosition || '50%'} + ${css}px )` : css;
   }
 
-  getImgOrVideo() {
-    const followObj = {};
-    if (this.props.followParallax) {
-      followObj.transition = this.props.followParallax.transition;
-    }
-    if (this.props.followParallax && this.state.domWH && this.state.mouseXY) {
-      this.props.followParallax.data.forEach(item => {
-        if (!item.key) {
-          return;
-        }
-        if (item.key === 'bgElem' || item.key === 'bannerBgElem') {
-          dataToArray(item.type).map(this.followAnalysisType.bind(this, item))
-            .forEach(_item =>
-              followObj[_item.cssName] = mergeStyle(followObj[_item.cssName], _item.data)
-            );
-        }
-      });
-    }
-    const className = `banner-anim-elem-background ${this.props.bgPrefixCls || ''}`.trim();
-    const dom = this.props.bgType.indexOf('video') >= 0 ?
-      (<div className={className}
-        style={{ ...this.state.bgParallaxAnim, ...followObj }}
-        key="bgElem"
-      >
-        <video loop autoPlay
-          style={this.state.videoRect}
-          onLoadedData={this.videoLoadedData}
-        >
-          <source src={this.props.bg || this.props.img} type={this.props.bgType} />
-        </video>
-      </div>) :
-      (<div
-        className={className}
-        style={{
-          backgroundImage: `url(${this.props.bg || this.props.img})`,
-          ...this.state.bgParallaxAnim,
-          ...followObj,
-        }}
-        key="bgElem"
-      ></div>);
-    return dom;
-  }
-
-  getFollowMouseMove() {
+  getFollowMouseMove = () => {
     let onMouseMove;
     if (this.props.followParallax) {
       if (this.props.followParallax.delay) {
@@ -283,7 +130,12 @@ class Element extends Component {
 
   getChildren() {
     if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
-      return this.props.children;
+      return toArrayChildren(this.props.children).map(item => {
+        if (item.type === BgElement) {
+          return React.cloneElement(item, { show: this.state.show });
+        }
+        return item;
+      });
     }
     const keys = this.props.followParallax.data.map(item => item.key);
     const child = toArrayChildren(this.props.children).map(item => {
@@ -307,40 +159,7 @@ class Element extends Component {
     return child;
   }
 
-  animEnd() {
-    const type = this.state.show ? 'enter' : 'leave';
-    this.props.callBack(type);
-    this.setState({ show: this.props.show });
-  }
-
-  videoLoadedData() {
-    this.onResize();
-    if (this.state.show) {
-      if (window.addEventListener) {
-        window.addEventListener('resize', this.onResize);
-      } else {
-        window.attachEvent('onresize', this.onResize);
-      }
-    } else {
-      if (window.addEventListener) {
-        window.removeEventListener('resize', this.onResize);
-      } else {
-        window.detachEvent('onresize', this.onResize);
-      }
-    }
-  }
-
-  addScrollEvent() {
-    this.onScroll();
-    this.isScroll = true;
-    if (window.addEventListener) {
-      window.addEventListener('scroll', this.onScroll);
-    } else {
-      window.attachEvent('onscroll', this.onScroll);
-    }
-  }
-
-  followAnalysisType(data, _type) {
+  followAnalysisType = (data, _type) => {
     const type = getGsapType(_type);
     const cssName = isConvert(type);
     // 把 bgParallax 的合进来；
@@ -352,11 +171,10 @@ class Element extends Component {
     };
   }
 
-  cancelRequestAnimationFrame() {
-    ticker.clear(this.timeoutID);
-    ticker.clear(this.delayTimeout);
-    this.delayTimeout = -1;
-    this.timeoutID = -1;
+  animEnd() {
+    const type = this.state.show ? 'enter' : 'leave';
+    this.props.callBack(type);
+    this.setState({ show: this.props.show });
   }
 
   animChildren(props, style, bgElem) {
@@ -371,7 +189,7 @@ class Element extends Component {
     props.component = this.props.component;
     this.show = this.state.show;
     style.zIndex = this.state.show ? 1 : 0;
-    props.children = this.props.show ? bgElem : [bgElem, this.getChildren()];
+    props.children = this.props.show ? bgElem : this.getChildren();
     const childrenToRender = React.createElement(TweenOne, props);
     const type = this.state.show ? 'enter' : 'leave';
     return this.props.animType(childrenToRender,
@@ -396,13 +214,15 @@ class Element extends Component {
     props.className = `banner-anim-elem ${this.props.prefixCls || ''}`.trim();
     delete props.direction;
     delete props.show;
-    const bgElem = this.props.bg || this.props.img ?
-      this.getImgOrVideo() : null;
+    const bgElem = toArrayChildren(this.props.children).filter(item => item.type === BgElement)
+      .map(item => {
+        return React.cloneElement(item, { show: this.state.show });
+      });
     [
-      `prefixCls`, `img`, `bgType`, `callBack`,
-      `animType`, `duration`, `ease`, `elemOffset`,
-      'bg', 'bgType', 'bgParallax', 'followParallax',
-      'show', 'bgPrefixCls', 'type',
+      `prefixCls`, `callBack`,
+      `animType`, `duration`, `ease`,
+      `elemOffset`, 'followParallax',
+      'show', 'type',
     ].forEach(key => delete props[key]);
     if (this.show === this.state.show) {
       style.transform = null;
@@ -411,7 +231,7 @@ class Element extends Component {
       }
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseMove = this.getFollowMouseMove();
-      return React.createElement(TweenOne, props, [bgElem, this.getChildren()]);
+      return React.createElement(TweenOne, props, this.getChildren());
     }
     return this.animChildren(props, style, bgElem);
   }
@@ -421,26 +241,22 @@ Element.propTypes = {
   children: PropTypes.any,
   style: PropTypes.object,
   prefixCls: PropTypes.string,
-  bgPrefixCls: PropTypes.string,
   component: PropTypes.any,
   elemOffset: PropTypes.object,
   type: PropTypes.string,
   animType: PropTypes.func,
-  img: PropTypes.string,
-  bg: PropTypes.string,
-  bgType: PropTypes.string,
   ease: PropTypes.string,
   duration: PropTypes.number,
   direction: PropTypes.string,
   callBack: PropTypes.func,
-  bgParallax: PropTypes.object,
   followParallax: PropTypes.object,
   show: PropTypes.bool,
 };
 Element.defaultProps = {
   component: 'div',
-  bgType: 'img',
   callBack: noop,
 };
+
+Element.BgElement = BgElement;
 
 export default Element;

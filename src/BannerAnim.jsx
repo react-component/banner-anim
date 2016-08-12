@@ -93,7 +93,7 @@ class BannerAnim extends Component {
   }
 
   onTouchEnd() {
-    if (this.mouseXY) {
+    if (!this.mouseXY) {
       return;
     }
     const differX = this.mouseXY.currentX - this.mouseXY.startX;
@@ -134,9 +134,6 @@ class BannerAnim extends Component {
             height: this.state.wrapperHeight,
           };
           itemProps.direction = this.state.direction;
-          if (this.props.bgParallaxAll) {
-            itemProps.bgParallax = this.props.bgParallaxAll;
-          }
           elem.push(React.cloneElement(item, itemProps));
           break;
         case Arrow:
@@ -273,6 +270,7 @@ class BannerAnim extends Component {
       `thumb`,
       `autoPlaySpeed`,
       'autoPlay',
+      'thumbFloat',
     ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
@@ -308,7 +306,6 @@ BannerAnim.propTypes = {
   onChange: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
-  bgParallaxAll: PropTypes.object,
 };
 BannerAnim.defaultProps = {
   component: 'div',

@@ -9,15 +9,23 @@ import './assets/index.less';
 import '../assets/index.less';
 
 const { Element } = BannerAnim;
+const BgElement = Element.BgElement;
 class Demo extends React.Component {
   render() {
     return (
-      <BannerAnim prefixCls="banner-user" type="across">
+      <BannerAnim prefixCls="banner-user">
         <Element key="aaa"
           prefixCls="banner-user-elem"
-          img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"
-          id="1"
         >
+          <BgElement
+            key="bg"
+            className="bg"
+            style={{
+              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
@@ -28,9 +36,16 @@ class Demo extends React.Component {
         </Element>
         <Element key="bbb"
           prefixCls="banner-user-elem"
-          img="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"
-          id="2"
         >
+          <BgElement
+            key="bg"
+            className="bg"
+            style={{
+              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
           <QueueAnim name="QueueAnim">
             <h1 key="h1">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
