@@ -3,10 +3,11 @@ import ReactDom from 'react-dom';
 import expect from 'expect.js';
 import BannerAnim from '../index';
 import '../assets/index.less';
+import '../examples/assets/index.less';
 import TestUtils from 'react-addons-test-utils';
 
 const { Element } = BannerAnim;
-
+const BgElement = Element.BgElement;
 describe('rc-banner-anim', () => {
   let div;
 
@@ -19,10 +20,28 @@ describe('rc-banner-anim', () => {
       render() {
         return (
           <BannerAnim { ...props }>
-            <Element img="https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg" key="a" id="a">
+            <Element key="a" id="a">
+              <BgElement
+                key="bgElem"
+                className="bg"
+                style={{
+                  backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
               <span>test text</span>
             </Element>
-            <Element img="https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg" key="b" id="b">
+            <Element key="b" id="b">
+              <BgElement
+                key="bgElem"
+                className="bg"
+                style={{
+                  backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
               <span>test text</span>
             </Element>
           </BannerAnim>
@@ -83,6 +102,6 @@ describe('rc-banner-anim', () => {
       expect(children[0].style.display).to.be('block');
       expect(children[1].style.display).to.be('block');
       done();
-    }, 1030);
+    }, 1300);
   });
 });
