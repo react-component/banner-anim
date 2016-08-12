@@ -17,6 +17,14 @@ li {
 .banner-thumb-bottom .banner-anim-thumb {
   background: #999;
 }
+.banner-anim-elem .bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
 .banner-anim {
   position: relative;
   overflow: hidden;
@@ -27,16 +35,6 @@ li {
 }
 .banner-anim-elem > * {
   position: relative;
-}
-.banner-anim-elem-background {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-position: center;
-  background-size: cover;
-  overflow: hidden;
 }
 .banner-anim-elem-mask {
   position: relative;

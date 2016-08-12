@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-banner-anim@0.2.14 - banner-anim animation component for react</title>
+  <title>rc-banner-anim@0.3.0 - banner-anim animation component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-banner-anim@0.2.14</h1>
+  <h1>rc-banner-anim@0.3.0</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -877,12 +877,6 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>onChange(<code>before</code> or <code>after</code>, currentShowInt)</td>
 </tr>
 <tr>
-<td>bgParallaxAll</td>
-<td>object</td>
-<td>null</td>
-<td>with <code>bgParallax</code>, All Element <code>bgParallax</code></td>
-</tr>
-<tr>
 <td>prefixCls</td>
 <td>string</td>
 <td>-</td>
@@ -893,6 +887,12 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>react.component</td>
 <td>-</td>
 <td><code>Element</code>(must), <code>Arrow</code>, <code>Thumb</code></td>
+</tr>
+<tr>
+<td>component</td>
+<td>string</td>
+<td>&#39;div&#39;</td>
+<td>component tag</td>
 </tr>
 </tbody>
 </table>
@@ -922,34 +922,16 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>user class</td>
 </tr>
 <tr>
-<td>bg</td>
-<td>string</td>
-<td>null</td>
-<td>bg image or video src</td>
-</tr>
-<tr>
-<td>bgType</td>
-<td>string</td>
-<td><code>img</code></td>
-<td>img or video/xxx</td>
-</tr>
-<tr>
-<td>bgParallax</td>
-<td>object</td>
-<td>null</td>
-<td>{ y: [0, 300] },  [ scrollTop is 0, page to top ]</td>
-</tr>
-<tr>
-<td>bgPrefixCls</td>
-<td>string</td>
-<td>-</td>
-<td>bg user class</td>
-</tr>
-<tr>
 <td>followParallax</td>
 <td>object</td>
 <td>null</td>
 <td>follow mouse anim</td>
+</tr>
+<tr>
+<td>component</td>
+<td>string</td>
+<td>&#39;div&#39;</td>
+<td>component tag</td>
 </tr>
 </tbody>
 </table>
@@ -973,7 +955,7 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>data</td>
 <td>array</td>
 <td>null</td>
-<td>content: { key: string, scale: number, type: array or string, bgPosition: string }; key: dom key, banner bg key is <code>bgElem</code>, scale: Animation value = banner.width / 2 ＊ scale, type: style or <code>x</code> <code>y</code>, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid.</td>
+<td>content: { key: string, value: number, type: array or string, bgPosition: string }; key: children key; value: animation interval value, example: value is 20 =&gt; [left: -20, center: 0 , right: 20] ; type: style or <code>x</code> <code>y</code>, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid.</td>
 </tr>
 <tr>
 <td>ease</td>
@@ -986,6 +968,48 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>number</td>
 <td>null</td>
 <td>ease.easeInOutQuad(start, minMove, 1, end); The mouse to move once, the minimum point of moving graphics, a second to reach the position of the mouse.</td>
+</tr>
+</tbody>
+</table>
+<h3>Element.BgElement<a id="user-content-element.bgelement" name="element.bgelement" class="anchor" aria-hidden="true" href="#element.bgelement"><span class="octicon octicon-link"></span></a></h3><table>
+<thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key</td>
+<td>string</td>
+<td>-</td>
+<td>must</td>
+</tr>
+<tr>
+<td>className</td>
+<td>string</td>
+<td>-</td>
+<td>className</td>
+</tr>
+<tr>
+<td>scrollParallax</td>
+<td>object</td>
+<td>null</td>
+<td>{ y: 100 },  scroll Element y to 100</td>
+</tr>
+<tr>
+<td>videoResize</td>
+<td>boolean</td>
+<td>true</td>
+<td>children is video, video follow window resize</td>
+</tr>
+<tr>
+<td>component</td>
+<td>string</td>
+<td>&#39;div&#39;</td>
+<td>component tag</td>
 </tr>
 </tbody>
 </table>

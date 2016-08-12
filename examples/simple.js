@@ -3,12 +3,12 @@ webpackJsonp([7],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(209);
+	module.exports = __webpack_require__(213);
 
 
 /***/ },
 
-/***/ 209:
+/***/ 213:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,11 +17,11 @@ webpackJsonp([7],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(193);
+	var _rcQueueAnim = __webpack_require__(197);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(177);
+	var _rcTweenOne = __webpack_require__(184);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -29,13 +29,13 @@ webpackJsonp([7],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(39);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(199);
+	__webpack_require__(203);
 	
-	__webpack_require__(200);
+	__webpack_require__(204);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -49,6 +49,8 @@ webpackJsonp([7],{
 	
 	var Element = _rcBannerAnim2.default.Element;
 	
+	var BgElement = Element.BgElement;
+	
 	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
@@ -61,13 +63,21 @@ webpackJsonp([7],{
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
 	      _rcBannerAnim2.default,
-	      { prefixCls: 'banner-user', type: 'across' },
+	      { prefixCls: 'banner-user' },
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'aaa',
-	          prefixCls: 'banner-user-elem',
-	          img: 'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg'
+	          prefixCls: 'banner-user-elem'
 	        },
+	        _react2.default.createElement(BgElement, {
+	          key: 'bg',
+	          className: 'bg',
+	          style: {
+	            backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+	            backgroundSize: 'cover',
+	            backgroundPosition: 'center'
+	          }
+	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
 	          { name: 'QueueAnim' },
@@ -91,9 +101,17 @@ webpackJsonp([7],{
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'bbb',
-	          prefixCls: 'banner-user-elem',
-	          img: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
+	          prefixCls: 'banner-user-elem'
 	        },
+	        _react2.default.createElement(BgElement, {
+	          key: 'bg',
+	          className: 'bg',
+	          style: {
+	            backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+	            backgroundSize: 'cover',
+	            backgroundPosition: 'center'
+	          }
+	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
 	          { name: 'QueueAnim' },

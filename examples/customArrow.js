@@ -3,12 +3,12 @@ webpackJsonp([4],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(204);
+	module.exports = __webpack_require__(208);
 
 
 /***/ },
 
-/***/ 204:
+/***/ 208:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,11 +17,11 @@ webpackJsonp([4],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(193);
+	var _rcQueueAnim = __webpack_require__(197);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(177);
+	var _rcTweenOne = __webpack_require__(184);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -29,15 +29,15 @@ webpackJsonp([4],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(39);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(199);
+	__webpack_require__(203);
 	
-	__webpack_require__(205);
+	__webpack_require__(209);
 	
-	__webpack_require__(200);
+	__webpack_require__(204);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -51,6 +51,8 @@ webpackJsonp([4],{
 	
 	var Element = _rcBannerAnim2.default.Element;
 	var Arrow = _rcBannerAnim2.default.Arrow;
+	
+	var BgElement = Element.BgElement;
 	
 	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
@@ -125,9 +127,17 @@ webpackJsonp([4],{
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'aaa',
-	          prefixCls: 'banner-user-elem',
-	          img: this.imgArray[0]
+	          prefixCls: 'banner-user-elem'
 	        },
+	        _react2.default.createElement(BgElement, {
+	          key: 'bg',
+	          className: 'bg',
+	          style: {
+	            backgroundImage: 'url(' + this.imgArray[0] + ')',
+	            backgroundSize: 'cover',
+	            backgroundPosition: 'center'
+	          }
+	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
 	          { key: '1', name: 'QueueAnim' },
@@ -144,16 +154,28 @@ webpackJsonp([4],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from' }, key: '2', name: 'TweenOne' },
+	          {
+	            animation: { y: 50, opacity: 0, type: 'from', delay: 200 },
+	            key: '2',
+	            name: 'TweenOne'
+	          },
 	          'Ant Motion Demo.Ant Motion Demo'
 	        )
 	      ),
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'bbb',
-	          prefixCls: 'banner-user-elem',
-	          img: this.imgArray[1]
+	          prefixCls: 'banner-user-elem'
 	        },
+	        _react2.default.createElement(BgElement, {
+	          key: 'bg',
+	          className: 'bg',
+	          style: {
+	            backgroundImage: 'url(' + this.imgArray[1] + ')',
+	            backgroundSize: 'cover',
+	            backgroundPosition: 'center'
+	          }
+	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
 	          { key: '1', name: 'QueueAnim' },
@@ -170,7 +192,11 @@ webpackJsonp([4],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from' }, key: '2', name: 'TweenOne' },
+	          {
+	            animation: { y: 50, opacity: 0, type: 'from', delay: 200 },
+	            key: '2',
+	            name: 'TweenOne'
+	          },
 	          'Ant Motion Demo.Ant Motion Demo'
 	        )
 	      ),
@@ -203,7 +229,7 @@ webpackJsonp([4],{
 	        _react2.default.createElement('div', { className: 'arrow' }),
 	        _react2.default.createElement(
 	          _rcTweenOne.TweenOneGroup,
-	          { enter: { opacity: 0, type: 'from' }, leave: { opacity: 0 },
+	          { enter: { opacity: 0, type: 'from', delay: 200 }, leave: { opacity: 0 },
 	            className: 'img-wrapper', component: 'ul'
 	          },
 	          _react2.default.createElement('li', {
@@ -222,8 +248,8 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 205:
-199
+/***/ 209:
+203
 
 });
 //# sourceMappingURL=customArrow.js.map

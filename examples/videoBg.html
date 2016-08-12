@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>videoBg.js - example - rc-banner-anim@0.2.14</title>
+  <title>videoBg.js - example - rc-banner-anim@0.3.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -258,7 +258,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-banner-anim@0.2.14</h1>
+      <h1>rc-banner-anim@0.3.0</h1>
 
       <p>banner-anim animation component for react</p>
     </div>
@@ -275,15 +275,19 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 
 <span class="hljs-keyword">const</span> { Element } = BannerAnim;
+<span class="hljs-keyword">const</span> BgElement = Element.BgElement;
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   render() {
     <span class="hljs-keyword">return</span> (
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">BannerAnim</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"aaa"</span>
           <span class="hljs-attribute">prefixCls</span>=<span class="hljs-value">"banner-user-elem"</span>
-          <span class="hljs-attribute">bgType</span>=<span class="hljs-value">"video/mp4"</span>
-          <span class="hljs-attribute">bg</span>=<span class="hljs-value">"https://os.alipayobjects.com/rmsportal/CoDFvoxaQpTnLOM.mp4"</span>
         &gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">BgElement</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"bg"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"bg"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-title">video</span> <span class="hljs-attribute">loop</span> <span class="hljs-attribute">autoPlay</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-title">source</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://os.alipayobjects.com/rmsportal/CoDFvoxaQpTnLOM.mp4"</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"video/mp4"</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-title">video</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-title">BgElement</span>&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"QueueAnim"</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">h1</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"h1"</span>&gt;</span>Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"p"</span>&gt;</span>Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
@@ -294,25 +298,41 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
         <span class="hljs-tag">&lt;/<span class="hljs-title">Element</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"bbb"</span>
           <span class="hljs-attribute">prefixCls</span>=<span class="hljs-value">"banner-user-elem"</span>
-          <span class="hljs-attribute">bg</span>=<span class="hljs-value">"https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg"</span>
         &gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">BgElement</span>
+            <span class="hljs-attribute">key</span>=<span class="hljs-value">"bg"</span>
+            <span class="hljs-attribute">className</span>=<span class="hljs-value">"bg"</span>
+            <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
+              <span class="hljs-attribute">backgroundImage:</span> '<span class="hljs-attribute">url</span>(<span class="hljs-attribute">https:</span>//<span class="hljs-attribute">os.alipayobjects.com</span>/<span class="hljs-attribute">rmsportal</span>/<span class="hljs-attribute">IhCNTqPpLeTNnwr.jpg</span>)',
+              <span class="hljs-attribute">backgroundSize:</span> '<span class="hljs-attribute">cover</span>',
+              <span class="hljs-attribute">backgroundPosition:</span> '<span class="hljs-attribute">center</span>',
+            }}
+          /&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"QueueAnim"</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">h1</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"h1"</span>&gt;</span>Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"p"</span>&gt;</span>Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
           <span class="hljs-tag">&lt;/<span class="hljs-title">QueueAnim</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>' }} <span class="hljs-attribute">name</span>=<span class="hljs-value">"TweenOne"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">200</span> }} <span class="hljs-attribute">name</span>=<span class="hljs-value">"TweenOne"</span>&gt;</span>
             Ant Motion Demo.Ant MotionDemo
           <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">Element</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"ccc"</span>
           <span class="hljs-attribute">prefixCls</span>=<span class="hljs-value">"banner-user-elem"</span>
-          <span class="hljs-attribute">bg</span>=<span class="hljs-value">"https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg"</span>
         &gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">BgElement</span>
+            <span class="hljs-attribute">key</span>=<span class="hljs-value">"bg"</span>
+            <span class="hljs-attribute">className</span>=<span class="hljs-value">"bg"</span>
+            <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
+              <span class="hljs-attribute">backgroundImage:</span> '<span class="hljs-attribute">url</span>(<span class="hljs-attribute">https:</span>//<span class="hljs-attribute">os.alipayobjects.com</span>/<span class="hljs-attribute">rmsportal</span>/<span class="hljs-attribute">uaQVvDrCwryVlbb.jpg</span>)',
+              <span class="hljs-attribute">backgroundSize:</span> '<span class="hljs-attribute">cover</span>',
+              <span class="hljs-attribute">backgroundPosition:</span> '<span class="hljs-attribute">center</span>',
+            }}
+          /&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"QueueAnim"</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">h1</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"h1"</span>&gt;</span>Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"p"</span>&gt;</span>Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
           <span class="hljs-tag">&lt;/<span class="hljs-title">QueueAnim</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>' }} <span class="hljs-attribute">name</span>=<span class="hljs-value">"TweenOne"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">200</span> }} <span class="hljs-attribute">name</span>=<span class="hljs-value">"TweenOne"</span>&gt;</span>
             Ant Motion Demo.Ant Motion Demo
           <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">Element</span>&gt;</span>

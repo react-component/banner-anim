@@ -3,12 +3,12 @@ webpackJsonp([6],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(208);
+	module.exports = __webpack_require__(212);
 
 
 /***/ },
 
-/***/ 208:
+/***/ 212:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,11 +17,11 @@ webpackJsonp([6],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(193);
+	var _rcQueueAnim = __webpack_require__(197);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(177);
+	var _rcTweenOne = __webpack_require__(184);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -29,13 +29,13 @@ webpackJsonp([6],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(39);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(199);
+	__webpack_require__(203);
 	
-	__webpack_require__(200);
+	__webpack_require__(204);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -48,6 +48,8 @@ webpackJsonp([6],{
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); } // use jsx to render html, do not modify simple.html
 	
 	var Element = _rcBannerAnim2.default.Element;
+	
+	var BgElement = Element.BgElement;
 	
 	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
@@ -66,16 +68,20 @@ webpackJsonp([6],{
 	        Element,
 	        { key: 'aaa',
 	          prefixCls: 'banner-user-elem',
-	          bg: 'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg',
-	          bgPrefixCls: 'banner-user-bg',
-	          name: '1',
 	          followParallax: {
-	            ease: 'easeInOutCirc',
-	            minMove: 0.1,
 	            delay: 1000,
-	            data: [{ key: 'bgElem', scale: 0.03, bgPosition: '50%', type: ['backgroundPositionX'] }, { key: 'queue', scale: 0.05, type: 'x' }, { key: 'text', scale: -0.03, type: 'x' }]
+	            data: [{ key: 'bg', value: 20, bgPosition: '50%', type: ['backgroundPositionX'] }, { key: 'queue', value: 50, type: 'x' }, { key: 'text', value: -30, type: 'x' }]
 	          }
 	        },
+	        _react2.default.createElement(BgElement, {
+	          key: 'bg',
+	          className: 'bg',
+	          style: {
+	            backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+	            backgroundSize: 'cover',
+	            backgroundPosition: 'center'
+	          }
+	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
 	          { key: 'queue' },
@@ -92,16 +98,24 @@ webpackJsonp([6],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from' }, key: 'text' },
+	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, key: 'text' },
 	          'Ant Motion Demo.Ant MotionDemo'
 	        )
 	      ),
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'bbb',
-	          prefixCls: 'banner-user-elem',
-	          bg: 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'
+	          prefixCls: 'banner-user-elem'
 	        },
+	        _react2.default.createElement(BgElement, {
+	          key: 'bg',
+	          className: 'bg',
+	          style: {
+	            backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+	            backgroundSize: 'cover',
+	            backgroundPosition: 'center'
+	          }
+	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
 	          null,
@@ -118,7 +132,7 @@ webpackJsonp([6],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from' } },
+	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 } },
 	          'Ant Motion Demo.Ant Motion Demo'
 	        )
 	      )
