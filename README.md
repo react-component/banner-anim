@@ -62,11 +62,11 @@ const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 React.render(<BannerAnim>
   <Element key="a">
-    <BGElement style={{ background: 'url(img)' }}/>
+    <BGElement key="bg" style={{ background: 'url(img)' }}/>
     <TweenOne key='0'>test text</TweenOne>
   </Element>
   <Element key="b">
-    <BGElement style={{ background: 'url(img)' }}/>
+    <BGElement key="bg" style={{ background: 'url(img)' }}/>
     <TweenOne key='0'>test text</TweenOne>
   </Element>
 </BannerAnim>, container);
