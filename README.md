@@ -59,11 +59,14 @@ online example: http://react-component.github.io/banner-anim/
 var BannerAnim = require('rc-banner-anim');
 var React = require('react');
 const { Element } = BannerAnim;
+const BgElement = Element.BgElement;
 React.render(<BannerAnim>
-  <Element img="img" key="a">
+  <Element key="a">
+    <BGElement style={{ background: 'url(img)' }}/>
     <TweenOne key='0'>test text</TweenOne>
   </Element>
-  <Element img="img" key="b">
+  <Element key="b">
+    <BGElement style={{ background: 'url(img)' }}/>
     <TweenOne key='0'>test text</TweenOne>
   </Element>
 </BannerAnim>, container);
