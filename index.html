@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-banner-anim@0.3.0 - banner-anim animation component for react</title>
+  <title>rc-banner-anim@0.3.1 - banner-anim animation component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-banner-anim@0.3.0</h1>
+  <h1>rc-banner-anim@0.3.1</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -805,11 +805,14 @@ npm start</code></pre></div><h2>Example<a id="user-content-example" name="exampl
 <h2>Usage<a id="user-content-usage" name="usage" class="anchor" aria-hidden="true" href="#usage"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> BannerAnim = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-banner-anim'</span>);
 <span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
 <span class="hljs-keyword">const</span> { Element } = BannerAnim;
+<span class="hljs-keyword">const</span> BgElement = Element.BgElement;
 React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">BannerAnim</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">img</span>=<span class="hljs-value">"img"</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">BGElement</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"bg"</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">background:</span> '<span class="hljs-attribute">url</span>(<span class="hljs-attribute">img</span>)' }}/&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">'0'</span>&gt;</span>test text<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-title">Element</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">img</span>=<span class="hljs-value">"img"</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"b"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"b"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">BGElement</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"bg"</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">background:</span> '<span class="hljs-attribute">url</span>(<span class="hljs-attribute">img</span>)' }}/&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">'0'</span>&gt;</span>test text<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-title">Element</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-title">BannerAnim</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>BannerAnim<a id="user-content-banneranim" name="banneranim" class="anchor" aria-hidden="true" href="#banneranim"><span class="octicon octicon-link"></span></a></h3><table>

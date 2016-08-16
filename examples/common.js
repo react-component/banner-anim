@@ -23007,7 +23007,7 @@
 	    style.position = 'relative';
 	    props.style = style;
 	    var component = props.component;
-	    ['component', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'leaveReverse', 'animatingClassName', 'animation', 'reverseDelay', 'attr', 'showProp', 'exclusive', 'transitionName', 'transitionAppear', 'transitionEnter', 'transitionLeave', 'onEnd'].forEach(function (key) {
+	    ['component', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName', 'animation', 'reverseDelay', 'attr', 'showProp', 'exclusive', 'transitionName', 'transitionAppear', 'transitionEnter', 'transitionLeave', 'onEnd'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    return _react2.default.createElement(component, props);
@@ -23167,6 +23167,7 @@
 	      this.startMoment = perFrame - 1; // 设置 perFrame 为开始时就播放一帧动画, 不是从0开始, 鼠标跟随使用
 	      this.startFrame = _ticker2["default"].frame;
 	      this.restartAnim = true;
+	      console.log(this.startMoment)
 	      // this.start(nextProps);
 	    } else if (!styleEqual) {
 	      // 如果 animation 相同，，style 不同，从当前时间开放。
@@ -23245,6 +23246,7 @@
 	    }
 	    this.moment = moment;
 	    this.timeLine.onChange = this.onChange;
+	    console.log(moment,'moment')
 	    this.timeLine.frame(moment);
 	  };
 	
@@ -23311,6 +23313,7 @@
 	TweenOne.plugins = _plugins2["default"];
 	exports["default"] = TweenOne;
 	module.exports = exports['default'];
+
 
 /***/ },
 /* 186 */
@@ -23518,16 +23521,20 @@
 	
 	var _styleUtils = __webpack_require__(182);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { "default": obj };
+	}
 	
-	var DEFAULT_EASING = 'easeInOutQuad'; /* eslint-disable func-names */
+	var DEFAULT_EASING = 'easeInOutQuad';
+	/* eslint-disable func-names */
 	/**
 	 * Created by jljsj on 16/1/27.
 	 */
 	
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
-	function noop() {}
+	function noop() {
+	}
 	_plugins2["default"].push(_StylePlugin2["default"]);
 	// 设置默认数据
 	function defaultData(vars, now) {
@@ -23761,6 +23768,7 @@
 	      }
 	    }
 	    var progressTime = _this6.progressTime - initTime;
+	    console.log(progressTime)
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
@@ -23769,12 +23777,14 @@
 	      if (!_this6.register) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay) || 0;
+	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : _tweenFunctions2["default"][item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
 	        st = st < 0 ? 0 : st;
+	        console.log(progressTime, item.duration, fromDelay, 'kdkdkdk')
 	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	        return;
 	      }
 	    }
+	
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
@@ -23819,6 +23829,7 @@
 	p.frame = function (moment) {
 	  this.progressTime = moment;
 	  this.render();
+	  console.log(this.tween.style.transform.xPercent)
 	};
 	p.resetAnimData = function () {
 	  this.tween = {};
@@ -23843,6 +23854,7 @@
 	p.onChange = noop;
 	exports["default"] = timeLine;
 	module.exports = exports['default'];
+
 
 /***/ },
 /* 188 */
@@ -24403,6 +24415,7 @@
 	};
 	
 	p.setRatio = function (ratio, tween) {
+	  console.log(ratio, 'ratio')
 	  var _this4 = this;
 	
 	  tween.style = tween.style || {};
@@ -24470,6 +24483,7 @@
 	};
 	exports["default"] = StylePlugin;
 	module.exports = exports['default'];
+
 
 /***/ },
 /* 191 */
