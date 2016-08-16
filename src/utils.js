@@ -50,6 +50,7 @@ export function setAnimCompToTagComp(item, i) {
       `delay`,
       `animConfig`,
       `ease`,
+      `enterForcedRePlay`,
       `leaveReverse`,
       `animatingClassName`,
       `animation`,
