@@ -19,13 +19,15 @@ class Demo extends React.Component {
           followParallax={{
             delay: 1000,
             data: [
-              { key: 'bg', value: 20, bgPosition: '50%', type: ['backgroundPositionX'] },
-              { key: 'queue', value: 50, type: 'x' },
-              { key: 'text', value: -30, type: 'x' },
+              { id: 'bg', value: 20, bgPosition: '50%', type: ['backgroundPositionX'] },
+              { id: 'title', value: -20, type: 'x' },
+              { id: 'queue', value: 50, type: 'x' },
+              { id: 'JText', value: -30, type: 'x' },
             ],
           }}
         >
           <BgElement
+            id="bg"
             key="bg"
             className="bg"
             style={{
@@ -34,11 +36,11 @@ class Demo extends React.Component {
               backgroundPosition: 'center',
             }}
           />
-          <QueueAnim key="queue">
-            <h1 key="h1">Ant Motion Demo</h1>
+          <QueueAnim id="queue" key="queue">
+            <h1 key="h1" id="title">Ant Motion Demo</h1>
             <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
           </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} key="text">
+          <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} id="JText">
             Ant Motion Demo.Ant MotionDemo
           </TweenOne>
         </Element>

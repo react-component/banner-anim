@@ -5,11 +5,10 @@ import TweenOne from 'rc-tween-one';
 import ticker from 'rc-tween-one/lib/ticker';
 import ease from 'tween-functions';
 import {
-  getUnit,
   getGsapType,
   isConvert,
-  getValues,
-  mergeStyle,
+  stylesToCss,
+  checkStyleName,
 } from 'style-utils';
 import {
   currentScrollTop,
@@ -28,6 +27,7 @@ class Element extends Component {
       show: this.props.show,
     };
     this.tickerId = -1;
+    this.enterMouse = null;
     this.delayTimeout = null;
     this.show = this.state.show;
     [
@@ -53,17 +53,16 @@ class Element extends Component {
     this.timeoutID = -1;
   }
 
-
-  onMouseEnter = () => {
-    const domRect = this.dom.getBoundingClientRect();
-    this.enterMouse = this.enterMouse || {
-      x: domRect.width / 2,
-      y: domRect.height / 2,
-    };
-  }
-
   onMouseMove = (e) => {
     const domRect = this.dom.getBoundingClientRect();
+    this.doms = this.props.followParallax.data.map(item => {
+      return document.getElementById(item.id);
+    });
+    this.enterMouse = this.enterMouse ||
+      {
+        x: domRect.width / 2,
+        y: domRect.height / 2,
+      };
     const offsetTop = domRect.top + currentScrollTop();
     const offsetLeft = domRect.left + currentScrollLeft();
     const mouseXY = {
@@ -85,30 +84,12 @@ class Element extends Component {
       'easeInOutQuad'](moment, start, 1, 1000);
       this.enterMouse.x = this.enterMouse.x + (mouseXY.x - this.enterMouse.x) * ratio;
       this.enterMouse.y = this.enterMouse.y + (mouseXY.y - this.enterMouse.y) * ratio;
-      this.setState({
-        mouseXY: this.enterMouse,
-        domWH,
-      });
+      this.setFollowStyle(domWH);
       if (moment >= 1000) {
         ticker.clear(this.tickerId);
       }
     });
   };
-
-  getFollowStyle = (type, data) => {
-    let mouseData = this.state.mouseXY.x;
-    let domData = this.state.domWH.w;
-    const value = data.value;
-    if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
-      mouseData = this.state.mouseXY.y;
-      domData = this.state.domWH.h;
-    }
-    const d = (mouseData - domData / 2) / (domData / 2) * value;
-    const unit = isConvert(type) !== type ? getUnit(type, d) : '';
-    const css = isConvert(type) !== type ? getValues(type, d, unit) : d;
-    return type.indexOf('backgroundPosition') >= 0 ?
-      `calc(${ data.bgPosition || '50%'} + ${css}px )` : css;
-  }
 
   getFollowMouseMove = () => {
     let onMouseMove;
@@ -128,47 +109,63 @@ class Element extends Component {
     return onMouseMove;
   }
 
-  getChildren() {
-    if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
-      return toArrayChildren(this.props.children).map(item => {
-        if (item.type === BgElement) {
-          return React.cloneElement(item, { show: this.state.show });
+  getFollowStyle = (data, domWH) => {
+    const style = {};
+    dataToArray(data.type).forEach(type => {
+      let mouseData = this.enterMouse.x;
+      let domData = domWH.w;
+      const value = data.value;
+      if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
+        mouseData = this.enterMouse.y;
+        domData = domWH.h;
+      }
+      const d = (mouseData - domData / 2) / (domData / 2) * value;
+      const _type = getGsapType(type);
+      const cssName = isConvert(_type);
+      if (cssName === 'transform') {
+        const transform = checkStyleName('transform');
+        style[transform] = style[transform] || {};
+        style[transform][_type] = stylesToCss(_type, d).trim();
+      } else if (cssName === 'filter') {
+        const filter = checkStyleName('filter');
+        style[filter] = style[filter] || {};
+        style[filter][_type] = stylesToCss(_type, d).trim();
+      } else {
+        style[cssName] = stylesToCss(_type, d).trim();
+      }
+    });
+    return style;
+  }
+
+  setFollowStyle = (domWH) => {
+    this.doms.map((item, i) => {
+      if (!item) {
+        return;
+      }
+      const data = this.props.followParallax.data[i];
+      const style = this.getFollowStyle(data, domWH);
+      Object.keys(style).forEach(key => {
+        if (typeof style[key] === 'object') {
+          let styleStr = '';
+          Object.keys(style[key]).forEach(_key => {
+            styleStr += ` ${_key}(${style[key][_key]})`.trim();
+          });
+          item.style[key] = styleStr;
+          return;
         }
-        return item;
+        item.style[key] = key.indexOf('backgroundPosition') >= 0 ?
+          `calc(${ data.bgPosition || '0%'} + ${style[key]} )` : style[key];
       });
-    }
-    const keys = this.props.followParallax.data.map(item => item.key);
-    const child = toArrayChildren(this.props.children).map(item => {
-      const num = keys.indexOf(item.key);
-      if (num >= 0) {
-        const props = { ...item.props };
-        const style = { ...props.style };
-        const data = this.props.followParallax.data[num];
-        if (this.props.followParallax.transition) {
-          style.transition = this.props.followParallax.transition;
-        }
-        dataToArray(data.type).map(this.followAnalysisType.bind(this, data))
-          .forEach(_item =>
-            style[_item.cssName] = mergeStyle(style[_item.cssName], _item.data)
-          );
-        props.style = style;
-        return React.cloneElement(item, props);
+    });
+  };
+
+  getChildren() {
+    return toArrayChildren(this.props.children).map(item => {
+      if (item.type === BgElement) {
+        return React.cloneElement(item, { show: this.state.show });
       }
       return item;
     });
-    return child;
-  }
-
-  followAnalysisType = (data, _type) => {
-    const type = getGsapType(_type);
-    const cssName = isConvert(type);
-    // 把 bgParallax 的合进来；
-    const bgParallaxStyle = this.state.bgParallaxAnim || {};
-    return {
-      cssName,
-      data: mergeStyle(bgParallaxStyle[cssName] || '',
-        this.getFollowStyle(type, data)),
-    };
   }
 
   animEnd() {
@@ -227,10 +224,12 @@ class Element extends Component {
     if (this.show === this.state.show) {
       style.transform = null;
       if (!this.state.show) {
+        this.enterMouse = null;
         return React.createElement(TweenOne, props, bgElem);
       }
-      props.onMouseEnter = this.onMouseEnter;
-      props.onMouseMove = this.getFollowMouseMove();
+      if (this.props.followParallax) {
+        props.onMouseMove = this.getFollowMouseMove();
+      }
       return React.createElement(TweenOne, props, this.getChildren());
     }
     return this.animChildren(props, style, bgElem);

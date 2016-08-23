@@ -114,7 +114,7 @@ React.render(<BannerAnim>
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-| key      |  string         | -            |  must                 |
+| id      |  string         | -            |  must( 0.4.0 key to id, use dom )|
 | className | string         | -            | className             |
 | scrollParallax | object | null | { y: 100 },  scroll Element y to 100 | 
 | videoResize | boolean | true | children is video, video follow window resize |
