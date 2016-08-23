@@ -70,10 +70,11 @@ webpackJsonp([6],{
 	          prefixCls: 'banner-user-elem',
 	          followParallax: {
 	            delay: 1000,
-	            data: [{ key: 'bg', value: 20, bgPosition: '50%', type: ['backgroundPositionX'] }, { key: 'queue', value: 50, type: 'x' }, { key: 'text', value: -30, type: 'x' }]
+	            data: [{ id: 'bg', value: 20, bgPosition: '50%', type: ['backgroundPositionX'] }, { id: 'title', value: -20, type: 'x' }, { id: 'queue', value: 50, type: 'x' }, { id: 'JText', value: -30, type: 'x' }]
 	          }
 	        },
 	        _react2.default.createElement(BgElement, {
+	          id: 'bg',
 	          key: 'bg',
 	          className: 'bg',
 	          style: {
@@ -84,10 +85,10 @@ webpackJsonp([6],{
 	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
-	          { key: 'queue' },
+	          { id: 'queue', key: 'queue' },
 	          _react2.default.createElement(
 	            'h1',
-	            { key: 'h1' },
+	            { key: 'h1', id: 'title' },
 	            'Ant Motion Demo'
 	          ),
 	          _react2.default.createElement(
@@ -98,7 +99,7 @@ webpackJsonp([6],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, key: 'text' },
+	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, id: 'JText' },
 	          'Ant Motion Demo.Ant MotionDemo'
 	        )
 	      ),

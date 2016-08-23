@@ -22033,9 +22033,9 @@
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
 	var _react = __webpack_require__(5);
 	
@@ -22085,16 +22085,15 @@
 	
 	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
 	
-	    _this.onMouseEnter = function () {
+	    _this.onMouseMove = function (e) {
 	      var domRect = _this.dom.getBoundingClientRect();
+	      _this.doms = _this.props.followParallax.data.map(function (item) {
+	        return document.getElementById(item.id);
+	      });
 	      _this.enterMouse = _this.enterMouse || {
 	        x: domRect.width / 2,
 	        y: domRect.height / 2
 	      };
-	    };
-	
-	    _this.onMouseMove = function (e) {
-	      var domRect = _this.dom.getBoundingClientRect();
 	      var offsetTop = domRect.top + (0, _utils.currentScrollTop)();
 	      var offsetLeft = domRect.left + (0, _utils.currentScrollLeft)();
 	      var mouseXY = {
@@ -22114,28 +22113,11 @@
 	        var ratio = _tweenFunctions2.default[_this.props.followParallax.ease || 'easeInOutQuad'](moment, start, 1, 1000);
 	        _this.enterMouse.x = _this.enterMouse.x + (mouseXY.x - _this.enterMouse.x) * ratio;
 	        _this.enterMouse.y = _this.enterMouse.y + (mouseXY.y - _this.enterMouse.y) * ratio;
-	        _this.setState({
-	          mouseXY: _this.enterMouse,
-	          domWH: domWH
-	        });
+	        _this.setFollowStyle(domWH);
 	        if (moment >= 1000) {
 	          _ticker2.default.clear(_this.tickerId);
 	        }
 	      });
-	    };
-	
-	    _this.getFollowStyle = function (type, data) {
-	      var mouseData = _this.state.mouseXY.x;
-	      var domData = _this.state.domWH.w;
-	      var value = data.value;
-	      if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
-	        mouseData = _this.state.mouseXY.y;
-	        domData = _this.state.domWH.h;
-	      }
-	      var d = (mouseData - domData / 2) / (domData / 2) * value;
-	      var unit = (0, _styleUtils.isConvert)(type) !== type ? (0, _styleUtils.getUnit)(type, d) : '';
-	      var css = (0, _styleUtils.isConvert)(type) !== type ? (0, _styleUtils.getValues)(type, d, unit) : d;
-	      return type.indexOf('backgroundPosition') >= 0 ? 'calc(' + (data.bgPosition || '50%') + ' + ' + css + 'px )' : css;
 	    };
 	
 	    _this.getFollowMouseMove = function () {
@@ -22155,21 +22137,60 @@
 	      return onMouseMove;
 	    };
 	
-	    _this.followAnalysisType = function (data, _type) {
-	      var type = (0, _styleUtils.getGsapType)(_type);
-	      var cssName = (0, _styleUtils.isConvert)(type);
-	      // 把 bgParallax 的合进来；
-	      var bgParallaxStyle = _this.state.bgParallaxAnim || {};
-	      return {
-	        cssName: cssName,
-	        data: (0, _styleUtils.mergeStyle)(bgParallaxStyle[cssName] || '', _this.getFollowStyle(type, data))
-	      };
+	    _this.getFollowStyle = function (data, domWH) {
+	      var style = {};
+	      (0, _utils.dataToArray)(data.type).forEach(function (type) {
+	        var mouseData = _this.enterMouse.x;
+	        var domData = domWH.w;
+	        var value = data.value;
+	        if ((type.indexOf('y') >= 0 || type.indexOf('Y') >= 0) && type !== 'opacity') {
+	          mouseData = _this.enterMouse.y;
+	          domData = domWH.h;
+	        }
+	        var d = (mouseData - domData / 2) / (domData / 2) * value;
+	        var _type = (0, _styleUtils.getGsapType)(type);
+	        var cssName = (0, _styleUtils.isConvert)(_type);
+	        if (cssName === 'transform') {
+	          var transform = (0, _styleUtils.checkStyleName)('transform');
+	          style[transform] = style[transform] || {};
+	          style[transform][_type] = (0, _styleUtils.stylesToCss)(_type, d).trim();
+	        } else if (cssName === 'filter') {
+	          var filter = (0, _styleUtils.checkStyleName)('filter');
+	          style[filter] = style[filter] || {};
+	          style[filter][_type] = (0, _styleUtils.stylesToCss)(_type, d).trim();
+	        } else {
+	          style[cssName] = (0, _styleUtils.stylesToCss)(_type, d).trim();
+	        }
+	      });
+	      return style;
+	    };
+	
+	    _this.setFollowStyle = function (domWH) {
+	      _this.doms.map(function (item, i) {
+	        if (!item) {
+	          return;
+	        }
+	        var data = _this.props.followParallax.data[i];
+	        var style = _this.getFollowStyle(data, domWH);
+	        Object.keys(style).forEach(function (key) {
+	          if (_typeof(style[key]) === 'object') {
+	            var styleStr = '';
+	            Object.keys(style[key]).forEach(function (_key) {
+	              styleStr += (' ' + _key + '(' + style[key][_key] + ')').trim();
+	            });
+	            item.style[key] = styleStr;
+	            return;
+	          }
+	          item.style[key] = key.indexOf('backgroundPosition') >= 0 ? 'calc(' + (data.bgPosition || '0%') + ' + ' + style[key] + ' )' : style[key];
+	        });
+	      });
 	    };
 	
 	    _this.state = {
 	      show: _this.props.show
 	    };
 	    _this.tickerId = -1;
+	    _this.enterMouse = null;
 	    _this.delayTimeout = null;
 	    _this.show = _this.state.show;
 	    ['getChildren', 'animEnd', 'animChildren'].forEach(function (method) {
@@ -22197,41 +22218,12 @@
 	  Element.prototype.getChildren = function getChildren() {
 	    var _this2 = this;
 	
-	    if (!(this.props.followParallax && this.state.domWH && this.state.mouseXY)) {
-	      return (0, _utils.toArrayChildren)(this.props.children).map(function (item) {
-	        if (item.type === _BgElement2.default) {
-	          return _react2.default.cloneElement(item, { show: _this2.state.show });
-	        }
-	        return item;
-	      });
-	    }
-	    var keys = this.props.followParallax.data.map(function (item) {
-	      return item.key;
-	    });
-	    var child = (0, _utils.toArrayChildren)(this.props.children).map(function (item) {
-	      var num = keys.indexOf(item.key);
-	      if (num >= 0) {
-	        var _ret = function () {
-	          var props = _extends({}, item.props);
-	          var style = _extends({}, props.style);
-	          var data = _this2.props.followParallax.data[num];
-	          if (_this2.props.followParallax.transition) {
-	            style.transition = _this2.props.followParallax.transition;
-	          }
-	          (0, _utils.dataToArray)(data.type).map(_this2.followAnalysisType.bind(_this2, data)).forEach(function (_item) {
-	            return style[_item.cssName] = (0, _styleUtils.mergeStyle)(style[_item.cssName], _item.data);
-	          });
-	          props.style = style;
-	          return {
-	            v: _react2.default.cloneElement(item, props)
-	          };
-	        }();
-	
-	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	    return (0, _utils.toArrayChildren)(this.props.children).map(function (item) {
+	      if (item.type === _BgElement2.default) {
+	        return _react2.default.cloneElement(item, { show: _this2.state.show });
 	      }
 	      return item;
 	    });
-	    return child;
 	  };
 	
 	  Element.prototype.animEnd = function animEnd() {
@@ -22285,10 +22277,12 @@
 	    if (this.show === this.state.show) {
 	      style.transform = null;
 	      if (!this.state.show) {
+	        this.enterMouse = null;
 	        return _react2.default.createElement(_rcTweenOne2.default, props, bgElem);
 	      }
-	      props.onMouseEnter = this.onMouseEnter;
-	      props.onMouseMove = this.getFollowMouseMove();
+	      if (this.props.followParallax) {
+	        props.onMouseMove = this.getFollowMouseMove();
+	      }
 	      return _react2.default.createElement(_rcTweenOne2.default, props, this.getChildren());
 	    }
 	    return this.animChildren(props, style, bgElem);
@@ -23167,7 +23161,6 @@
 	      this.startMoment = perFrame - 1; // 设置 perFrame 为开始时就播放一帧动画, 不是从0开始, 鼠标跟随使用
 	      this.startFrame = _ticker2["default"].frame;
 	      this.restartAnim = true;
-	      console.log(this.startMoment)
 	      // this.start(nextProps);
 	    } else if (!styleEqual) {
 	      // 如果 animation 相同，，style 不同，从当前时间开放。
@@ -23246,7 +23239,6 @@
 	    }
 	    this.moment = moment;
 	    this.timeLine.onChange = this.onChange;
-	    console.log(moment,'moment')
 	    this.timeLine.frame(moment);
 	  };
 	
@@ -23313,7 +23305,6 @@
 	TweenOne.plugins = _plugins2["default"];
 	exports["default"] = TweenOne;
 	module.exports = exports['default'];
-
 
 /***/ },
 /* 186 */
@@ -23521,20 +23512,16 @@
 	
 	var _styleUtils = __webpack_require__(182);
 	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { "default": obj };
-	}
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
-	var DEFAULT_EASING = 'easeInOutQuad';
-	/* eslint-disable func-names */
+	var DEFAULT_EASING = 'easeInOutQuad'; /* eslint-disable func-names */
 	/**
 	 * Created by jljsj on 16/1/27.
 	 */
 	
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
-	function noop() {
-	}
+	function noop() {}
 	_plugins2["default"].push(_StylePlugin2["default"]);
 	// 设置默认数据
 	function defaultData(vars, now) {
@@ -23768,7 +23755,6 @@
 	      }
 	    }
 	    var progressTime = _this6.progressTime - initTime;
-	    console.log(progressTime)
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
@@ -23778,19 +23764,16 @@
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
 	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : _tweenFunctions2["default"][item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
-	        st = st < 0 ? 0 : st;
-	        console.log(progressTime, item.duration, fromDelay, 'kdkdkdk')
 	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	        return;
 	      }
 	    }
-	
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime < 0 && progressTime > -_this6.perFrame) {
+	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
@@ -23829,7 +23812,6 @@
 	p.frame = function (moment) {
 	  this.progressTime = moment;
 	  this.render();
-	  console.log(this.tween.style.transform.xPercent)
 	};
 	p.resetAnimData = function () {
 	  this.tween = {};
@@ -23854,7 +23836,6 @@
 	p.onChange = noop;
 	exports["default"] = timeLine;
 	module.exports = exports['default'];
-
 
 /***/ },
 /* 188 */
@@ -24415,7 +24396,6 @@
 	};
 	
 	p.setRatio = function (ratio, tween) {
-	  console.log(ratio, 'ratio')
 	  var _this4 = this;
 	
 	  tween.style = tween.style || {};
@@ -24483,7 +24463,6 @@
 	};
 	exports["default"] = StylePlugin;
 	module.exports = exports['default'];
-
 
 /***/ },
 /* 191 */
