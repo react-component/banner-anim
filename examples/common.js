@@ -459,12 +459,10 @@
 	  };
 	
 	  BannerAnim.prototype.thumbClick = function thumbClick(i) {
-	    if (!this.tweenBool) {
+	    if (!this.tweenBool && i !== this.state.currentShow) {
 	      this.tweenBool = true;
-	      if (i !== this.state.currentShow) {
-	        var type = i > this.state.currentShow ? 'next' : 'prev';
-	        this.animTweenStart(i, type);
-	      }
+	      var type = i > this.state.currentShow ? 'next' : 'prev';
+	      this.animTweenStart(i, type);
 	    }
 	  };
 	
