@@ -248,12 +248,10 @@ class BannerAnim extends Component {
   }
 
   thumbClick(i) {
-    if (!this.tweenBool) {
+    if (!this.tweenBool && i !== this.state.currentShow) {
       this.tweenBool = true;
-      if (i !== this.state.currentShow) {
-        const type = i > this.state.currentShow ? 'next' : 'prev';
-        this.animTweenStart(i, type);
-      }
+      const type = i > this.state.currentShow ? 'next' : 'prev';
+      this.animTweenStart(i, type);
     }
   }
 
