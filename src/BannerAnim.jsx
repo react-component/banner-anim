@@ -256,11 +256,12 @@ class BannerAnim extends Component {
       'autoPlay',
       'thumbFloat',
       'sync',
+      'dragPlay',
     ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = { ...props.style };
-    if (childrenToRender.length > 1) {
+    if (childrenToRender.length > 1 && this.props.dragPlay) {
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseLeave = this.onMouseLeave;
       props.onTouchStart = this.onTouchStart;
@@ -293,6 +294,7 @@ BannerAnim.propTypes = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
   sync: PropTypes.bool,
+  dragPlay: PropTypes.bool,
 };
 BannerAnim.defaultProps = {
   component: 'div',
@@ -304,6 +306,7 @@ BannerAnim.defaultProps = {
   arrow: true,
   thumb: true,
   autoPlaySpeed: 5000,
+  dragPlay: true,
   onChange: () => {
   },
   onMouseEnter: () => {

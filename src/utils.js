@@ -99,7 +99,7 @@ export function switchChildren(hideProps, item) {
   if (!hideProps) {
     return item;
   }
-  if (item.key in hideProps) {
+  if (typeof hideProps === 'object' && item.key in hideProps) {
     return React.cloneElement(item, { ...hideProps[item.key] });
   }
   return React.cloneElement(item, item.props, null);
