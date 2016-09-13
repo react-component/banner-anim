@@ -3,12 +3,12 @@ webpackJsonp([7],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(213);
+	module.exports = __webpack_require__(210);
 
 
 /***/ },
 
-/***/ 213:
+/***/ 210:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,11 +17,11 @@ webpackJsonp([7],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(197);
+	var _rcQueueAnim = __webpack_require__(194);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(184);
+	var _rcTweenOne = __webpack_require__(181);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -29,13 +29,13 @@ webpackJsonp([7],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(39);
+	var _reactDom = __webpack_require__(38);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(203);
+	__webpack_require__(200);
 	
-	__webpack_require__(204);
+	__webpack_require__(201);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -69,6 +69,10 @@ webpackJsonp([7],{
 	      }
 	    };
 	
+	    _this.onClick = function () {
+	      _this.refs.banner.slickGoTo(1);
+	    };
+	
 	    _this.state = {
 	      delay: 0
 	    };
@@ -78,83 +82,93 @@ webpackJsonp([7],{
 	
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
-	      _rcBannerAnim2.default,
-	      { prefixCls: 'banner-user', type: 'across',
-	        onChange: this.onChange,
-	        duration: 1000,
-	        ease: 'easeInOutExpo',
-	        sync: true
-	      },
+	      'div',
+	      null,
 	      _react2.default.createElement(
-	        Element,
-	        { key: 'aaa',
-	          prefixCls: 'banner-user-elem',
-	          hideProps: { 2: { reverse: true } }
-	        },
-	        _react2.default.createElement(BgElement, {
-	          key: 'bg',
-	          className: 'bg',
-	          style: {
-	            backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-	            backgroundSize: 'cover',
-	            backgroundPosition: 'center'
-	          }
-	        }),
-	        _react2.default.createElement(
-	          _rcQueueAnim2.default,
-	          { key: '1', name: 'QueueAnim', delay: [this.state.delay, 0] },
-	          _react2.default.createElement(
-	            'h1',
-	            { key: 'h1' },
-	            'Ant Motion Demo'
-	          ),
-	          _react2.default.createElement(
-	            'p',
-	            { key: 'p' },
-	            'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
-	          )
-	        ),
-	        _react2.default.createElement(
-	          _rcTweenOne2.default,
-	          { key: '2',
-	            animation: { y: 50, opacity: 0, type: 'from', delay: this.state.delay + 200 }
-	          },
-	          'Ant Motion Demo.Ant Motion Demo'
-	        )
+	        'a',
+	        { onClick: this.onClick },
+	        '点击跳到第二块'
 	      ),
 	      _react2.default.createElement(
-	        Element,
-	        { key: 'bbb',
-	          prefixCls: 'banner-user-elem',
-	          hideProps: { 2: { reverse: true } }
+	        _rcBannerAnim2.default,
+	        { prefixCls: 'banner-user', type: 'across',
+	          onChange: this.onChange,
+	          duration: 1000,
+	          ease: 'easeInOutExpo',
+	          sync: true,
+	          ref: 'banner'
 	        },
-	        _react2.default.createElement(BgElement, {
-	          key: 'bg',
-	          className: 'bg',
-	          style: {
-	            backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-	            backgroundSize: 'cover',
-	            backgroundPosition: 'center'
-	          }
-	        }),
 	        _react2.default.createElement(
-	          _rcQueueAnim2.default,
-	          { name: 'QueueAnim', key: '1', delay: [600, 0] },
+	          Element,
+	          { key: 'aaa',
+	            prefixCls: 'banner-user-elem',
+	            hideProps: { 2: { reverse: true } }
+	          },
+	          _react2.default.createElement(BgElement, {
+	            key: 'bg',
+	            className: 'bg',
+	            style: {
+	              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+	              backgroundSize: 'cover',
+	              backgroundPosition: 'center'
+	            }
+	          }),
 	          _react2.default.createElement(
-	            'h1',
-	            { key: 'h1' },
-	            'Ant Motion Demo'
+	            _rcQueueAnim2.default,
+	            { key: '1', name: 'QueueAnim', delay: [this.state.delay, 0] },
+	            _react2.default.createElement(
+	              'h1',
+	              { key: 'h1' },
+	              'Ant Motion Demo'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              { key: 'p' },
+	              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	            )
 	          ),
 	          _react2.default.createElement(
-	            'p',
-	            { key: 'p' },
-	            'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	            _rcTweenOne2.default,
+	            { key: '2',
+	              animation: { y: 50, opacity: 0, type: 'from', delay: this.state.delay + 200 }
+	            },
+	            'Ant Motion Demo.Ant Motion Demo'
 	          )
 	        ),
 	        _react2.default.createElement(
-	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from', delay: 800 }, key: '2' },
-	          'Ant Motion Demo.Ant Motion Demo'
+	          Element,
+	          { key: 'bbb',
+	            prefixCls: 'banner-user-elem',
+	            hideProps: { 2: { reverse: true } }
+	          },
+	          _react2.default.createElement(BgElement, {
+	            key: 'bg',
+	            className: 'bg',
+	            style: {
+	              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+	              backgroundSize: 'cover',
+	              backgroundPosition: 'center'
+	            }
+	          }),
+	          _react2.default.createElement(
+	            _rcQueueAnim2.default,
+	            { name: 'QueueAnim', key: '1', delay: [600, 0] },
+	            _react2.default.createElement(
+	              'h1',
+	              { key: 'h1' },
+	              'Ant Motion Demo'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              { key: 'p' },
+	              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _rcTweenOne2.default,
+	            { animation: { y: 50, opacity: 0, type: 'from', delay: 800 }, key: '2' },
+	            'Ant Motion Demo.Ant Motion Demo'
+	          )
 	        )
 	      )
 	    );
