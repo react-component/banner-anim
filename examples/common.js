@@ -466,13 +466,13 @@
 	  BannerAnim.prototype.render = function render() {
 	    var prefixCls = this.props.prefixCls;
 	    var props = _extends({}, this.props);
-	    ['prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat', 'sync'].forEach(function (key) {
+	    ['prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat', 'sync', 'dragPlay'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    var childrenToRender = this.getRenderChildren(props.children);
 	    props.className = (props.className + ' ' + (prefixCls || '')).trim();
 	    props.style = _extends({}, props.style);
-	    if (childrenToRender.length > 1) {
+	    if (childrenToRender.length > 1 && this.props.dragPlay) {
 	      props.onMouseEnter = this.onMouseEnter;
 	      props.onMouseLeave = this.onMouseLeave;
 	      props.onTouchStart = this.onTouchStart;
@@ -507,7 +507,8 @@
 	  onChange: _react.PropTypes.func,
 	  onMouseEnter: _react.PropTypes.func,
 	  onMouseLeave: _react.PropTypes.func,
-	  sync: _react.PropTypes.bool
+	  sync: _react.PropTypes.bool,
+	  dragPlay: _react.PropTypes.bool
 	};
 	BannerAnim.defaultProps = {
 	  component: 'div',
@@ -519,6 +520,7 @@
 	  arrow: true,
 	  thumb: true,
 	  autoPlaySpeed: 5000,
+	  dragPlay: true,
 	  onChange: function onChange() {},
 	  onMouseEnter: function onMouseEnter() {},
 	  onMouseLeave: function onMouseLeave() {}
@@ -22912,6 +22914,8 @@
 	  value: true
 	});
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	exports.toArrayChildren = toArrayChildren;
@@ -22999,7 +23003,7 @@
 	  if (!hideProps) {
 	    return item;
 	  }
-	  if (item.key in hideProps) {
+	  if ((typeof hideProps === 'undefined' ? 'undefined' : _typeof(hideProps)) === 'object' && item.key in hideProps) {
 	    return _react2.default.cloneElement(item, _extends({}, hideProps[item.key]));
 	  }
 	  return _react2.default.cloneElement(item, item.props, null);
