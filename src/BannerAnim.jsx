@@ -10,23 +10,6 @@ import animType from './anim';
 class BannerAnim extends Component {
   constructor() {
     super(...arguments);
-    [
-      'getDomDataSetToState',
-      'getRenderChildren',
-      'getElementHeight',
-      'getAnimType',
-      'next',
-      'prev',
-      'thumbClick',
-      'onMouseEnter',
-      'onMouseLeave',
-      'onTouchStart',
-      'onTouchMove',
-      'onTouchEnd',
-      'autoPlay',
-      'animEnd',
-      'animTweenStart',
-    ].forEach((method) => this[method] = this[method].bind(this));
     this.state = {
       currentShow: this.props.initShow,
       direction: null,
@@ -63,28 +46,28 @@ class BannerAnim extends Component {
     }
   }
 
-  onMouseEnter() {
+  onMouseEnter = () => {
     this.props.onMouseEnter();
     if (this.props.autoPlay) {
       ticker.clear(this.autoPlayId);
     }
   }
 
-  onMouseLeave() {
+  onMouseLeave = () => {
     this.props.onMouseLeave();
     if (this.props.autoPlay) {
       this.autoPlay();
     }
   }
 
-  onTouchStart(e) {
+  onTouchStart = (e) => {
     this.mouseXY = {
       startX: e.touches === undefined ? e.clientX : e.touches[0].clientX,
       startY: e.touches === undefined ? e.clientY : e.touches[0].clientY,
     };
   }
 
-  onTouchMove(e) {
+  onTouchMove = (e) => {
     if (!this.mouseXY) {
       return;
     }
@@ -92,7 +75,7 @@ class BannerAnim extends Component {
     this.mouseXY.currentY = e.touches === undefined ? e.clientY : e.touches[0].clientY;
   }
 
-  onTouchEnd() {
+  onTouchEnd = () => {
     if (!this.mouseXY) {
       return;
     }
@@ -109,7 +92,7 @@ class BannerAnim extends Component {
     delete this.mouseXY;
   }
 
-  getRenderChildren(children) {
+  getRenderChildren = (children) => {
     const elem = [];
     const arrow = [];
     let thumb;
@@ -145,7 +128,7 @@ class BannerAnim extends Component {
           arrow.push(React.cloneElement(item, itemProps));
           break;
         case Thumb:
-          itemProps.thumbClick = this.thumbClick;
+          itemProps.thumbClick = this.slickGoTo;
           itemProps.active = this.state.currentShow;
           thumb = React.cloneElement(item, itemProps);
           break;
@@ -166,7 +149,7 @@ class BannerAnim extends Component {
       }
       if (!thumb && this.props.thumb) {
         thumb = (<Thumb length={elem.length} key="thumb"
-          thumbClick={this.thumbClick}
+          thumbClick={this.slickGoTo}
           active={this.state.currentShow}
           default
         />);
@@ -176,7 +159,7 @@ class BannerAnim extends Component {
     return elem.concat(arrow, thumb);
   }
 
-  getDomDataSetToState() {
+  getDomDataSetToState = () => {
     this.dom = ReactDOM.findDOMNode(this);
     const domRect = this.dom.getBoundingClientRect();
     // 获取宽度与定位，setState刷新；
@@ -189,7 +172,7 @@ class BannerAnim extends Component {
     this.tweenBool = false;
   }
 
-  getElementHeight(children) {
+  getElementHeight = (children) => {
     let height = 0;
     for (let i = 0; i < children.length; i++) {
       const dom = children[i];
@@ -200,17 +183,17 @@ class BannerAnim extends Component {
   }
 
 
-  getAnimType(type) {
+  getAnimType = (type) => {
     const typeArray = type ? dataToArray(type) : Object.keys(animType);
     const random = Math.round(Math.random() * (typeArray.length - 1));
     return animType[typeArray[random]];
   }
 
-  autoPlay() {
+  autoPlay = () => {
     this.autoPlayId = ticker.interval(this.next, this.props.autoPlaySpeed);
   }
 
-  animTweenStart(show, type) {
+  animTweenStart = (show, type) => {
     this.props.onChange('before', show);
     this.setState({
       currentShow: show,
@@ -218,14 +201,14 @@ class BannerAnim extends Component {
     });
   }
 
-  animEnd(type) {
+  animEnd = (type) => {
     if (type === 'enter') {
       this.tweenBool = false;
       this.props.onChange('after', this.state.currentShow);
     }
   }
 
-  next() {
+  next = () => {
     if (!this.tweenBool) {
       this.tweenBool = true;
       let newShow = this.state.currentShow;
@@ -237,7 +220,7 @@ class BannerAnim extends Component {
     }
   }
 
-  prev() {
+  prev = () => {
     if (!this.tweenBool) {
       this.tweenBool = true;
       let newShow = this.state.currentShow;
@@ -249,7 +232,7 @@ class BannerAnim extends Component {
     }
   }
 
-  thumbClick(i) {
+  slickGoTo = (i) => {
     if (!this.tweenBool && i !== this.state.currentShow) {
       this.tweenBool = true;
       const type = i > this.state.currentShow ? 'next' : 'prev';

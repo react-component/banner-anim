@@ -30,11 +30,6 @@ class Element extends Component {
     this.enterMouse = null;
     this.delayTimeout = null;
     this.show = this.state.show;
-    [
-      'getChildren',
-      'animEnd',
-      'animChildren',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
@@ -159,7 +154,7 @@ class Element extends Component {
     });
   };
 
-  getChildren() {
+  getChildren = () => {
     return toArrayChildren(this.props.children).map(item => {
       if (item.type === BgElement) {
         return React.cloneElement(item, { show: this.state.show });
@@ -168,13 +163,13 @@ class Element extends Component {
     });
   }
 
-  animEnd() {
+  animEnd = () => {
     const type = this.state.show ? 'enter' : 'leave';
     this.props.callBack(type);
     this.setState({ show: this.props.show });
   }
 
-  animChildren(props, style, bgElem) {
+  animChildren = (props, style, bgElem) => {
     if (this.tickerId) {
       ticker.clear(this.tickerId);
     }

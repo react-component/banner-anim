@@ -1,14 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 class Arrow extends Component {
-  constructor() {
-    super(...arguments);
-    [
-      'onClick',
-    ].forEach((method) => this[method] = this[method].bind(this));
-  }
-
-  onClick() {
+  onClick = () => {
     this.props[this.props.arrowType]();
   }
 

@@ -29,59 +29,67 @@ class Demo extends React.Component {
     }
   }
 
+  onClick = () => {
+    this.refs.banner.slickGoTo(1);
+  }
+
   render() {
     return (
-      <BannerAnim prefixCls="banner-user" type="across"
-        onChange={this.onChange}
-        duration={1000}
-        ease="easeInOutExpo"
-        sync
-      >
-        <Element key="aaa"
-          prefixCls="banner-user-elem"
-          hideProps={{ 2: { reverse: true } }}
+      <div>
+        <a onClick={this.onClick}>点击跳到第二块</a>
+        <BannerAnim prefixCls="banner-user" type="across"
+          onChange={this.onChange}
+          duration={1000}
+          ease="easeInOutExpo"
+          sync
+          ref="banner"
         >
-          <BgElement
-            key="bg"
-            className="bg"
-            style={{
-              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-          <QueueAnim key="1" name="QueueAnim" delay={[this.state.delay, 0]}>
-            <h1 key="h1">Ant Motion Demo</h1>
-            <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
-          </QueueAnim>
-          <TweenOne key="2"
-            animation={{ y: 50, opacity: 0, type: 'from', delay: this.state.delay + 200 }}
+          <Element key="aaa"
+            prefixCls="banner-user-elem"
+            hideProps={{ 2: { reverse: true } }}
           >
-            Ant Motion Demo.Ant Motion Demo
-          </TweenOne>
-        </Element>
-        <Element key="bbb"
-          prefixCls="banner-user-elem"
-          hideProps={{ 2: { reverse: true } }}
-        >
-          <BgElement
-            key="bg"
-            className="bg"
-            style={{
-              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-          <QueueAnim name="QueueAnim" key="1" delay={[600, 0]}>
-            <h1 key="h1">Ant Motion Demo</h1>
-            <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
-          </QueueAnim>
-          <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 800 }} key="2">
-            Ant Motion Demo.Ant Motion Demo
-          </TweenOne>
-        </Element>
-      </BannerAnim>
+            <BgElement
+              key="bg"
+              className="bg"
+              style={{
+                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+            <QueueAnim key="1" name="QueueAnim" delay={[this.state.delay, 0]}>
+              <h1 key="h1">Ant Motion Demo</h1>
+              <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
+            </QueueAnim>
+            <TweenOne key="2"
+              animation={{ y: 50, opacity: 0, type: 'from', delay: this.state.delay + 200 }}
+            >
+              Ant Motion Demo.Ant Motion Demo
+            </TweenOne>
+          </Element>
+          <Element key="bbb"
+            prefixCls="banner-user-elem"
+            hideProps={{ 2: { reverse: true } }}
+          >
+            <BgElement
+              key="bg"
+              className="bg"
+              style={{
+                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+            <QueueAnim name="QueueAnim" key="1" delay={[600, 0]}>
+              <h1 key="h1">Ant Motion Demo</h1>
+              <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
+            </QueueAnim>
+            <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 800 }} key="2">
+              Ant Motion Demo.Ant Motion Demo
+            </TweenOne>
+          </Element>
+        </BannerAnim>
+      </div>
     );
   }
 }

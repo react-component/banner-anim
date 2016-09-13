@@ -4,12 +4,9 @@ import { toArrayChildren } from './utils';
 class Thumb extends Component {
   constructor() {
     super(...arguments);
-    [
-      'getDefaultThumb',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  getDefaultThumb() {
+  getDefaultThumb = () => {
     const children = [];
     for (let i = 0; i < this.props.length; i++) {
       children.push(<span key={i} />);
