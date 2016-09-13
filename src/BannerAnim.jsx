@@ -4,7 +4,7 @@ import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
 import ticker from 'rc-tween-one/lib/ticker';
-import { toArrayChildren, dataToArray, setAnimCompToTagComp } from './utils';
+import { toArrayChildren, dataToArray, setAnimCompToTagComp, switchChildren } from './utils';
 import animType from './anim';
 
 class BannerAnim extends Component {
@@ -127,7 +127,9 @@ class BannerAnim extends Component {
           itemProps.show = this.state.currentShow === i;
           itemProps.animType = _animType;
           itemProps.duration = this.props.duration;
+          itemProps.delay = this.props.delay;
           itemProps.ease = this.props.ease;
+          itemProps.sync = this.props.sync;
           itemProps.elemOffset = {
             top: this.state.domRect.top,
             width: this.state.domRect.width,
@@ -152,7 +154,7 @@ class BannerAnim extends Component {
       }
     });
     if (elem.length > 1) {
-      if (!arrow.length) {
+      if (!arrow.length && this.props.arrow) {
         arrow.push(
           <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default
             elemHeight={this.state.wrapperHeight}
@@ -162,7 +164,7 @@ class BannerAnim extends Component {
           />
         );
       }
-      if (!thumb) {
+      if (!thumb && this.props.thumb) {
         thumb = (<Thumb length={elem.length} key="thumb"
           thumbClick={this.thumbClick}
           active={this.state.currentShow}
@@ -263,12 +265,14 @@ class BannerAnim extends Component {
       `component`,
       `initShow`,
       `duration`,
+      `delay`,
       `ease`,
       `arrow`,
       `thumb`,
       `autoPlaySpeed`,
       'autoPlay',
       'thumbFloat',
+      'sync',
     ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
@@ -298,18 +302,21 @@ BannerAnim.propTypes = {
   initShow: PropTypes.number,
   type: stringOrArray,
   duration: PropTypes.number,
+  delay: PropTypes.number,
   ease: PropTypes.string,
   autoPlay: PropTypes.bool,
   autoPlaySpeed: PropTypes.number,
   onChange: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
+  sync: PropTypes.bool,
 };
 BannerAnim.defaultProps = {
   component: 'div',
   className: 'banner-anim',
   initShow: 0,
   duration: 450,
+  delay: 0,
   ease: 'easeInOutQuad',
   arrow: true,
   thumb: true,
@@ -326,4 +333,5 @@ BannerAnim.Element = Element;
 BannerAnim.Thumb = Thumb;
 BannerAnim.animType = animType;
 BannerAnim.setAnimCompToTagComp = setAnimCompToTagComp;
+BannerAnim.switchChildren = switchChildren;
 export default BannerAnim;

@@ -186,7 +186,7 @@ class Element extends Component {
     props.component = this.props.component;
     this.show = this.state.show;
     style.zIndex = this.state.show ? 1 : 0;
-    props.children = this.props.show ? bgElem : this.getChildren();
+    props.children = this.props.show && !this.props.sync ? bgElem : this.getChildren();
     const childrenToRender = React.createElement(TweenOne, props);
     const type = this.state.show ? 'enter' : 'leave';
     return this.props.animType(childrenToRender,
@@ -195,9 +195,11 @@ class Element extends Component {
       {
         ease: this.props.ease,
         duration: this.props.duration,
+        delay: this.props.delay,
         onComplete: this.animEnd,
       },
-      this.props.elemOffset
+      this.props.elemOffset,
+      this.props.hideProps
     );
   }
 
@@ -209,17 +211,15 @@ class Element extends Component {
     style.width = '100%';
     props.style = style;
     props.className = `banner-anim-elem ${this.props.prefixCls || ''}`.trim();
-    delete props.direction;
-    delete props.show;
     const bgElem = toArrayChildren(this.props.children).filter(item => item.type === BgElement)
       .map(item => {
         return React.cloneElement(item, { show: this.state.show });
       });
     [
       `prefixCls`, `callBack`,
-      `animType`, `duration`, `ease`,
+      `animType`, `duration`, `delay`, `ease`,
       `elemOffset`, 'followParallax',
-      'show', 'type',
+      'show', 'type', 'direction', 'hideProps', 'sync',
     ].forEach(key => delete props[key]);
     if (this.show === this.state.show) {
       style.transform = null;
@@ -246,10 +246,13 @@ Element.propTypes = {
   animType: PropTypes.func,
   ease: PropTypes.string,
   duration: PropTypes.number,
+  delay: PropTypes.number,
   direction: PropTypes.string,
   callBack: PropTypes.func,
   followParallax: PropTypes.object,
   show: PropTypes.bool,
+  hideProps: PropTypes.any,
+  sync: PropTypes.bool,
 };
 Element.defaultProps = {
   component: 'div',

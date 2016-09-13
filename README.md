@@ -80,6 +80,7 @@ React.render(<BannerAnim>
 |----------|-----------------|--------------|-----------------------|
 |   type   |  string / array | All animType | Provide `across`, `vertical`, `acrossOverlay`, `verticalOverlay`, (`gridBar`, `grid`) => duration is a single block of animation time, video bg no use |
 | duration |      number     |      450     | Single switch time.   |
+| delay    |     number      |      0       |    switch delay.      |
 | ease     |      string     | `easeInOutQuad` | easing.            |
 | initShow |      number     |    0         |  start show           |
 | arrow    |      boolean    |      `true`    |  `Arrow` is children, this is null and void. else is default arrow |
@@ -89,6 +90,7 @@ React.render(<BannerAnim>
 | onChange |     func        |    -          | onChange(`before` or `after`, currentShowInt) |
 | prefixCls |    string      |   -           |  user class |
 | children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
+| sync      |   boolean      |   false       | `Element` the children and `Element` the same time animation |  
 | component | string | 'div' | component tag        |
 
 ### Element 
@@ -98,6 +100,8 @@ React.render(<BannerAnim>
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | key      |     string      |      -       |  must                 |
+| hideProps |    object / boolean |  false   | children leave switch animation. | 
+| sync      |   boolean      |   false       | children and `Element` the same time animation |  
 | prefixCls |     string      |   -           |  user class |
 | followParallax | object   |  null        | follow mouse anim  |
 | component | string | 'div' | component tag        |

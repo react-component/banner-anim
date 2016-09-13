@@ -1,9 +1,9 @@
 import React, { cloneElement } from 'react';
-import { toArrayChildren, setAnimCompToTagComp } from './utils';
+import { toArrayChildren, setAnimCompToTagComp, switchChildren } from './utils';
 import ticker from 'rc-tween-one/lib/ticker';
 
 export default {
-  across(elem, type, direction, animData) {
+  across(elem, type, direction, animData, elemOffset, hideProps) {
     let _x;
     const props = { ...elem.props };
     let children = props.children;
@@ -12,7 +12,7 @@ export default {
     } else {
       // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
       _x = direction === 'next' ? '-100%' : '100%';
-      children = toArrayChildren(children).map(setAnimCompToTagComp);
+      children = toArrayChildren(children).map(switchChildren.bind(this, hideProps));
     }
     return cloneElement(elem, {
       animation: {
@@ -22,7 +22,7 @@ export default {
       },
     }, children);
   },
-  vertical(elem, type, direction, animData) {
+  vertical(elem, type, direction, animData, elemOffset, hideProps) {
     let _y;
     const props = { ...elem.props };
     let children = props.children;
@@ -31,7 +31,7 @@ export default {
     } else {
       // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
       _y = direction === 'next' ? '100%' : '-100%';
-      children = toArrayChildren(children).map(setAnimCompToTagComp);
+      children = toArrayChildren(children).map(switchChildren.bind(this, hideProps));
     }
     return cloneElement(elem, {
       ...props,
@@ -42,7 +42,7 @@ export default {
       },
     }, children);
   },
-  acrossOverlay(elem, type, direction, animData) {
+  acrossOverlay(elem, type, direction, animData, elemOffset, hideProps) {
     let _x;
     const props = { ...elem.props };
     let children = props.children;
@@ -50,7 +50,7 @@ export default {
       _x = direction === 'next' ? '100%' : '-100%';
     } else {
       _x = direction === 'next' ? '-20%' : '20%';
-      children = toArrayChildren(children).map(setAnimCompToTagComp);
+      children = toArrayChildren(children).map(switchChildren.bind(this, hideProps));
     }
     return cloneElement(elem, {
       ...props,
@@ -61,7 +61,7 @@ export default {
       },
     }, children);
   },
-  verticalOverlay(elem, type, direction, animData) {
+  verticalOverlay(elem, type, direction, animData, elemOffset, hideProps) {
     let _y;
     const props = { ...elem.props };
     let children = props.children;
@@ -69,7 +69,7 @@ export default {
       _y = direction === 'next' ? '-100%' : '100%';
     } else {
       _y = direction === 'next' ? '20%' : '-20%';
-      children = toArrayChildren(children).map(setAnimCompToTagComp);
+      children = toArrayChildren(children).map(switchChildren.bind(this, hideProps));
     }
     return cloneElement(elem, {
       ...props,
@@ -111,7 +111,7 @@ export default {
         ...animData,
         y: _y,
         type: type === 'enter' ? 'from' : 'to',
-        delay: i * 50 + (type === 'enter' ? 0 : 50),
+        delay: i * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0),
         onComplete: i === girdNum - 1 ? animData.onComplete : null,
       };
 
@@ -159,8 +159,9 @@ export default {
       _style.left = -i % gridNum * gridWidth;
       _style.top = -Math.floor(i / gridNum) * gridWidth;
       props.style = _style;
-      const delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
+      let delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
       (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+      delay += animData.delay || 0;
       const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
       const animation = {
         ...animData,
