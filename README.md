@@ -91,6 +91,7 @@ React.render(<BannerAnim>
 | prefixCls |    string      |   -           |  user class |
 | children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
 | sync      |   boolean      |   false       | `Element` the children and `Element` the same time animation |  
+| dragPlay  | boolean        |   true        | drag play next or prev |
 | component | string | 'div' | component tag        |
 
 ### Element 
