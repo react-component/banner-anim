@@ -51,7 +51,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		10:0
+/******/ 		11:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -97,7 +97,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"autoplay","1":"bgParallax","2":"change","3":"customAnimType","4":"customArrow","5":"customThumb","6":"followMouse","7":"simple","8":"thumbBottom","9":"videoBg"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"autoplay","1":"bgParallax","2":"change","3":"customAnimType","4":"customArrow","5":"customThumb","6":"followMouse","7":"hideProps","8":"simple","9":"thumbBottom","10":"videoBg"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -343,7 +343,9 @@
 	          itemProps.show = _this2.state.currentShow === i;
 	          itemProps.animType = _animType;
 	          itemProps.duration = _this2.props.duration;
+	          itemProps.delay = _this2.props.delay;
 	          itemProps.ease = _this2.props.ease;
+	          itemProps.sync = _this2.props.sync;
 	          itemProps.elemOffset = {
 	            top: _this2.state.domRect.top,
 	            width: _this2.state.domRect.width,
@@ -368,14 +370,14 @@
 	      }
 	    });
 	    if (elem.length > 1) {
-	      if (!arrow.length) {
+	      if (!arrow.length && this.props.arrow) {
 	        arrow.push(_react2.default.createElement(_Arrow2.default, { arrowType: 'prev', key: 'arrowPrev', next: this.next, prev: this.prev, 'default': true,
 	          elemHeight: this.state.wrapperHeight
 	        }), _react2.default.createElement(_Arrow2.default, { arrowType: 'next', key: 'arrowNext', next: this.next, prev: this.prev, 'default': true,
 	          elemHeight: this.state.wrapperHeight
 	        }));
 	      }
-	      if (!thumb) {
+	      if (!thumb && this.props.thumb) {
 	        thumb = _react2.default.createElement(_Thumb2.default, { length: elem.length, key: 'thumb',
 	          thumbClick: this.thumbClick,
 	          active: this.state.currentShow,
@@ -469,7 +471,7 @@
 	  BannerAnim.prototype.render = function render() {
 	    var prefixCls = this.props.prefixCls;
 	    var props = _extends({}, this.props);
-	    ['prefixCls', 'component', 'initShow', 'duration', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat'].forEach(function (key) {
+	    ['prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat', 'sync'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    var childrenToRender = this.getRenderChildren(props.children);
@@ -503,18 +505,21 @@
 	  initShow: _react.PropTypes.number,
 	  type: stringOrArray,
 	  duration: _react.PropTypes.number,
+	  delay: _react.PropTypes.number,
 	  ease: _react.PropTypes.string,
 	  autoPlay: _react.PropTypes.bool,
 	  autoPlaySpeed: _react.PropTypes.number,
 	  onChange: _react.PropTypes.func,
 	  onMouseEnter: _react.PropTypes.func,
-	  onMouseLeave: _react.PropTypes.func
+	  onMouseLeave: _react.PropTypes.func,
+	  sync: _react.PropTypes.bool
 	};
 	BannerAnim.defaultProps = {
 	  component: 'div',
 	  className: 'banner-anim',
 	  initShow: 0,
 	  duration: 450,
+	  delay: 0,
 	  ease: 'easeInOutQuad',
 	  arrow: true,
 	  thumb: true,
@@ -528,6 +533,7 @@
 	BannerAnim.Thumb = _Thumb2.default;
 	BannerAnim.animType = _anim2.default;
 	BannerAnim.setAnimCompToTagComp = _utils.setAnimCompToTagComp;
+	BannerAnim.switchChildren = _utils.switchChildren;
 	exports.default = BannerAnim;
 	module.exports = exports['default'];
 
@@ -22242,14 +22248,15 @@
 	    props.component = this.props.component;
 	    this.show = this.state.show;
 	    style.zIndex = this.state.show ? 1 : 0;
-	    props.children = this.props.show ? bgElem : this.getChildren();
+	    props.children = this.props.show && !this.props.sync ? bgElem : this.getChildren();
 	    var childrenToRender = _react2.default.createElement(_rcTweenOne2.default, props);
 	    var type = this.state.show ? 'enter' : 'leave';
 	    return this.props.animType(childrenToRender, type, this.props.direction, {
 	      ease: this.props.ease,
 	      duration: this.props.duration,
+	      delay: this.props.delay,
 	      onComplete: this.animEnd
-	    }, this.props.elemOffset);
+	    }, this.props.elemOffset, this.props.hideProps);
 	  };
 	
 	  Element.prototype.render = function render() {
@@ -22262,14 +22269,12 @@
 	    style.width = '100%';
 	    props.style = style;
 	    props.className = ('banner-anim-elem ' + (this.props.prefixCls || '')).trim();
-	    delete props.direction;
-	    delete props.show;
 	    var bgElem = (0, _utils.toArrayChildren)(this.props.children).filter(function (item) {
 	      return item.type === _BgElement2.default;
 	    }).map(function (item) {
 	      return _react2.default.cloneElement(item, { show: _this3.state.show });
 	    });
-	    ['prefixCls', 'callBack', 'animType', 'duration', 'ease', 'elemOffset', 'followParallax', 'show', 'type'].forEach(function (key) {
+	    ['prefixCls', 'callBack', 'animType', 'duration', 'delay', 'ease', 'elemOffset', 'followParallax', 'show', 'type', 'direction', 'hideProps', 'sync'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    if (this.show === this.state.show) {
@@ -22299,10 +22304,13 @@
 	  animType: _react.PropTypes.func,
 	  ease: _react.PropTypes.string,
 	  duration: _react.PropTypes.number,
+	  delay: _react.PropTypes.number,
 	  direction: _react.PropTypes.string,
 	  callBack: _react.PropTypes.func,
 	  followParallax: _react.PropTypes.object,
-	  show: _react.PropTypes.bool
+	  show: _react.PropTypes.bool,
+	  hideProps: _react.PropTypes.any,
+	  sync: _react.PropTypes.bool
 	};
 	Element.defaultProps = {
 	  component: 'div',
@@ -22956,6 +22964,7 @@
 	exports.setAnimCompToTagComp = setAnimCompToTagComp;
 	exports.currentScrollTop = currentScrollTop;
 	exports.currentScrollLeft = currentScrollLeft;
+	exports.switchChildren = switchChildren;
 	
 	var _react = __webpack_require__(5);
 	
@@ -23029,6 +23038,16 @@
 	  }
 	  var isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
 	  return isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
+	}
+	
+	function switchChildren(hideProps, item) {
+	  if (!hideProps) {
+	    return item;
+	  }
+	  if (item.key in hideProps) {
+	    return _react2.default.cloneElement(item, _extends({}, hideProps[item.key]));
+	  }
+	  return _react2.default.cloneElement(item, item.props, null);
 	}
 
 /***/ },
@@ -24908,7 +24927,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  across: function across(elem, type, direction, animData) {
+	  across: function across(elem, type, direction, animData, elemOffset, hideProps) {
 	    var _x = void 0;
 	    var props = _extends({}, elem.props);
 	    var children = props.children;
@@ -24917,7 +24936,7 @@
 	    } else {
 	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
 	      _x = direction === 'next' ? '-100%' : '100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
 	    }
 	    return (0, _react.cloneElement)(elem, {
 	      animation: _extends({}, animData, {
@@ -24926,7 +24945,7 @@
 	      })
 	    }, children);
 	  },
-	  vertical: function vertical(elem, type, direction, animData) {
+	  vertical: function vertical(elem, type, direction, animData, elemOffset, hideProps) {
 	    var _y = void 0;
 	    var props = _extends({}, elem.props);
 	    var children = props.children;
@@ -24935,7 +24954,7 @@
 	    } else {
 	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
 	      _y = direction === 'next' ? '100%' : '-100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
 	    }
 	    return (0, _react.cloneElement)(elem, _extends({}, props, {
 	      animation: _extends({}, animData, {
@@ -24944,7 +24963,7 @@
 	      })
 	    }), children);
 	  },
-	  acrossOverlay: function acrossOverlay(elem, type, direction, animData) {
+	  acrossOverlay: function acrossOverlay(elem, type, direction, animData, elemOffset, hideProps) {
 	    var _x = void 0;
 	    var props = _extends({}, elem.props);
 	    var children = props.children;
@@ -24952,7 +24971,7 @@
 	      _x = direction === 'next' ? '100%' : '-100%';
 	    } else {
 	      _x = direction === 'next' ? '-20%' : '20%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
 	    }
 	    return (0, _react.cloneElement)(elem, _extends({}, props, {
 	      animation: _extends({}, animData, {
@@ -24961,7 +24980,7 @@
 	      })
 	    }), children);
 	  },
-	  verticalOverlay: function verticalOverlay(elem, type, direction, animData) {
+	  verticalOverlay: function verticalOverlay(elem, type, direction, animData, elemOffset, hideProps) {
 	    var _y = void 0;
 	    var props = _extends({}, elem.props);
 	    var children = props.children;
@@ -24969,7 +24988,7 @@
 	      _y = direction === 'next' ? '-100%' : '100%';
 	    } else {
 	      _y = direction === 'next' ? '20%' : '-20%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
 	    }
 	    return (0, _react.cloneElement)(elem, _extends({}, props, {
 	      animation: _extends({}, animData, {
@@ -25008,7 +25027,7 @@
 	      props.animation = _extends({}, animData, {
 	        y: _y,
 	        type: type === 'enter' ? 'from' : 'to',
-	        delay: i * 50 + (type === 'enter' ? 0 : 50),
+	        delay: i * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0),
 	        onComplete: i === girdNum - 1 ? animData.onComplete : null
 	      });
 	
@@ -25060,6 +25079,7 @@
 	      _style.top = -Math.floor(i / gridNum) * gridWidth;
 	      props.style = _style;
 	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+	      delay += animData.delay || 0;
 	      var length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
 	      var animation = _extends({}, animData, {
 	        opacity: 0,

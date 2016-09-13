@@ -1,14 +1,14 @@
-webpackJsonp([9],{
+webpackJsonp([7],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(215);
+	module.exports = __webpack_require__(213);
 
 
 /***/ },
 
-/***/ 215:
+/***/ 213:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57,17 +57,39 @@ webpackJsonp([9],{
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	
+	    _this.onChange = function (e, int) {
+	      // 在切换到下一个后把延时改掉。
+	      if (int === 1 && e === 'after' && !_this.openSlide) {
+	        _this.setState({
+	          delay: 600
+	        });
+	        _this.openSlide = true;
+	      }
+	    };
+	
+	    _this.state = {
+	      delay: 0
+	    };
+	    _this.openSlide = false;
+	    return _this;
 	  }
 	
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
 	      _rcBannerAnim2.default,
-	      { thumbFloat: false, prefixCls: 'banner-thumb-bottom' },
+	      { prefixCls: 'banner-user', type: 'across',
+	        onChange: this.onChange,
+	        duration: 1000,
+	        ease: 'easeInOutExpo',
+	        sync: true
+	      },
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'aaa',
-	          prefixCls: 'banner-user-elem'
+	          prefixCls: 'banner-user-elem',
+	          hideProps: { 2: { reverse: true } }
 	        },
 	        _react2.default.createElement(BgElement, {
 	          key: 'bg',
@@ -80,7 +102,7 @@ webpackJsonp([9],{
 	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
-	          { name: 'QueueAnim' },
+	          { key: '1', name: 'QueueAnim', delay: [this.state.delay, 0] },
 	          _react2.default.createElement(
 	            'h1',
 	            { key: 'h1' },
@@ -94,14 +116,17 @@ webpackJsonp([9],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne' },
+	          { key: '2',
+	            animation: { y: 50, opacity: 0, type: 'from', delay: this.state.delay + 200 }
+	          },
 	          'Ant Motion Demo.Ant Motion Demo'
 	        )
 	      ),
 	      _react2.default.createElement(
 	        Element,
 	        { key: 'bbb',
-	          prefixCls: 'banner-user-elem'
+	          prefixCls: 'banner-user-elem',
+	          hideProps: { 2: { reverse: true } }
 	        },
 	        _react2.default.createElement(BgElement, {
 	          key: 'bg',
@@ -114,7 +139,7 @@ webpackJsonp([9],{
 	        }),
 	        _react2.default.createElement(
 	          _rcQueueAnim2.default,
-	          { name: 'QueueAnim' },
+	          { name: 'QueueAnim', key: '1', delay: [600, 0] },
 	          _react2.default.createElement(
 	            'h1',
 	            { key: 'h1' },
@@ -128,7 +153,7 @@ webpackJsonp([9],{
 	        ),
 	        _react2.default.createElement(
 	          _rcTweenOne2.default,
-	          { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne' },
+	          { animation: { y: 50, opacity: 0, type: 'from', delay: 800 }, key: '2' },
 	          'Ant Motion Demo.Ant Motion Demo'
 	        )
 	      )
@@ -143,4 +168,4 @@ webpackJsonp([9],{
 /***/ }
 
 });
-//# sourceMappingURL=thumbBottom.js.map
+//# sourceMappingURL=hideProps.js.map
