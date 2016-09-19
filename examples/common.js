@@ -22075,7 +22075,7 @@
 	      _ticker2.default.wake(_this.tickerId, function () {
 	        var moment = (_ticker2.default.frame - startFrame) * _ticker2.default.perFrame;
 	        var start = typeof _this.props.followParallax.minMove === 'number' ? _this.props.followParallax.minMove : 0.08;
-	        var ratio = _tweenFunctions2.default[_this.props.followParallax.ease || 'easeInOutQuad'](moment, start, 1, 1000);
+	        var ratio = _tweenFunctions2.default[_this.props.followParallax.ease || 'easeOutQuad'](moment, start, 1, 1000);
 	        _this.enterMouse.x = _this.enterMouse.x + (mouseXY.x - _this.enterMouse.x) * ratio;
 	        _this.enterMouse.y = _this.enterMouse.y + (mouseXY.y - _this.enterMouse.y) * ratio;
 	        _this.setFollowStyle(domWH);

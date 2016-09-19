@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-banner-anim@0.5.2 - banner-anim animation component for react</title>
+  <title>rc-banner-anim@0.5.3 - banner-anim animation component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-banner-anim@0.5.2</h1>
+  <h1>rc-banner-anim@0.5.3</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -906,6 +906,12 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td><code>Element</code> the children and <code>Element</code> the same time animation</td>
 </tr>
 <tr>
+<td>dragPlay</td>
+<td>boolean</td>
+<td>true</td>
+<td>drag play next or prev</td>
+</tr>
+<tr>
 <td>component</td>
 <td>string</td>
 <td>&#39;div&#39;</td>
@@ -989,8 +995,8 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <tr>
 <td>ease</td>
 <td>string</td>
-<td>false</td>
-<td><code>true</code> is <code>easeInOutQuad</code></td>
+<td><code>easeOutQuad</code></td>
+<td>animate ease. <a href="http://easings.net/en" title="null">refer</a></td>
 </tr>
 <tr>
 <td>minMove</td>
