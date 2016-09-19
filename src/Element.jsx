@@ -76,7 +76,7 @@ class Element extends Component {
       const start = typeof this.props.followParallax.minMove === 'number' ?
         this.props.followParallax.minMove : 0.08;
       const ratio = ease[this.props.followParallax.ease ||
-      'easeInOutQuad'](moment, start, 1, 1000);
+      'easeOutQuad'](moment, start, 1, 1000);
       this.enterMouse.x = this.enterMouse.x + (mouseXY.x - this.enterMouse.x) * ratio;
       this.enterMouse.y = this.enterMouse.y + (mouseXY.y - this.enterMouse.y) * ratio;
       this.setFollowStyle(domWH);

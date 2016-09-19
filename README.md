@@ -112,7 +112,7 @@ React.render(<BannerAnim>
 |----------|-----------------|--------------|-----------------------|
 | delay    |     number      |  null        | open followParallax delay |
 | data     | array           |  null        | content: { key: string, value: number, type: array or string, bgPosition: string }; key: children key; value: animation interval value, example: value is 20 => [left: -20, center: 0 , right: 20] ; type: style or `x` `y`, bgPosition: if type is backgroundPosition, this is bg default position, else is invalid. |
-| ease | string        |  `easeInOutQuad`   | animate ease. [refer](http://easings.net/en)    |
+| ease | string        |  `easeOutQuad`   | animate ease. [refer](http://easings.net/en)    |
 | minMove    |   number        |  null        | ease.easeInOutQuad(start, minMove, 1, end); The mouse to move once, the minimum point of moving graphics, a second to reach the position of the mouse. |
 
 ### Element.BgElement
