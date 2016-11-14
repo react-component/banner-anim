@@ -205,17 +205,17 @@
 	
 	var _Element2 = _interopRequireDefault(_Element);
 	
-	var _Thumb = __webpack_require__(193);
+	var _Thumb = __webpack_require__(194);
 	
 	var _Thumb2 = _interopRequireDefault(_Thumb);
 	
-	var _ticker = __webpack_require__(188);
+	var _ticker = __webpack_require__(182);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
 	var _utils = __webpack_require__(180);
 	
-	var _anim = __webpack_require__(192);
+	var _anim = __webpack_require__(181);
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
@@ -1531,14 +1531,6 @@
 	  var source = null;
 	
 	  if (config != null) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      process.env.NODE_ENV !== 'production' ? warning(
-	      /* eslint-disable no-proto */
-	      config.__proto__ == null || config.__proto__ === Object.prototype,
-	      /* eslint-enable no-proto */
-	      'React.createElement(...): Expected props argument to be a plain object. ' + 'Properties defined in its prototype chain will be ignored.') : void 0;
-	    }
-	
 	    if (hasValidRef(config)) {
 	      ref = config.ref;
 	    }
@@ -1639,14 +1631,6 @@
 	  var owner = element._owner;
 	
 	  if (config != null) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      process.env.NODE_ENV !== 'production' ? warning(
-	      /* eslint-disable no-proto */
-	      config.__proto__ == null || config.__proto__ === Object.prototype,
-	      /* eslint-enable no-proto */
-	      'React.cloneElement(...): Expected props argument to be a plain object. ' + 'Properties defined in its prototype chain will be ignored.') : void 0;
-	    }
-	
 	    if (hasValidRef(config)) {
 	      // Silently steal the ref from the parent.
 	      ref = config.ref;
@@ -4680,7 +4664,7 @@
 	
 	'use strict';
 	
-	module.exports = '15.3.1';
+	module.exports = '15.3.2';
 
 /***/ },
 /* 37 */
@@ -5662,8 +5646,10 @@
 	function getFallbackBeforeInputChars(topLevelType, nativeEvent) {
 	  // If we are currently composing (IME) and using a fallback to do so,
 	  // try to extract the composed characters from the fallback object.
+	  // If composition event is available, we extract a string only at
+	  // compositionevent, otherwise extract it at fallback events.
 	  if (currentComposition) {
-	    if (topLevelType === topLevelTypes.topCompositionEnd || isFallbackCompositionEnd(topLevelType, nativeEvent)) {
+	    if (topLevelType === topLevelTypes.topCompositionEnd || !canUseCompositionEvent && isFallbackCompositionEnd(topLevelType, nativeEvent)) {
 	      var chars = currentComposition.getData();
 	      FallbackCompositionState.release(currentComposition);
 	      currentComposition = null;
@@ -7272,7 +7258,8 @@
 	
 	    if (event.preventDefault) {
 	      event.preventDefault();
-	    } else {
+	    } else if (typeof event.returnValue !== 'unknown') {
+	      // eslint-disable-line valid-typeof
 	      event.returnValue = false;
 	    }
 	    this.isDefaultPrevented = emptyFunction.thatReturnsTrue;
@@ -7529,7 +7516,7 @@
 	var doesChangeEventBubble = false;
 	if (ExecutionEnvironment.canUseDOM) {
 	  // See `handleChange` comment below
-	  doesChangeEventBubble = isEventSupported('change') && (!('documentMode' in document) || document.documentMode > 8);
+	  doesChangeEventBubble = isEventSupported('change') && (!document.documentMode || document.documentMode > 8);
 	}
 	
 	function manualDispatchChangeEvent(nativeEvent) {
@@ -7595,7 +7582,7 @@
 	  // deleting text, so we ignore its input events.
 	  // IE10+ fire input events to often, such when a placeholder
 	  // changes or when an input with a placeholder is focused.
-	  isInputEventSupported = isEventSupported('input') && (!('documentMode' in document) || document.documentMode > 11);
+	  isInputEventSupported = isEventSupported('input') && (!document.documentMode || document.documentMode > 11);
 	}
 	
 	/**
@@ -8824,12 +8811,6 @@
 	    endLifeCycleTimer(debugID, timerType);
 	    emitEvent('onEndLifeCycleTimer', debugID, timerType);
 	  },
-	  onError: function (debugID) {
-	    if (currentTimerDebugID != null) {
-	      endLifeCycleTimer(currentTimerDebugID, currentTimerType);
-	    }
-	    emitEvent('onError', debugID);
-	  },
 	  onBeginProcessingChildContext: function () {
 	    emitEvent('onBeginProcessingChildContext');
 	  },
@@ -9903,6 +9884,8 @@
 	    allowFullScreen: HAS_BOOLEAN_VALUE,
 	    allowTransparency: 0,
 	    alt: 0,
+	    // specifies target context for links with `preload` type
+	    as: 0,
 	    async: HAS_BOOLEAN_VALUE,
 	    autoComplete: 0,
 	    // autoFocus is polyfilled/normalized by AutoFocusUtils
@@ -9983,6 +9966,7 @@
 	    optimum: 0,
 	    pattern: 0,
 	    placeholder: 0,
+	    playsInline: HAS_BOOLEAN_VALUE,
 	    poster: 0,
 	    preload: 0,
 	    profile: 0,
@@ -10505,9 +10489,9 @@
 	  if (node.namespaceURI === DOMNamespaces.svg && !('innerHTML' in node)) {
 	    reusableSVGContainer = reusableSVGContainer || document.createElement('div');
 	    reusableSVGContainer.innerHTML = '<svg>' + html + '</svg>';
-	    var newNodes = reusableSVGContainer.firstChild.childNodes;
-	    for (var i = 0; i < newNodes.length; i++) {
-	      node.appendChild(newNodes[i]);
+	    var svgNode = reusableSVGContainer.firstChild;
+	    while (svgNode.firstChild) {
+	      node.appendChild(svgNode.firstChild);
 	    }
 	  } else {
 	    node.innerHTML = html;
@@ -11435,9 +11419,9 @@
 	  ReactDOMOption.postMountWrapper(inst);
 	}
 	
-	var setContentChildForInstrumentation = emptyFunction;
+	var setAndValidateContentChildDev = emptyFunction;
 	if (process.env.NODE_ENV !== 'production') {
-	  setContentChildForInstrumentation = function (content) {
+	  setAndValidateContentChildDev = function (content) {
 	    var hasExistingContent = this._contentDebugID != null;
 	    var debugID = this._debugID;
 	    // This ID represents the inlined child that has no backing instance:
@@ -11451,6 +11435,7 @@
 	      return;
 	    }
 	
+	    validateDOMNesting(null, String(content), this, this._ancestorInfo);
 	    this._contentDebugID = contentDebugID;
 	    if (hasExistingContent) {
 	      ReactInstrumentation.debugTool.onBeforeUpdateComponent(contentDebugID, content);
@@ -11625,7 +11610,7 @@
 	  this._flags = 0;
 	  if (process.env.NODE_ENV !== 'production') {
 	    this._ancestorInfo = null;
-	    setContentChildForInstrumentation.call(this, null);
+	    setAndValidateContentChildDev.call(this, null);
 	  }
 	}
 	
@@ -11725,7 +11710,7 @@
 	      if (parentInfo) {
 	        // parentInfo should always be present except for the top-level
 	        // component when server rendering
-	        validateDOMNesting(this._tag, this, parentInfo);
+	        validateDOMNesting(this._tag, null, this, parentInfo);
 	      }
 	      this._ancestorInfo = validateDOMNesting.updatedAncestorInfo(parentInfo, this._tag, this);
 	    }
@@ -11894,7 +11879,7 @@
 	        // TODO: Validate that text is allowed as a child of this node
 	        ret = escapeTextContentForBrowser(contentToUse);
 	        if (process.env.NODE_ENV !== 'production') {
-	          setContentChildForInstrumentation.call(this, contentToUse);
+	          setAndValidateContentChildDev.call(this, contentToUse);
 	        }
 	      } else if (childrenToUse != null) {
 	        var mountImages = this.mountChildren(childrenToUse, transaction, context);
@@ -11931,7 +11916,7 @@
 	      if (contentToUse != null) {
 	        // TODO: Validate that text is allowed as a child of this node
 	        if (process.env.NODE_ENV !== 'production') {
-	          setContentChildForInstrumentation.call(this, contentToUse);
+	          setAndValidateContentChildDev.call(this, contentToUse);
 	        }
 	        DOMLazyTree.queueText(lazyTree, contentToUse);
 	      } else if (childrenToUse != null) {
@@ -12163,7 +12148,7 @@
 	      if (lastContent !== nextContent) {
 	        this.updateTextContent('' + nextContent);
 	        if (process.env.NODE_ENV !== 'production') {
-	          setContentChildForInstrumentation.call(this, nextContent);
+	          setAndValidateContentChildDev.call(this, nextContent);
 	        }
 	      }
 	    } else if (nextHtml != null) {
@@ -12175,7 +12160,7 @@
 	      }
 	    } else if (nextChildren != null) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        setContentChildForInstrumentation.call(this, null);
+	        setAndValidateContentChildDev.call(this, null);
 	      }
 	
 	      this.updateChildren(nextChildren, transaction, context);
@@ -12230,7 +12215,7 @@
 	    this._wrapperState = null;
 	
 	    if (process.env.NODE_ENV !== 'production') {
-	      setContentChildForInstrumentation.call(this, null);
+	      setAndValidateContentChildDev.call(this, null);
 	    }
 	  },
 	
@@ -13503,6 +13488,19 @@
 	  },
 	
 	  /**
+	   * Protect against document.createEvent() returning null
+	   * Some popup blocker extensions appear to do this:
+	   * https://github.com/facebook/react/issues/6887
+	   */
+	  supportsEventPageXY: function () {
+	    if (!document.createEvent) {
+	      return false;
+	    }
+	    var ev = document.createEvent('MouseEvent');
+	    return ev != null && 'pageX' in ev;
+	  },
+	
+	  /**
 	   * Listens to window scroll and resize events. We cache scroll values so that
 	   * application code can access them without triggering reflows.
 	   *
@@ -13515,7 +13513,7 @@
 	   */
 	  ensureScrollValueMonitoring: function () {
 	    if (hasEventPageXY === undefined) {
-	      hasEventPageXY = document.createEvent && 'pageX' in document.createEvent('MouseEvent');
+	      hasEventPageXY = ReactBrowserEventEmitter.supportsEventPageXY();
 	    }
 	    if (!hasEventPageXY && !isMonitoringScrollValue) {
 	      var refresh = ViewportMetrics.refreshScrollValues;
@@ -13801,7 +13799,7 @@
 	
 	function isControlled(props) {
 	  var usesChecked = props.type === 'checkbox' || props.type === 'radio';
-	  return usesChecked ? props.checked !== undefined : props.value !== undefined;
+	  return usesChecked ? props.checked != null : props.value != null;
 	}
 	
 	/**
@@ -15574,34 +15572,29 @@
 	  }
 	}
 	
-	function invokeComponentDidMountWithTimer() {
-	  var publicInstance = this._instance;
-	  if (this._debugID !== 0) {
-	    ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'componentDidMount');
-	  }
-	  publicInstance.componentDidMount();
-	  if (this._debugID !== 0) {
-	    ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'componentDidMount');
-	  }
-	}
-	
-	function invokeComponentDidUpdateWithTimer(prevProps, prevState, prevContext) {
-	  var publicInstance = this._instance;
-	  if (this._debugID !== 0) {
-	    ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'componentDidUpdate');
-	  }
-	  publicInstance.componentDidUpdate(prevProps, prevState, prevContext);
-	  if (this._debugID !== 0) {
-	    ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'componentDidUpdate');
-	  }
-	}
-	
 	function shouldConstruct(Component) {
 	  return !!(Component.prototype && Component.prototype.isReactComponent);
 	}
 	
 	function isPureComponent(Component) {
 	  return !!(Component.prototype && Component.prototype.isPureReactComponent);
+	}
+	
+	// Separated into a function to contain deoptimizations caused by try/finally.
+	function measureLifeCyclePerf(fn, debugID, timerType) {
+	  if (debugID === 0) {
+	    // Top-level wrappers (see ReactMount) and empty components (see
+	    // ReactDOMEmptyComponent) are invisible to hooks and devtools.
+	    // Both are implementation details that should go away in the future.
+	    return fn();
+	  }
+	
+	  ReactInstrumentation.debugTool.onBeginLifeCycleTimer(debugID, timerType);
+	  try {
+	    return fn();
+	  } finally {
+	    ReactInstrumentation.debugTool.onEndLifeCycleTimer(debugID, timerType);
+	  }
 	}
 	
 	/**
@@ -15695,6 +15688,8 @@
 	   * @internal
 	   */
 	  mountComponent: function (transaction, hostParent, hostContainerInfo, context) {
+	    var _this = this;
+	
 	    this._context = context;
 	    this._mountOrder = nextMountID++;
 	    this._hostParent = hostParent;
@@ -15784,7 +15779,11 @@
 	
 	    if (inst.componentDidMount) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        transaction.getReactMountReady().enqueue(invokeComponentDidMountWithTimer, this);
+	        transaction.getReactMountReady().enqueue(function () {
+	          measureLifeCyclePerf(function () {
+	            return inst.componentDidMount();
+	          }, _this._debugID, 'componentDidMount');
+	        });
 	      } else {
 	        transaction.getReactMountReady().enqueue(inst.componentDidMount, inst);
 	      }
@@ -15808,35 +15807,26 @@
 	
 	  _constructComponentWithoutOwner: function (doConstruct, publicProps, publicContext, updateQueue) {
 	    var Component = this._currentElement.type;
-	    var instanceOrElement;
+	
 	    if (doConstruct) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'ctor');
-	        }
-	      }
-	      instanceOrElement = new Component(publicProps, publicContext, updateQueue);
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'ctor');
-	        }
-	      }
-	    } else {
-	      // This can still be an instance in case of factory components
-	      // but we'll count this as time spent rendering as the more common case.
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'render');
-	        }
-	      }
-	      instanceOrElement = Component(publicProps, publicContext, updateQueue);
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'render');
-	        }
+	        return measureLifeCyclePerf(function () {
+	          return new Component(publicProps, publicContext, updateQueue);
+	        }, this._debugID, 'ctor');
+	      } else {
+	        return new Component(publicProps, publicContext, updateQueue);
 	      }
 	    }
-	    return instanceOrElement;
+	
+	    // This can still be an instance in case of factory components
+	    // but we'll count this as time spent rendering as the more common case.
+	    if (process.env.NODE_ENV !== 'production') {
+	      return measureLifeCyclePerf(function () {
+	        return Component(publicProps, publicContext, updateQueue);
+	      }, this._debugID, 'render');
+	    } else {
+	      return Component(publicProps, publicContext, updateQueue);
+	    }
 	  },
 	
 	  performInitialMountWithErrorHandling: function (renderedElement, hostParent, hostContainerInfo, transaction, context) {
@@ -15845,11 +15835,6 @@
 	    try {
 	      markup = this.performInitialMount(renderedElement, hostParent, hostContainerInfo, transaction, context);
 	    } catch (e) {
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onError();
-	        }
-	      }
 	      // Roll back to checkpoint, handle error (which may add items to the transaction), and take a new checkpoint
 	      transaction.rollback(checkpoint);
 	      this._instance.unstable_handleError(e);
@@ -15870,17 +15855,19 @@
 	
 	  performInitialMount: function (renderedElement, hostParent, hostContainerInfo, transaction, context) {
 	    var inst = this._instance;
+	
+	    var debugID = 0;
+	    if (process.env.NODE_ENV !== 'production') {
+	      debugID = this._debugID;
+	    }
+	
 	    if (inst.componentWillMount) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'componentWillMount');
-	        }
-	      }
-	      inst.componentWillMount();
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'componentWillMount');
-	        }
+	        measureLifeCyclePerf(function () {
+	          return inst.componentWillMount();
+	        }, debugID, 'componentWillMount');
+	      } else {
+	        inst.componentWillMount();
 	      }
 	      // When mounting, calls to `setState` by `componentWillMount` will set
 	      // `this._pendingStateQueue` without triggering a re-render.
@@ -15900,15 +15887,12 @@
 	    );
 	    this._renderedComponent = child;
 	
-	    var selfDebugID = 0;
-	    if (process.env.NODE_ENV !== 'production') {
-	      selfDebugID = this._debugID;
-	    }
-	    var markup = ReactReconciler.mountComponent(child, transaction, hostParent, hostContainerInfo, this._processChildContext(context), selfDebugID);
+	    var markup = ReactReconciler.mountComponent(child, transaction, hostParent, hostContainerInfo, this._processChildContext(context), debugID);
 	
 	    if (process.env.NODE_ENV !== 'production') {
-	      if (this._debugID !== 0) {
-	        ReactInstrumentation.debugTool.onSetChildren(this._debugID, child._debugID !== 0 ? [child._debugID] : []);
+	      if (debugID !== 0) {
+	        var childDebugIDs = child._debugID !== 0 ? [child._debugID] : [];
+	        ReactInstrumentation.debugTool.onSetChildren(debugID, childDebugIDs);
 	      }
 	    }
 	
@@ -15929,24 +15913,22 @@
 	    if (!this._renderedComponent) {
 	      return;
 	    }
+	
 	    var inst = this._instance;
 	
 	    if (inst.componentWillUnmount && !inst._calledComponentWillUnmount) {
 	      inst._calledComponentWillUnmount = true;
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'componentWillUnmount');
-	        }
-	      }
+	
 	      if (safely) {
 	        var name = this.getName() + '.componentWillUnmount()';
 	        ReactErrorUtils.invokeGuardedCallback(name, inst.componentWillUnmount.bind(inst));
 	      } else {
-	        inst.componentWillUnmount();
-	      }
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'componentWillUnmount');
+	        if (process.env.NODE_ENV !== 'production') {
+	          measureLifeCyclePerf(function () {
+	            return inst.componentWillUnmount();
+	          }, this._debugID, 'componentWillUnmount');
+	        } else {
+	          inst.componentWillUnmount();
 	        }
 	      }
 	    }
@@ -16033,13 +16015,21 @@
 	  _processChildContext: function (currentContext) {
 	    var Component = this._currentElement.type;
 	    var inst = this._instance;
-	    if (process.env.NODE_ENV !== 'production') {
-	      ReactInstrumentation.debugTool.onBeginProcessingChildContext();
+	    var childContext;
+	
+	    if (inst.getChildContext) {
+	      if (process.env.NODE_ENV !== 'production') {
+	        ReactInstrumentation.debugTool.onBeginProcessingChildContext();
+	        try {
+	          childContext = inst.getChildContext();
+	        } finally {
+	          ReactInstrumentation.debugTool.onEndProcessingChildContext();
+	        }
+	      } else {
+	        childContext = inst.getChildContext();
+	      }
 	    }
-	    var childContext = inst.getChildContext && inst.getChildContext();
-	    if (process.env.NODE_ENV !== 'production') {
-	      ReactInstrumentation.debugTool.onEndProcessingChildContext();
-	    }
+	
 	    if (childContext) {
 	      !(typeof Component.childContextTypes === 'object') ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s.getChildContext(): childContextTypes must be defined in order to use getChildContext().', this.getName() || 'ReactCompositeComponent') : _prodInvariant('107', this.getName() || 'ReactCompositeComponent') : void 0;
 	      if (process.env.NODE_ENV !== 'production') {
@@ -16134,15 +16124,11 @@
 	    // immediately reconciled instead of waiting for the next batch.
 	    if (willReceive && inst.componentWillReceiveProps) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'componentWillReceiveProps');
-	        }
-	      }
-	      inst.componentWillReceiveProps(nextProps, nextContext);
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'componentWillReceiveProps');
-	        }
+	        measureLifeCyclePerf(function () {
+	          return inst.componentWillReceiveProps(nextProps, nextContext);
+	        }, this._debugID, 'componentWillReceiveProps');
+	      } else {
+	        inst.componentWillReceiveProps(nextProps, nextContext);
 	      }
 	    }
 	
@@ -16152,15 +16138,11 @@
 	    if (!this._pendingForceUpdate) {
 	      if (inst.shouldComponentUpdate) {
 	        if (process.env.NODE_ENV !== 'production') {
-	          if (this._debugID !== 0) {
-	            ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'shouldComponentUpdate');
-	          }
-	        }
-	        shouldUpdate = inst.shouldComponentUpdate(nextProps, nextState, nextContext);
-	        if (process.env.NODE_ENV !== 'production') {
-	          if (this._debugID !== 0) {
-	            ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'shouldComponentUpdate');
-	          }
+	          shouldUpdate = measureLifeCyclePerf(function () {
+	            return inst.shouldComponentUpdate(nextProps, nextState, nextContext);
+	          }, this._debugID, 'shouldComponentUpdate');
+	        } else {
+	          shouldUpdate = inst.shouldComponentUpdate(nextProps, nextState, nextContext);
 	        }
 	      } else {
 	        if (this._compositeType === CompositeTypes.PureClass) {
@@ -16226,6 +16208,8 @@
 	   * @private
 	   */
 	  _performComponentUpdate: function (nextElement, nextProps, nextState, nextContext, transaction, unmaskedContext) {
+	    var _this2 = this;
+	
 	    var inst = this._instance;
 	
 	    var hasComponentDidUpdate = Boolean(inst.componentDidUpdate);
@@ -16240,15 +16224,11 @@
 	
 	    if (inst.componentWillUpdate) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'componentWillUpdate');
-	        }
-	      }
-	      inst.componentWillUpdate(nextProps, nextState, nextContext);
-	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'componentWillUpdate');
-	        }
+	        measureLifeCyclePerf(function () {
+	          return inst.componentWillUpdate(nextProps, nextState, nextContext);
+	        }, this._debugID, 'componentWillUpdate');
+	      } else {
+	        inst.componentWillUpdate(nextProps, nextState, nextContext);
 	      }
 	    }
 	
@@ -16262,7 +16242,9 @@
 	
 	    if (hasComponentDidUpdate) {
 	      if (process.env.NODE_ENV !== 'production') {
-	        transaction.getReactMountReady().enqueue(invokeComponentDidUpdateWithTimer.bind(this, prevProps, prevState, prevContext), this);
+	        transaction.getReactMountReady().enqueue(function () {
+	          measureLifeCyclePerf(inst.componentDidUpdate.bind(inst, prevProps, prevState, prevContext), _this2._debugID, 'componentDidUpdate');
+	        });
 	      } else {
 	        transaction.getReactMountReady().enqueue(inst.componentDidUpdate.bind(inst, prevProps, prevState, prevContext), inst);
 	      }
@@ -16279,6 +16261,12 @@
 	    var prevComponentInstance = this._renderedComponent;
 	    var prevRenderedElement = prevComponentInstance._currentElement;
 	    var nextRenderedElement = this._renderValidatedComponent();
+	
+	    var debugID = 0;
+	    if (process.env.NODE_ENV !== 'production') {
+	      debugID = this._debugID;
+	    }
+	
 	    if (shouldUpdateReactComponent(prevRenderedElement, nextRenderedElement)) {
 	      ReactReconciler.receiveComponent(prevComponentInstance, nextRenderedElement, transaction, this._processChildContext(context));
 	    } else {
@@ -16291,15 +16279,12 @@
 	      );
 	      this._renderedComponent = child;
 	
-	      var selfDebugID = 0;
-	      if (process.env.NODE_ENV !== 'production') {
-	        selfDebugID = this._debugID;
-	      }
-	      var nextMarkup = ReactReconciler.mountComponent(child, transaction, this._hostParent, this._hostContainerInfo, this._processChildContext(context), selfDebugID);
+	      var nextMarkup = ReactReconciler.mountComponent(child, transaction, this._hostParent, this._hostContainerInfo, this._processChildContext(context), debugID);
 	
 	      if (process.env.NODE_ENV !== 'production') {
-	        if (this._debugID !== 0) {
-	          ReactInstrumentation.debugTool.onSetChildren(this._debugID, child._debugID !== 0 ? [child._debugID] : []);
+	        if (debugID !== 0) {
+	          var childDebugIDs = child._debugID !== 0 ? [child._debugID] : [];
+	          ReactInstrumentation.debugTool.onSetChildren(debugID, childDebugIDs);
 	        }
 	      }
 	
@@ -16321,17 +16306,14 @@
 	   */
 	  _renderValidatedComponentWithoutOwnerOrContext: function () {
 	    var inst = this._instance;
+	    var renderedComponent;
 	
 	    if (process.env.NODE_ENV !== 'production') {
-	      if (this._debugID !== 0) {
-	        ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'render');
-	      }
-	    }
-	    var renderedComponent = inst.render();
-	    if (process.env.NODE_ENV !== 'production') {
-	      if (this._debugID !== 0) {
-	        ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'render');
-	      }
+	      renderedComponent = measureLifeCyclePerf(function () {
+	        return inst.render();
+	      }, this._debugID, 'render');
+	    } else {
+	      renderedComponent = inst.render();
 	    }
 	
 	    if (process.env.NODE_ENV !== 'production') {
@@ -16382,7 +16364,7 @@
 	    var publicComponentInstance = component.getPublicInstance();
 	    if (process.env.NODE_ENV !== 'production') {
 	      var componentName = component && component.getName ? component.getName() : 'a component';
-	      process.env.NODE_ENV !== 'production' ? warning(publicComponentInstance != null, 'Stateless function components cannot be given refs ' + '(See ref "%s" in %s created by %s). ' + 'Attempts to access this ref will fail.', ref, componentName, this.getName()) : void 0;
+	      process.env.NODE_ENV !== 'production' ? warning(publicComponentInstance != null || component._compositeType !== CompositeTypes.StatelessFunctional, 'Stateless function components cannot be given refs ' + '(See ref "%s" in %s created by %s). ' + 'Attempts to access this ref will fail.', ref, componentName, this.getName()) : void 0;
 	    }
 	    var refs = inst.refs === emptyObject ? inst.refs = {} : inst.refs;
 	    refs[ref] = publicComponentInstance;
@@ -16519,7 +16501,8 @@
 	  if (x === y) {
 	    // Steps 1-5, 7-10
 	    // Steps 6.b-6.e: +0 != -0
-	    return x !== 0 || 1 / x === 1 / y;
+	    // Added the nonzero y check to make Flow happy, but it is redundant
+	    return x !== 0 || y !== 0 || 1 / x === 1 / y;
 	  } else {
 	    // Step 6.a: NaN == NaN
 	    return x !== x && y !== y;
@@ -17573,10 +17556,15 @@
 	
 	  var didWarn = {};
 	
-	  validateDOMNesting = function (childTag, childInstance, ancestorInfo) {
+	  validateDOMNesting = function (childTag, childText, childInstance, ancestorInfo) {
 	    ancestorInfo = ancestorInfo || emptyAncestorInfo;
 	    var parentInfo = ancestorInfo.current;
 	    var parentTag = parentInfo && parentInfo.tag;
+	
+	    if (childText != null) {
+	      process.env.NODE_ENV !== 'production' ? warning(childTag == null, 'validateDOMNesting: when childText is passed, childTag should be null') : void 0;
+	      childTag = '#text';
+	    }
 	
 	    var invalidParent = isTagValidWithParent(childTag, parentTag) ? null : parentInfo;
 	    var invalidAncestor = invalidParent ? null : findInvalidAncestorForTag(childTag, ancestorInfo);
@@ -17625,7 +17613,15 @@
 	      didWarn[warnKey] = true;
 	
 	      var tagDisplayName = childTag;
-	      if (childTag !== '#text') {
+	      var whitespaceInfo = '';
+	      if (childTag === '#text') {
+	        if (/\S/.test(childText)) {
+	          tagDisplayName = 'Text nodes';
+	        } else {
+	          tagDisplayName = 'Whitespace text nodes';
+	          whitespaceInfo = ' Make sure you don\'t have any extra whitespace between tags on ' + 'each line of your source code.';
+	        }
+	      } else {
 	        tagDisplayName = '<' + childTag + '>';
 	      }
 	
@@ -17634,7 +17630,7 @@
 	        if (ancestorTag === 'table' && childTag === 'tr') {
 	          info += ' Add a <tbody> to your code to match the DOM tree generated by ' + 'the browser.';
 	        }
-	        process.env.NODE_ENV !== 'production' ? warning(false, 'validateDOMNesting(...): %s cannot appear as a child of <%s>. ' + 'See %s.%s', tagDisplayName, ancestorTag, ownerInfo, info) : void 0;
+	        process.env.NODE_ENV !== 'production' ? warning(false, 'validateDOMNesting(...): %s cannot appear as a child of <%s>.%s ' + 'See %s.%s', tagDisplayName, ancestorTag, whitespaceInfo, ownerInfo, info) : void 0;
 	      } else {
 	        process.env.NODE_ENV !== 'production' ? warning(false, 'validateDOMNesting(...): %s cannot appear as a descendant of ' + '<%s>. See %s.', tagDisplayName, ancestorTag, ownerInfo) : void 0;
 	      }
@@ -17941,7 +17937,7 @@
 	      if (parentInfo) {
 	        // parentInfo should always be present except for the top-level
 	        // component when server rendering
-	        validateDOMNesting('#text', this, parentInfo);
+	        validateDOMNesting(null, this._stringText, this, parentInfo);
 	      }
 	    }
 	
@@ -19534,7 +19530,7 @@
 	      bubbled: keyOf({ onSelect: null }),
 	      captured: keyOf({ onSelectCapture: null })
 	    },
-	    dependencies: [topLevelTypes.topBlur, topLevelTypes.topContextMenu, topLevelTypes.topFocus, topLevelTypes.topKeyDown, topLevelTypes.topMouseDown, topLevelTypes.topMouseUp, topLevelTypes.topSelectionChange]
+	    dependencies: [topLevelTypes.topBlur, topLevelTypes.topContextMenu, topLevelTypes.topFocus, topLevelTypes.topKeyDown, topLevelTypes.topKeyUp, topLevelTypes.topMouseDown, topLevelTypes.topMouseUp, topLevelTypes.topSelectionChange]
 	  }
 	};
 	
@@ -22000,7 +21996,7 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _react = __webpack_require__(5);
 	
@@ -22014,15 +22010,15 @@
 	
 	var _BgElement2 = _interopRequireDefault(_BgElement);
 	
-	var _rcTweenOne = __webpack_require__(181);
+	var _rcTweenOne = __webpack_require__(185);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
-	var _ticker = __webpack_require__(188);
+	var _ticker = __webpack_require__(182);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
-	var _tweenFunctions = __webpack_require__(185);
+	var _tweenFunctions = __webpack_require__(190);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
@@ -22302,11 +22298,11 @@
 	
 	var _utils = __webpack_require__(180);
 	
-	var _anim = __webpack_require__(192);
+	var _anim = __webpack_require__(181);
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
-	var _rcTweenOne = __webpack_require__(181);
+	var _rcTweenOne = __webpack_require__(185);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -22589,7 +22585,7 @@
 	  p = p === 'x' ? 'translateX' : p;
 	  p = p === 'y' ? 'translateY' : p;
 	  p = p === 'z' ? 'translateZ' : p;
-	  p = p === 'r' ? 'rotate' : p;
+	  // p = p === 'r' ? 'rotate' : p;
 	  return p;
 	}
 	
@@ -22914,7 +22910,7 @@
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -22928,10 +22924,6 @@
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
-	
-	var _rcTweenOne = __webpack_require__(181);
-	
-	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22961,13 +22953,13 @@
 	  props.key = item.key || i;
 	  // 压缩后名称不一样了。
 	  var propTypes = item.type.propTypes;
-	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || item.type === _rcTweenOne2.default || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation || props.name === 'QueueAnim' || props.name === 'TweenOne' || props.name === 'Animate')) {
+	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || propTypes.animation && propTypes.paused && propTypes.reverse && propTypes.attr && propTypes.moment || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation)) {
 	    // queueAnim or tweeOne or animate;
 	    var style = _extends({}, props.style);
 	    style.position = 'relative';
 	    props.style = style;
 	    var component = props.component;
-	    ['component', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName', 'animation', 'reverseDelay', 'attr', 'showProp', 'exclusive', 'transitionName', 'transitionAppear', 'transitionEnter', 'transitionLeave', 'onEnd'].forEach(function (key) {
+	    ['component', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName', 'animation', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'showProp', 'exclusive', 'transitionName', 'transitionAppear', 'transitionEnter', 'transitionLeave', 'onEnd'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    return _react2.default.createElement(component, props);
@@ -22982,21 +22974,11 @@
 	};
 	
 	function currentScrollTop() {
-	  var supportPageOffset = window.pageYOffset !== undefined;
-	  if (supportPageOffset) {
-	    return window.pageYOffset;
-	  }
-	  var isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
-	  return isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+	  return window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop;
 	}
 	
 	function currentScrollLeft() {
-	  var supportPageOffset = window.pageXOffset !== undefined;
-	  if (supportPageOffset) {
-	    return window.pageXOffset;
-	  }
-	  var isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
-	  return isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
+	  return window.pageXOffset || document.body.scrollLeft || document.documentElement.scrollLeft;
 	}
 	
 	function switchChildren(hideProps, item) {
@@ -23015,9 +22997,197 @@
 
 	'use strict';
 	
-	var TweenOne = __webpack_require__(182);
-	TweenOne.TweenOneGroup = __webpack_require__(191);
-	module.exports = TweenOne;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _utils = __webpack_require__(180);
+	
+	var _ticker = __webpack_require__(182);
+	
+	var _ticker2 = _interopRequireDefault(_ticker);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  across: function across(elem, type, direction, animData, elemOffset, hideProps) {
+	    var _x = void 0;
+	    var props = _extends({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _x = direction === 'next' ? '100%' : '-100%';
+	    } else {
+	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
+	      _x = direction === 'next' ? '-100%' : '100%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
+	    }
+	    return (0, _react.cloneElement)(elem, {
+	      animation: _extends({}, animData, {
+	        x: _x,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }, children);
+	  },
+	  vertical: function vertical(elem, type, direction, animData, elemOffset, hideProps) {
+	    var _y = void 0;
+	    var props = _extends({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _y = direction === 'next' ? '-100%' : '100%';
+	    } else {
+	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
+	      _y = direction === 'next' ? '100%' : '-100%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        y: _y,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  acrossOverlay: function acrossOverlay(elem, type, direction, animData, elemOffset, hideProps) {
+	    var _x = void 0;
+	    var props = _extends({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _x = direction === 'next' ? '100%' : '-100%';
+	    } else {
+	      _x = direction === 'next' ? '-20%' : '20%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        x: _x,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  verticalOverlay: function verticalOverlay(elem, type, direction, animData, elemOffset, hideProps) {
+	    var _y = void 0;
+	    var props = _extends({}, elem.props);
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _y = direction === 'next' ? '-100%' : '100%';
+	    } else {
+	      _y = direction === 'next' ? '20%' : '-20%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
+	    }
+	    return (0, _react.cloneElement)(elem, _extends({}, props, {
+	      animation: _extends({}, animData, {
+	        y: _y,
+	        type: type === 'enter' ? 'from' : 'to'
+	      })
+	    }), children);
+	  },
+	  gridBar: function gridBar(elem, type, direction, animData, elemOffset) {
+	    var props = _extends({}, elem.props);
+	    var animChild = [];
+	    var girdNum = 10;
+	    var girdSize = 100 / girdNum;
+	
+	    var _y = void 0;
+	    var children = props.children;
+	    if (type === 'enter') {
+	      _y = direction === 'next' ? '-100%' : '100%';
+	    } else {
+	      _y = direction === 'next' ? '100%' : '-100%';
+	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
+	    }
+	    for (var i = 0; i < girdNum; i++) {
+	      var style = _extends({}, props.style);
+	      style.width = girdSize + 0.1 + '%';
+	      style.left = i * girdSize + '%';
+	      style.position = 'absolute';
+	      style.overflow = 'hidden';
+	      var _style = _extends({}, props.style);
+	      _style.width = elemOffset.width + 'px';
+	      _style.height = elemOffset.height + 'px';
+	      _style.float = 'left';
+	      _style.position = 'relative';
+	      _style.left = -i * girdSize / 100 * elemOffset.width + 'px';
+	      props.style = _style;
+	      props.animation = _extends({}, animData, {
+	        y: _y,
+	        type: type === 'enter' ? 'from' : 'to',
+	        delay: i * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0),
+	        onComplete: i === girdNum - 1 ? animData.onComplete : null
+	      });
+	
+	      var mask = _react2.default.createElement(
+	        'div',
+	        { style: style, key: i },
+	        (0, _react.cloneElement)(elem, props, children)
+	      );
+	      animChild.push(mask);
+	    }
+	    var animSlot = _react2.default.createElement(
+	      'div',
+	      { style: { width: '100%', position: 'absolute', top: 0 } },
+	      animChild
+	    );
+	    var _props = _extends({}, elem.props);
+	    _props.children = animSlot;
+	    return (0, _react.cloneElement)(elem, _props);
+	  },
+	  grid: function grid(elem, type, direction, animData, elemOffset) {
+	    var props = _extends({}, elem.props);
+	    var animChild = [];
+	    var gridNum = 10;
+	    var gridWidth = elemOffset.width / gridNum;
+	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
+	    if (type === 'leave') {
+	      var _delay = (gridNum * gridNumH - 1) % gridNum * 50 + Math.floor((gridNum * gridNumH - 1) / gridNum) * 50;
+	      _ticker2.default.timeout(function () {
+	        animData.onComplete();
+	      }, _delay + animData.duration);
+	      return _react2.default.cloneElement(elem, props);
+	    }
+	    for (var i = 0; i < gridNum * gridNumH; i++) {
+	      // mask样式
+	      var style = _extends({}, props.style);
+	      style.position = 'absolute';
+	      style.overflow = 'hidden';
+	      style.width = gridWidth + 1 + 'px';
+	      style.height = gridWidth + 1 + 'px';
+	      style.left = i % gridNum * gridWidth;
+	      style.top = Math.floor(i / gridNum) * gridWidth;
+	      // clone 的样式
+	      var _style = _extends({}, props.style);
+	      _style.width = elemOffset.width + 'px';
+	      _style.height = elemOffset.height + 'px';
+	      _style.position = 'relative';
+	      _style.left = -i % gridNum * gridWidth;
+	      _style.top = -Math.floor(i / gridNum) * gridWidth;
+	      props.style = _style;
+	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+	      delay += animData.delay || 0;
+	      var length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
+	      var animation = _extends({}, animData, {
+	        opacity: 0,
+	        type: 'from',
+	        delay: delay,
+	        onComplete: i === length ? animData.onComplete : null
+	      });
+	      var mask = _react2.default.createElement(
+	        elem.type,
+	        { style: style, key: i, animation: animation },
+	        (0, _react.cloneElement)(elem, props)
+	      );
+	      animChild.push(mask);
+	    }
+	    var _props = _extends({}, elem.props);
+	    _props.children = animChild;
+	    return (0, _react.cloneElement)(elem, _props);
+	  }
+	};
+	module.exports = exports['default'];
 
 /***/ },
 /* 182 */
@@ -23029,6 +23199,260 @@
 	  value: true
 	});
 	
+	var _raf = __webpack_require__(183);
+	
+	var _raf2 = _interopRequireDefault(_raf);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	var Ticker = function Ticker() {}; /* eslint-disable func-names */
+	
+	
+	var p = Ticker.prototype = {
+	  tickFnObject: {},
+	  id: -1,
+	  tweenId: 0,
+	  frame: 0,
+	  perFrame: Math.round(1000 / 60),
+	  getTime: Date.now || function () {
+	    return new Date().getTime();
+	  },
+	  elapsed: 0,
+	  lastUpdate: 0,
+	  skipFrameMax: 166
+	};
+	p.add = function (fn) {
+	  var key = 'tweenOne' + this.tweenId;
+	  this.tweenId++;
+	  this.wake(key, fn);
+	  return key;
+	};
+	p.wake = function (key, fn) {
+	  this.tickFnObject[key] = fn;
+	  if (this.id === -1) {
+	    this.id = (0, _raf2["default"])(this.tick);
+	  }
+	};
+	p.clear = function (key) {
+	  delete this.tickFnObject[key];
+	};
+	p.sleep = function () {
+	  _raf2["default"].cancel(this.id);
+	  this.id = -1;
+	  this.frame = 0;
+	};
+	var ticker = new Ticker();
+	p.tick = function (a) {
+	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
+	  ticker.lastUpdate = ticker.lastUpdate ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
+	  ticker.time = (ticker.lastUpdate - ticker.startTime) / 1000;
+	  // 小于 10 不刷新，，减少刷亲率；
+	  if (ticker.elapsed < 10) {
+	    ticker.id = (0, _raf2["default"])(ticker.tick);
+	    return;
+	  }
+	  var obj = ticker.tickFnObject;
+	  Object.keys(obj).forEach(function (key) {
+	    if (obj[key]) {
+	      obj[key](a);
+	    }
+	  });
+	  // 如果 object 里没对象了，自动杀掉；
+	  if (!Object.keys(obj).length) {
+	    ticker.sleep();
+	    return;
+	  }
+	  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
+	    ticker.frame++;
+	  } else {
+	    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
+	  }
+	  ticker.id = (0, _raf2["default"])(ticker.tick);
+	};
+	var timeoutIdNumber = 0;
+	p.timeout = function (fn, time) {
+	  var _this = this;
+	
+	  if (!(typeof fn === 'function')) {
+	    return console.warn('Is no function'); // eslint-disable-line
+	  }
+	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
+	  var startFrame = this.frame;
+	  this.wake(timeoutID, function () {
+	    // 跟 tween-one 的开始统一用 perFrame;
+	    var moment = (_this.frame - startFrame) * _this.perFrame + _this.perFrame;
+	    if (moment >= (time || 0)) {
+	      _this.clear(timeoutID);
+	      fn();
+	    }
+	  });
+	  timeoutIdNumber++;
+	  return timeoutID;
+	};
+	var intervalIdNumber = 0;
+	p.interval = function (fn, time) {
+	  var _this2 = this;
+	
+	  if (!(typeof fn === 'function')) {
+	    console.warn('Is no function'); // eslint-disable-line
+	    return null;
+	  }
+	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
+	  var starFrame = this.frame;
+	  this.wake(intervalID, function () {
+	    var moment = (_this2.frame - starFrame) * _this2.perFrame + _this2.perFrame;
+	    if (moment >= (time || 0)) {
+	      starFrame = _this2.frame;
+	      fn();
+	    }
+	  });
+	  intervalIdNumber++;
+	  return intervalID;
+	};
+	exports["default"] = ticker;
+	module.exports = exports['default'];
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(184)
+	  , root = typeof window === 'undefined' ? global : window
+	  , vendors = ['moz', 'webkit']
+	  , suffix = 'AnimationFrame'
+	  , raf = root['request' + suffix]
+	  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
+	
+	for(var i = 0; !raf && i < vendors.length; i++) {
+	  raf = root[vendors[i] + 'Request' + suffix]
+	  caf = root[vendors[i] + 'Cancel' + suffix]
+	      || root[vendors[i] + 'CancelRequest' + suffix]
+	}
+	
+	// Some versions of FF have rAF but not cAF
+	if(!raf || !caf) {
+	  var last = 0
+	    , id = 0
+	    , queue = []
+	    , frameDuration = 1000 / 60
+	
+	  raf = function(callback) {
+	    if(queue.length === 0) {
+	      var _now = now()
+	        , next = Math.max(0, frameDuration - (_now - last))
+	      last = next + _now
+	      setTimeout(function() {
+	        var cp = queue.slice(0)
+	        // Clear queue here to prevent
+	        // callbacks from appending listeners
+	        // to the current frame's queue
+	        queue.length = 0
+	        for(var i = 0; i < cp.length; i++) {
+	          if(!cp[i].cancelled) {
+	            try{
+	              cp[i].callback(last)
+	            } catch(e) {
+	              setTimeout(function() { throw e }, 0)
+	            }
+	          }
+	        }
+	      }, Math.round(next))
+	    }
+	    queue.push({
+	      handle: ++id,
+	      callback: callback,
+	      cancelled: false
+	    })
+	    return id
+	  }
+	
+	  caf = function(handle) {
+	    for(var i = 0; i < queue.length; i++) {
+	      if(queue[i].handle === handle) {
+	        queue[i].cancelled = true
+	      }
+	    }
+	  }
+	}
+	
+	module.exports = function(fn) {
+	  // Wrap in a new function to prevent
+	  // `cancel` potentially being assigned
+	  // to the native rAF function
+	  return raf.call(root, fn)
+	}
+	module.exports.cancel = function() {
+	  caf.apply(root, arguments)
+	}
+	module.exports.polyfill = function() {
+	  root.requestAnimationFrame = raf
+	  root.cancelAnimationFrame = caf
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
+	(function() {
+	  var getNanoSeconds, hrtime, loadTime;
+	
+	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
+	    module.exports = function() {
+	      return performance.now();
+	    };
+	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
+	    module.exports = function() {
+	      return (getNanoSeconds() - loadTime) / 1e6;
+	    };
+	    hrtime = process.hrtime;
+	    getNanoSeconds = function() {
+	      var hr;
+	      hr = hrtime();
+	      return hr[0] * 1e9 + hr[1];
+	    };
+	    loadTime = getNanoSeconds();
+	  } else if (Date.now) {
+	    module.exports = function() {
+	      return Date.now() - loadTime;
+	    };
+	    loadTime = Date.now();
+	  } else {
+	    module.exports = function() {
+	      return new Date().getTime() - loadTime;
+	    };
+	    loadTime = new Date().getTime();
+	  }
+	
+	}).call(this);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var TweenOne = __webpack_require__(186);
+	TweenOne.TweenOneGroup = __webpack_require__(193);
+	TweenOne.easing = __webpack_require__(189);
+	module.exports = TweenOne;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -23037,23 +23461,19 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _objectAssign = __webpack_require__(8);
-	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-	
-	var _util = __webpack_require__(183);
+	var _util = __webpack_require__(187);
 	
 	var _styleUtils = __webpack_require__(179);
 	
-	var _TimeLine = __webpack_require__(184);
+	var _TimeLine = __webpack_require__(188);
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
-	var _plugins = __webpack_require__(186);
+	var _plugins = __webpack_require__(191);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _ticker = __webpack_require__(188);
+	var _ticker = __webpack_require__(182);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
@@ -23071,8 +23491,6 @@
 	
 	var perFrame = Math.round(1000 / 60);
 	
-	var tickerIdNum = 0;
-	
 	var TweenOne = function (_Component) {
 	  _inherits(TweenOne, _Component);
 	
@@ -23081,16 +23499,66 @@
 	
 	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
 	
+	    _this.restart = function () {
+	      _this.startMoment = _this.timeLine.progressTime;
+	      _this.startFrame = _ticker2["default"].frame;
+	      _this.play();
+	    };
+	
+	    _this.start = function () {
+	      var props = _this.props;
+	      if (props.animation && Object.keys(props.animation).length) {
+	        _this.timeLine = new _TimeLine2["default"](_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
+	        // 开始动画
+	        _this.play();
+	        // 预先注册 raf, 初始动画数值。
+	        _this.raf(0, true);
+	      }
+	    };
+	
+	    _this.play = function () {
+	      _this.cancelRequestAnimationFrame();
+	      if (_this.paused) {
+	        return;
+	      }
+	      _this.rafID = _ticker2["default"].add(_this.raf);
+	    };
+	
+	    _this.frame = function (register) {
+	      var startMoment = register ? 0 : _this.startMoment;
+	      var moment = (_ticker2["default"].frame - _this.startFrame) * perFrame + startMoment;
+	      if (_this.reverse) {
+	        moment = (_this.startMoment || 0) - (_ticker2["default"].frame - _this.startFrame) * perFrame;
+	      }
+	      moment = moment > _this.timeLine.totalTime ? _this.timeLine.totalTime : moment;
+	      moment = moment <= 0 ? 0 : moment;
+	      if (moment < _this.moment && !_this.reverse) {
+	        _this.timeLine.resetDefaultStyle();
+	      }
+	      _this.moment = moment;
+	      _this.timeLine.onChange = _this.onChange;
+	      _this.timeLine.frame(moment);
+	    };
+	
+	    _this.raf = function (date, register) {
+	      _this.frame(register);
+	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
+	        return _this.cancelRequestAnimationFrame();
+	      }
+	    };
+	
+	    _this.cancelRequestAnimationFrame = function () {
+	      _ticker2["default"].clear(_this.rafID);
+	      _this.rafID = -1;
+	    };
+	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
-	    _this.startMoment = _this.props.moment;
+	    _this.startMoment = _this.props.moment || perFrame;
 	    _this.startFrame = _ticker2["default"].frame;
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
 	    _this.onChange = _this.props.onChange;
-	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
-	      return _this[method] = _this[method].bind(_this);
-	    });
 	    return _this;
 	  }
 	
@@ -23134,7 +23602,7 @@
 	      if (nextProps.resetStyleBool && this.timeLine) {
 	        this.timeLine.resetDefaultStyle();
 	      }
-	      this.startMoment = perFrame - 1; // 设置 perFrame 为开始时就播放一帧动画, 不是从0开始, 鼠标跟随使用
+	      this.startMoment = perFrame;
 	      this.startFrame = _ticker2["default"].frame;
 	      this.restartAnim = true;
 	      // this.start(nextProps);
@@ -23176,75 +23644,19 @@
 	    this.cancelRequestAnimationFrame();
 	  };
 	
-	  TweenOne.prototype.restart = function restart() {
-	    this.startMoment = this.timeLine.progressTime;
-	    this.startFrame = _ticker2["default"].frame;
-	    this.play();
-	  };
-	
-	  TweenOne.prototype.start = function start() {
-	    var props = this.props;
-	    if (props.animation && Object.keys(props.animation).length) {
-	      this.timeLine = new _TimeLine2["default"](this.dom, (0, _util.dataToArray)(props.animation), props.attr);
-	      // 预先注册 raf, 初始动画数值。
-	      this.raf();
-	      // 开始动画
-	      this.play();
-	    }
-	  };
-	
-	  TweenOne.prototype.play = function play() {
-	    this.cancelRequestAnimationFrame();
-	    if (this.paused) {
-	      return;
-	    }
-	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
-	    _ticker2["default"].wake(this.rafID, this.raf);
-	    tickerIdNum++;
-	  };
-	
-	  TweenOne.prototype.frame = function frame() {
-	    var moment = (_ticker2["default"].frame - this.startFrame) * perFrame + (this.startMoment || 0);
-	    if (this.reverse) {
-	      moment = (this.startMoment || 0) - (_ticker2["default"].frame - this.startFrame) * perFrame;
-	    }
-	    moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
-	    moment = moment <= 0 ? 0 : moment;
-	    if (moment < this.moment && !this.reverse) {
-	      this.timeLine.resetDefaultStyle();
-	    }
-	    this.moment = moment;
-	    this.timeLine.onChange = this.onChange;
-	    this.timeLine.frame(moment);
-	  };
-	
-	  TweenOne.prototype.raf = function raf() {
-	    this.frame();
-	    if (this.moment >= this.timeLine.totalTime && !this.reverse || this.paused || this.reverse && this.moment === 0) {
-	      return this.cancelRequestAnimationFrame();
-	    }
-	  };
-	
-	  TweenOne.prototype.cancelRequestAnimationFrame = function cancelRequestAnimationFrame() {
-	    _ticker2["default"].clear(this.rafID);
-	    this.rafID = -1;
-	  };
-	
 	  TweenOne.prototype.render = function render() {
-	    var props = (0, _objectAssign2["default"])({}, this.props);
+	    var props = _extends({}, this.props);
 	    ['animation', 'component', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool'].forEach(function (key) {
 	      return delete props[key];
 	    });
-	    props.style = (0, _objectAssign2["default"])({}, this.props.style);
-	    for (var p in props.style) {
-	      if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
-	        // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
-	        var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
-	        for (var i = 0; i < transformArr.length; i++) {
-	          props.style[transformArr[i] + 'Filter'] = props.style[p];
-	        }
+	    props.style = _extends({}, this.props.style);
+	    Object.keys(props.style).forEach(function (p) {
+	      if (p.match(/filter/i)) {
+	        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(function (prefix) {
+	          return props.style[prefix + 'Filter'] = props.style[p];
+	        });
 	      }
-	    }
+	    });
 	    props.component = typeof props.component === 'function' ? this.props.componentReplace : props.component;
 	    if (!props.component) {
 	      delete props.component;
@@ -23283,7 +23695,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 183 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23292,7 +23704,7 @@
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
@@ -23301,10 +23713,15 @@
 	exports.mergeChildren = mergeChildren;
 	exports.transformArguments = transformArguments;
 	exports.getChildrenFromProps = getChildrenFromProps;
+	exports.startConvertToEndUnit = startConvertToEndUnit;
+	exports.parsePath = parsePath;
+	exports.getTransformValue = getTransformValue;
 	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	var _styleUtils = __webpack_require__(179);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
@@ -23333,6 +23750,7 @@
 	  if (!obj1 || !obj2) {
 	    return false;
 	  }
+	  // animation 写在标签上的进行判断是否相等， 判断每个参数的值;
 	  var equalBool = true;
 	  if (Array.isArray(obj1) && Array.isArray(obj2)) {
 	    for (var i = 0; i < obj1.length; i++) {
@@ -23342,6 +23760,10 @@
 	        if (currentObj[p] !== nextObj[p]) {
 	          if (_typeof(currentObj[p]) === 'object' && _typeof(nextObj[p]) === 'object') {
 	            equalBool = objectEqual(currentObj[p], nextObj[p]);
+	          } else if (typeof currentObj[p] === 'function' && typeof nextObj[p] === 'function') {
+	            if (currentObj[p].name !== nextObj[p].name) {
+	              equalBool = false;
+	            }
 	          } else {
 	            equalBool = false;
 	            return false;
@@ -23408,6 +23830,7 @@
 	  // the combined list
 	  var nextChildrenPending = {};
 	  var pendingChildren = [];
+	  var followChildrenKey = void 0;
 	  prev.forEach(function (c) {
 	    if (!c) {
 	      return;
@@ -23417,10 +23840,14 @@
 	        nextChildrenPending[c.key] = pendingChildren;
 	        pendingChildren = [];
 	      }
+	      followChildrenKey = c.key;
 	    } else if (c.key) {
 	      pendingChildren.push(c);
 	    }
 	  });
+	  if (!followChildrenKey) {
+	    ret = ret.concat(pendingChildren);
+	  }
 	
 	  next.forEach(function (c) {
 	    if (!c) {
@@ -23430,13 +23857,8 @@
 	      ret = ret.concat(nextChildrenPending[c.key]);
 	    }
 	    ret.push(c);
-	  });
-	
-	  // 保持原有的顺序
-	  pendingChildren.forEach(function (c) {
-	    var originIndex = prev.indexOf(c);
-	    if (originIndex >= 0) {
-	      ret.splice(originIndex, 0, c);
+	    if (c.key === followChildrenKey) {
+	      ret = ret.concat(pendingChildren);
 	    }
 	  });
 	
@@ -23459,9 +23881,89 @@
 	function getChildrenFromProps(props) {
 	  return props && props.children;
 	}
+	
+	function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed, isOriginWidth) {
+	  var horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
+	  var t = style.indexOf('border') !== -1 ? target : target.parentNode || document.body;
+	  t = fixed ? document.body : t;
+	  var pix = void 0;
+	
+	  if (unit === '%') {
+	    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+	  } else if (unit === 'vw') {
+	    pix = parseFloat(num) * document.body.clientWidth / 100;
+	  } else if (unit === 'vh') {
+	    pix = parseFloat(num) * document.body.clientHeight / 100;
+	  } else if (unit && unit.match(/em/i)) {
+	    pix = parseFloat(num) * 16;
+	  } else {
+	    pix = parseFloat(num);
+	  }
+	  if (dataUnit === '%') {
+	    pix = pix * 100 / (horiz ? t.clientWidth : t.clientHeight);
+	  } else if (dataUnit === 'vw') {
+	    pix = parseFloat(num) / document.body.clientWidth * 100;
+	  } else if (dataUnit === 'vh') {
+	    pix = parseFloat(num) / document.body.clientHeight * 100;
+	  } else if (dataUnit && dataUnit.match(/em/i)) {
+	    pix = parseFloat(num) / 16;
+	  }
+	  return pix;
+	}
+	
+	function parsePath(path) {
+	  if (typeof path === 'string') {
+	    if (path.charAt(0).match(/m/i)) {
+	      var domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	      domPath.setAttributeNS(null, 'd', path);
+	      return domPath;
+	    }
+	    return document.querySelector(path);
+	  } else if (path.style) {
+	    return path;
+	  }
+	  throw new Error('Error while parsing the path');
+	}
+	
+	function getTransformValue(t, ratio, supports3D) {
+	  var perspective = t.perspective;
+	  var angle = t.rotate;
+	  var rotateX = t.rotateX;
+	  var rotateY = t.rotateY;
+	  var sx = t.scaleX;
+	  var sy = t.scaleY;
+	  var sz = t.scaleZ;
+	  var skx = t.skewX;
+	  var sky = t.skewY;
+	  var xPercent = t.xPercent || 0;
+	  var yPercent = t.yPercent || 0;
+	  var translateX = xPercent ? 0 : t.translateX;
+	  var translateY = yPercent ? 0 : t.translateY;
+	  var translateZ = t.translateZ || 0;
+	  var percent = xPercent || yPercent ? 'translate(' + (xPercent || translateX + 'px') + ',' + (yPercent || translateY + 'px') + ')' : '';
+	  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+	  var an = angle ? 'rotate(' + angle + 'deg)' : '';
+	  var ss = void 0;
+	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
+	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	    var translate = percent || 'translate(' + translateX + 'px,' + translateY + 'px)';
+	    var transform = translate + ' ' + an + ' ' + ss + ' ' + sk;
+	    if (ratio >= 1) {
+	      // IE 9 没 3d;
+	      return _styleUtils.createMatrix && !percent ? (0, _styleUtils.createMatrix)(transform) : transform;
+	    }
+	    return transform;
+	  }
+	  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+	  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
+	  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	}
 
 /***/ },
-/* 184 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23470,31 +23972,31 @@
 	  value: true
 	});
 	
-	var _objectAssign = __webpack_require__(8);
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* eslint-disable func-names */
+	/**
+	 * Created by jljsj on 16/1/27.
+	 */
 	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _tweenFunctions = __webpack_require__(185);
+	var _easing = __webpack_require__(189);
 	
-	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
+	var _easing2 = _interopRequireDefault(_easing);
 	
-	var _plugins = __webpack_require__(186);
+	var _plugins = __webpack_require__(191);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _StylePlugin = __webpack_require__(187);
+	var _StylePlugin = __webpack_require__(192);
 	
 	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
 	
 	var _styleUtils = __webpack_require__(179);
 	
+	var _util = __webpack_require__(187);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
-	var DEFAULT_EASING = 'easeInOutQuad'; /* eslint-disable func-names */
-	/**
-	 * Created by jljsj on 16/1/27.
-	 */
-	
+	var DEFAULT_EASING = 'easeInOutQuad';
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
 	function noop() {}
@@ -23504,7 +24006,7 @@
 	  return {
 	    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
 	    delay: vars.delay || DEFAULT_DELAY,
-	    ease: vars.ease || DEFAULT_EASING,
+	    ease: typeof vars.ease === 'function' ? vars.ease : _easing2["default"][vars.ease || DEFAULT_EASING],
 	    onUpdate: vars.onUpdate || noop,
 	    onComplete: vars.onComplete || noop,
 	    onStart: vars.onStart || noop,
@@ -23513,7 +24015,8 @@
 	    repeatDelay: vars.repeatDelay || 0,
 	    yoyo: vars.yoyo || false,
 	    type: vars.type || 'to',
-	    initTime: now
+	    initTime: now,
+	    appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null
 	  };
 	}
 	
@@ -23534,7 +24037,7 @@
 	  this.startDefaultData = {};
 	  var data = [];
 	  toData.forEach(function (d, i) {
-	    var _d = (0, _objectAssign2["default"])({}, d);
+	    var _d = _extends({}, d);
 	    if (_this.attr === 'style') {
 	      data[i] = {};
 	      Object.keys(_d).forEach(function (key) {
@@ -23551,7 +24054,7 @@
 	          throw new Error('Style should be the object.');
 	        }
 	        if (key === 'bezier') {
-	          _d.style = (0, _objectAssign2["default"])(_d.style || {}, { bezier: _d[key] });
+	          _d.style = _extends({}, _d.style, { bezier: _d[key] });
 	          delete _d[key];
 	          _this.startDefaultData.style = _this.target.getAttribute('style');
 	        } else {
@@ -23567,6 +24070,8 @@
 	  this.perFrame = Math.round(1000 / 60);
 	  // 注册，第一次进入执行注册
 	  this.register = false;
+	  // 缓动最小值;
+	  this.tinyNum = 0.0000000001;
 	  // 设置默认动画数据;
 	  this.setDefaultData(data);
 	};
@@ -23578,8 +24083,15 @@
 	  var now = 0;
 	  var repeatMax = false;
 	  var data = _vars.map(function (item) {
-	    now += item.delay || 0; // 加上延时，在没有播放过时；
-	    var tweenData = defaultData(item, now);
+	    var appearToBool = typeof item.appearTo === 'number';
+	    // 加上延时，在没有播放过时；
+	    // !appearToBool && (now += item.delay || 0);
+	    if (!appearToBool) {
+	      now += item.delay || 0;
+	    }
+	    var appearToTime = (item.appearTo || 0) + (item.delay || 0);
+	    // 获取默认数据
+	    var tweenData = defaultData(item, appearToBool ? appearToTime : now);
 	    tweenData.vars = {};
 	    Object.keys(item).forEach(function (_key) {
 	      if (!(_key in tweenData)) {
@@ -23594,14 +24106,6 @@
 	          var count = _data.toString().replace(/[^+|=|-]/g, '');
 	          tweenData.vars[_key] = { unit: unit, vars: vars, count: count };
 	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2["default"]) {
-	          /*
-	           * SVG 情况如下：
-	           * points: ***,*** ***,***
-	           * - split(' ') => ['***,***','***,**'] split(',') => [[***,***],[***,***]];
-	           * - array 里的 array.trim(',') => array.join(' ');
-	           * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
-	           * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
-	           */
 	          tweenData.vars[_key] = new _plugins2["default"].SVGMorph(_this2.target, _data, _key);
 	        }
 	      }
@@ -23612,29 +24116,25 @@
 	    if (tweenData.repeat === -1) {
 	      repeatMax = true;
 	    }
-	    if (tweenData.delay < -tweenData.duration) {
-	      // 如果延时小于 负时间时,,不加,再减回延时;
-	      now -= tweenData.delay;
+	    var repeat = tweenData.repeat === -1 ? 0 : tweenData.repeat;
+	    if (appearToBool) {
+	      // 如果有 appearTo 且这条时间比 now 大时，，总时间用这条；
+	      var appearNow = item.appearTo + (item.delay || 0) + tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+	      now = appearNow >= now ? appearNow : now;
 	    } else {
-	      now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
+	      if (tweenData.delay < -tweenData.duration) {
+	        // 如果延时小于 负时间时,,不加,再减回延时;
+	        now -= tweenData.delay;
+	      } else {
+	        // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
+	        now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+	      }
 	    }
 	    tweenData.mode = '';
 	    return tweenData;
 	  });
 	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
 	  this.defaultData = data;
-	};
-	p.convertToMarks = function (style, num, unit) {
-	  var horiz = /(?:Left|Right|Width)/i.test(style);
-	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = void 0;
-	  if (unit === '%') {
-	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
-	  } else {
-	    // em rem
-	    pix = parseFloat(num) / 16;
-	  }
-	  return pix;
 	};
 	p.getAnimStartData = function (item) {
 	  var _this3 = this;
@@ -23655,7 +24155,7 @@
 	        start[_key] = data;
 	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
 	        var unit = data.toString().replace(/[^a-z|%]/g, '');
-	        start[_key] = unit !== item[_key].unit ? _this3.convertToMarks(_key, parseFloat(data), unit) : parseFloat(data);
+	        start[_key] = unit !== item[_key].unit ? (0, _util.startConvertToEndUnit)(_this3.target, _key, parseFloat(data), unit, item[_key].unit) : parseFloat(data);
 	      }
 	      // start[_key] = data;
 	      return;
@@ -23674,7 +24174,6 @@
 	    _this4.target[key] = data[key];
 	  });
 	};
-	
 	p.setRatio = function (ratio, endData, i) {
 	  var _this5 = this;
 	
@@ -23710,16 +24209,23 @@
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
+	    var duration = parseFloat(item.duration.toFixed(10));
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
 	    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
+	      if (item.repeat < repeatNum && item.repeat !== -1) {
+	        return;
+	      }
 	      if (item.repeat || item.repeat <= repeatNum) {
-	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
+	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this6.progressTime - initTime;
+	    var startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
+	    var endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
+	    //  精度损失，只取小数点后10位。
+	    var progressTime = parseFloat((_this6.progressTime - initTime).toFixed(10));
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
@@ -23728,48 +24234,50 @@
 	      if (!_this6.register) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : _tweenFunctions2["default"][item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
-	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
+	        var s = delay ? 0 : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
+	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
+	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
+	        _this6.setRatio(st, item, i);
 	        return;
 	      }
 	    }
+	    var e = {
+	      index: i,
+	      target: _this6.target
+	    };
+	
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
-	      item.onRepeat();
+	      item.onRepeat(e);
 	    }
 	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
-	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
-	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
+	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
+	      var compRatio = duration ? item.ease(duration, startData, endData, duration) : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
+	      _this6.setRatio(compRatio, item, i);
 	      if (item.mode !== 'reset') {
-	        item.onComplete();
+	        item.onComplete(e);
 	      }
 	      item.mode = 'onComplete';
-	    } else if (progressTime >= 0 && progressTime < item.duration) {
+	    } else if (progressTime >= 0 && progressTime < duration) {
 	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
-	      progressTime = progressTime > item.duration ? item.duration : progressTime;
-	      var ratio = _tweenFunctions2["default"][item.ease](progressTime, 0, 1, item.duration);
-	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        ratio = _tweenFunctions2["default"][item.ease](progressTime, 1, 0, item.duration);
-	      }
+	      progressTime = progressTime > duration ? duration : progressTime;
+	      var ratio = item.ease(progressTime, startData, endData, duration);
 	      _this6.setRatio(ratio, item, i);
 	      if (progressTime <= _this6.perFrame) {
-	        item.onStart();
+	        item.onStart(e);
 	      } else {
-	        item.onUpdate(ratio);
+	        item.onUpdate(_extends({ ratio: ratio }, e));
 	      }
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
-	      _this6.onChange({
+	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
+	      _this6.onChange(_extends({
 	        moment: _this6.progressTime,
-	        item: item,
-	        tween: _this6.tween,
-	        index: i,
-	        mode: item.mode,
-	        target: _this6.target
-	      });
+	        mode: item.mode
+	      }, e));
 	    }
 	  });
 	};
@@ -23803,7 +24311,49 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 185 */
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _tweenFunctions = __webpack_require__(190);
+	
+	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
+	
+	var _util = __webpack_require__(187);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	_tweenFunctions2["default"].path = function (_path, _param) {
+	  var param = _param || {};
+	  var pathNode = (0, _util.parsePath)(_path);
+	  var pathLength = pathNode.getTotalLength();
+	  var rect = param.rect || 100; // path 的大小，100 * 100，
+	  var lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1500 段。。
+	  var points = [];
+	  for (var i = 0; i < lengthPixel; i++) {
+	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
+	  }
+	  return function path(t, b, _c, d) {
+	    var p = _tweenFunctions2["default"].linear(t, b, _c, d);
+	    var timePointX = rect * p; // X 轴的百分比;
+	    // 取出 x 轴百分比上的点;
+	    var point = points.filter(function (item) {
+	      return item.x >= timePointX;
+	    })[0] || pathNode.getPointAtLength(p * pathLength);
+	    return 1 - point.y / rect;
+	  };
+	};
+	
+	exports["default"] = _tweenFunctions2["default"];
+	module.exports = exports['default'];
+
+/***/ },
+/* 190 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24058,7 +24608,7 @@
 
 
 /***/ },
-/* 186 */
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24076,7 +24626,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 187 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24085,15 +24635,16 @@
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* eslint-disable func-names, no-console */
+	
+	
 	var _styleUtils = __webpack_require__(179);
 	
 	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
-	var _objectAssign = __webpack_require__(8);
+	var _util = __webpack_require__(187);
 	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-	
-	var _plugins = __webpack_require__(186);
+	var _plugins = __webpack_require__(191);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
@@ -24105,8 +24656,7 @@
 	  this.type = type;
 	  this.propsData = {};
 	  this.setDefaultData();
-	}; /* eslint-disable func-names, no-console */
-	
+	};
 	var p = StylePlugin.prototype = {
 	  name: 'style'
 	};
@@ -24121,7 +24671,7 @@
 	    dataCount: {},
 	    dataSplitStr: {}
 	  };
-	  if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	  if (key.match(/colo|fill|storker/i)) {
 	    data.data[key] = (0, _styleUtils.parseColor)(vars);
 	    data.dataType[key] = 'color';
 	  } else if (key.match(/shadow/i)) {
@@ -24178,21 +24728,6 @@
 	    }
 	  });
 	};
-	p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
-	  var horiz = /(?:Left|Right|Width|X)/i.test(style);
-	  var t = style.indexOf('border') !== -1 || style === 'transformOrigin' ? this.target : this.target.parentNode || document.body;
-	  t = fixed ? document.body : t;
-	  var pix = void 0;
-	  if (unit === '%') {
-	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
-	  } else if (unit && unit.match(/em/i)) {
-	    // em rem
-	    pix = parseFloat(num) / 16;
-	  } else {
-	    pix = parseFloat(num);
-	  }
-	  return pix;
-	};
 	p.convertToMarksArray = function (unit, key, data, i) {
 	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
 	  var endUnit = unit[i];
@@ -24201,7 +24736,7 @@
 	  } else if (!parseFloat(data) && parseFloat(data) !== 0) {
 	    return data;
 	  }
-	  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
+	  return (0, _util.startConvertToEndUnit)(this.target, key, data, startUnit, endUnit, null, key === 'transformOrigin' && !i);
 	};
 	p.getAnimStart = function () {
 	  var _this2 = this;
@@ -24209,8 +24744,13 @@
 	  var computedStyle = this.getComputedStyle();
 	  var style = {};
 	  this.supports3D = (0, _styleUtils.checkStyleName)('perspective');
+	  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
+	    var willStyle = key in _plugins2["default"] ? _this2.propsData.data[key].useStyle || cssName : cssName;
+	    willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
+	    _this2.willChange = _this2.willChange.replace(willStyle, '');
+	    _this2.willChange = _this2.willChange === '' ? willStyle : willStyle + ', ' + _this2.willChange;
 	    var startData = computedStyle[cssName];
 	    var fixed = computedStyle.position === 'fixed';
 	    if (!startData || startData === 'none' || startData === 'auto') {
@@ -24223,32 +24763,32 @@
 	      if (key === 'bezier') {
 	        _this2.transform = (0, _styleUtils.checkStyleName)('transform');
 	        startData = computedStyle[_this2.transform];
-	        style.transform = (0, _styleUtils.getTransform)(startData);
+	        style.transform = style.transform || (0, _styleUtils.getTransform)(startData);
 	      }
 	      _this2.propsData.data[key].getAnimStart();
 	    } else if (cssName === 'transform') {
 	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
 	      startData = computedStyle[_this2.transform];
 	      endUnit = _this2.propsData.dataUnit[key];
-	      transform = (0, _styleUtils.getTransform)(startData);
-	      if (endUnit === '%') {
+	      transform = style.transform || (0, _styleUtils.getTransform)(startData);
+	      if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
 	        var percent = key === 'translateX' ? 'xPercent' : 'yPercent';
-	        transform[percent] = _this2.convertToMarks(key, transform[key], '%');
+	        transform[percent] = (0, _util.startConvertToEndUnit)(_this2.target, key, transform[key], null, endUnit);
 	        transform[key] = 0;
 	      }
 	      style.transform = transform;
 	    } else if (cssName === 'filter') {
-	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
+	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter') || 'filter';
 	      startData = computedStyle[_this2.filterName];
-	      _this2.filterObject = (0, _objectAssign2["default"])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
+	      _this2.filterObject = _extends({}, _this2.filterObject, (0, _styleUtils.splitFilterToObject)(startData));
 	      startData = _this2.filterObject[key] || 0;
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      endUnit = _this2.propsData.dataUnit[key];
 	      if (endUnit !== startUnit) {
-	        startData = _this2.convertToMarks(key, startData, endUnit, null, fixed);
+	        startData = (0, _util.startConvertToEndUnit)(_this2.target, cssName, parseFloat(startData), startUnit, endUnit, fixed);
 	      }
 	      style[key] = parseFloat(startData);
-	    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	    } else if (key.match(/color|fill|stroke/i)) {
 	      startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
 	      style[cssName] = (0, _styleUtils.parseColor)(startData);
 	    } else if (key.match(/shadow/i)) {
@@ -24266,19 +24806,7 @@
 	      endUnit = _this2.propsData.dataUnit[cssName];
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      if (endUnit !== startUnit) {
-	        if (startUnit === '%') {
-	          var node = document.createElement('div');
-	          node.style.cssText = 'border:0 solid red;position: ' + computedStyle.position + 'line-height:0;';
-	          var horiz = /(?:Left|Right|Width)/i.test(cssName);
-	          node.style[horiz ? 'width' : 'height'] = startData;
-	          node.style[cssName] = 0;
-	          var parentNode = _this2.target.parentNode || document.body;
-	          parentNode.appendChild(node);
-	          startData = parseFloat(node[horiz ? 'offsetWidth' : 'offsetHeight']);
-	          parentNode.removeChild(node);
-	        } else if (endUnit && endUnit !== 'px') {
-	          startData = _this2.convertToMarks(cssName, startData, endUnit, null, fixed);
-	        }
+	        startData = (0, _util.startConvertToEndUnit)(_this2.target, cssName, parseFloat(startData), startUnit, endUnit, fixed);
 	      }
 	      style[cssName] = parseFloat(startData || 0);
 	    }
@@ -24286,71 +24814,11 @@
 	  this.start = style;
 	  return style;
 	};
-	p.setAnimData = function (data, ratio) {
-	  var _this3 = this;
-	
-	  var style = this.target.style;
-	  Object.keys(data).forEach(function (_key) {
-	    if (_key === 'transform') {
-	      var t = data[_key];
-	      var start = _this3.start.transform || {};
-	      var perspective = typeof t.perspective === 'number' ? t.perspective : start.perspective;
-	      var angle = typeof t.rotate === 'number' ? t.rotate : start.rotate;
-	      var rotateX = typeof t.rotateX === 'number' ? t.rotateX : start.rotateX;
-	      var rotateY = typeof t.rotateY === 'number' ? t.rotateY : start.rotateY;
-	      var sx = typeof t.scaleX === 'number' ? t.scaleX : start.scaleX;
-	      var sy = typeof t.scaleY === 'number' ? t.scaleY : start.scaleY;
-	      var sz = typeof t.scaleZ === 'number' ? t.scaleZ : start.scaleZ;
-	      var skx = typeof t.skewX === 'number' ? t.skewX : start.skewX;
-	      var sky = typeof t.skewY === 'number' ? t.skewY : start.skewY;
-	      var translateX = typeof t.translateX === 'number' ? t.translateX : start.translateX;
-	      var translateY = typeof t.translateY === 'number' ? t.translateY : start.translateY;
-	      var translateZ = (typeof t.translateZ === 'number' ? t.translateZ : start.tranlateZ) || 0;
-	      var xPercent = t.xPercent || 0;
-	      var yPercent = t.yPercent || 0;
-	      var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
-	      var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
-	      var an = angle ? 'rotate(' + angle + 'deg)' : '';
-	      var ss = void 0;
-	      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-	        if (!_this3.supports3D || ratio >= 1) {
-	          var matrix = '1,0,0,1,' + translateX + ',' + translateY;
-	          ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	          // IE 9 没 3d;
-	          style[_this3.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
-	          return;
-	        }
-	        ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	        style[_this3.transform] = (percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + an + ' ' + ss + ' ' + sk).trim();
-	        return;
-	      }
-	      ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
-	      var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
-	      var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
-	      var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	      style[_this3.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
-	      return;
-	    } else if (_styleUtils2["default"].filter.indexOf(_key) >= 0) {
-	      if (!_this3.filterObject) {
-	        return;
-	      }
-	      _this3.filterObject[_key] = data[_key];
-	      var filterStyle = '';
-	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
-	        filterStyle += ' ' + filterKey + '(' + _this3.filterObject[filterKey] + ')';
-	      });
-	      style[_this3.filterName] = filterStyle.trim();
-	      return;
-	    }
-	    style[_key] = data[_key];
-	  });
-	};
 	p.setArrayRatio = function (ratio, start, vars, unit, type) {
 	  if (type === 'color' && start.length === 4 && vars.length === 3) {
 	    vars[3] = 1;
 	  }
 	  var startInset = start.indexOf('inset') >= 0;
-	  // 操，indexOf 改了我三次，发了三个版本，我是有多粗心啊。。。
 	  var endInset = vars.indexOf('inset') >= 0;
 	  if (startInset && !endInset || endInset && !startInset) {
 	    throw console.error('Error: "box-shadow" inset have to exist');
@@ -24388,304 +24856,101 @@
 	};
 	
 	p.setRatio = function (ratio, tween) {
-	  var _this4 = this;
+	  var _this3 = this;
 	
 	  tween.style = tween.style || {};
 	  if (this.start.transform) {
-	    tween.style.transform = tween.style.transform || {};
+	    tween.style.transform = tween.style.transform || _extends({}, this.start.transform);
+	  }
+	  var style = this.target.style;
+	  if (ratio === (this.type === 'from' ? 0 : 1)) {
+	    style.willChange = null;
+	  } else {
+	    style.willChange = this.willChange;
 	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
-	    var startVars = _isTransform ? _this4.start.transform[key] : _this4.start[key];
-	    var endVars = _this4.propsData.data[key];
-	    var unit = _this4.propsData.dataUnit[key];
-	    var count = _this4.propsData.dataCount[key];
+	    var startVars = _isTransform ? _this3.start.transform[key] : _this3.start[key];
+	    var endVars = _this3.propsData.data[key];
+	    var unit = _this3.propsData.dataUnit[key];
+	    var count = _this3.propsData.dataCount[key];
 	    if (key in _plugins2["default"]) {
-	      _this4.propsData.data[key].setRatio(ratio, tween);
+	      _this3.propsData.data[key].setRatio(ratio, tween);
+	      if (key === 'bezier') {
+	        style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
+	      } else {
+	        Object.keys(tween.style).forEach(function (css) {
+	          return style[css] = tween.style[css];
+	        });
+	      }
 	      return;
 	    } else if (_isTransform) {
-	      if (unit === '%' || unit === 'em' || unit === 'rem') {
+	      if (unit && unit.match(/%|vw|vh|em|rem/i)) {
 	        var pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-	        startVars = _this4.start.transform[pName];
+	        startVars = _this3.start.transform[pName];
 	        if (count.charAt(1) === '=') {
 	          tween.style.transform[pName] = startVars + endVars * ratio + unit;
-	          return;
+	        } else {
+	          tween.style.transform[pName] = (endVars - startVars) * ratio + startVars + unit;
 	        }
-	        tween.style.transform[pName] = (endVars - startVars) * ratio + startVars + unit;
-	        return;
 	      } else if (key === 'scale') {
-	        var xStart = _this4.start.transform.scaleX;
-	        var yStart = _this4.start.transform.scaleY;
+	        var xStart = _this3.start.transform.scaleX;
+	        var yStart = _this3.start.transform.scaleY;
 	        if (count.charAt(1) === '=') {
 	          tween.style.transform.scaleX = xStart + endVars * ratio;
 	          tween.style.transform.scaleY = yStart + endVars * ratio;
-	          return;
+	        } else {
+	          tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
+	          tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
 	        }
-	        tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
-	        tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
-	        return;
 	      }
 	      if (count.charAt(1) === '=') {
 	        tween.style.transform[key] = startVars + endVars * ratio;
-	        return;
+	      } else {
+	        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
 	      }
-	      tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+	      style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
 	      return;
 	    } else if (Array.isArray(endVars)) {
-	      var _type = _this4.propsData.dataType[key];
-	      tween.style[key] = _this4.setArrayRatio(ratio, startVars, endVars, unit, _type);
+	      var _type = _this3.propsData.dataType[key];
+	      tween.style[key] = _this3.setArrayRatio(ratio, startVars, endVars, unit, _type);
 	      if (_type === 'string') {
-	        tween.style[key] = tween.style[key].join(_this4.propsData.dataSplitStr[key]);
+	        tween.style[key] = tween.style[key].join(_this3.propsData.dataSplitStr[key]);
 	      }
-	      return;
-	    }
-	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
-	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-	    unit = unit || (_styleUtils2["default"].filter.indexOf(key) >= 0 ? '' : styleUnit);
-	    if (typeof endVars === 'string') {
-	      tween.style[key] = endVars;
 	    } else {
-	      if (count.charAt(1) === '=') {
-	        tween.style[key] = startVars + endVars * ratio + unit;
+	      var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
+	      styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+	      unit = unit || (_styleUtils2["default"].filter.indexOf(key) >= 0 ? '' : styleUnit);
+	      if (typeof endVars === 'string') {
+	        tween.style[key] = endVars;
+	      } else {
+	        if (count.charAt(1) === '=') {
+	          tween.style[key] = startVars + endVars * ratio + unit;
+	        } else {
+	          tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	        }
+	      }
+	    }
+	    if (_styleUtils2["default"].filter.indexOf(key) >= 0) {
+	      if (!_this3.filterObject) {
 	        return;
 	      }
-	      tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	      _this3.filterObject[key] = tween.style[key];
+	      var filterStyle = '';
+	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
+	        filterStyle += ' ' + filterKey + '(' + _this3.filterObject[filterKey] + ')';
+	      });
+	      style[_this3.filterName] = filterStyle.trim();
+	      return;
 	    }
+	    style[key] = tween.style[key];
 	  });
-	  this.setAnimData(tween.style, ratio);
 	};
 	exports["default"] = StylePlugin;
 	module.exports = exports['default'];
 
 /***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _raf = __webpack_require__(189);
-	
-	var _raf2 = _interopRequireDefault(_raf);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	var Ticker = function Ticker() {}; /* eslint-disable func-names */
-	
-	
-	var p = Ticker.prototype = {
-	  tickFnObject: {},
-	  id: -1,
-	  frame: 0,
-	  perFrame: Math.round(1000 / 60),
-	  getTime: Date.now || function () {
-	    return new Date().getTime();
-	  },
-	  elapsed: 0,
-	  skipFrameMax: 100
-	};
-	p.wake = function (key, fn) {
-	  this.tickFnObject[key] = fn;
-	  if (this.id === -1) {
-	    this.lastUpdate = this.getTime();
-	    this.id = (0, _raf2["default"])(this.tick);
-	  }
-	};
-	p.clear = function (key) {
-	  delete this.tickFnObject[key];
-	};
-	p.sleep = function () {
-	  _raf2["default"].cancel(this.id);
-	  this.id = -1;
-	  this.frame = 0;
-	};
-	var ticker = new Ticker();
-	p.tick = function (a) {
-	  ticker.elapsed = ticker.getTime() - ticker.lastUpdate;
-	  ticker.lastUpdate += ticker.elapsed;
-	  var obj = ticker.tickFnObject;
-	  Object.keys(obj).forEach(function (key) {
-	    if (obj[key]) {
-	      obj[key](a);
-	    }
-	  });
-	  // 如果 object 里没对象了，自动杀掉；
-	  if (!Object.keys(obj).length) {
-	    return ticker.sleep();
-	  }
-	  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
-	    ticker.frame++;
-	  } else {
-	    // 太卡。跳帧处理。保证时间的正确；
-	    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
-	  }
-	  ticker.id = (0, _raf2["default"])(ticker.tick);
-	};
-	var timeoutIdNumber = 0;
-	p.timeout = function (fn, time) {
-	  var _this = this;
-	
-	  if (!(typeof fn === 'function')) {
-	    return console.warn('Is no function'); // eslint-disable-line
-	  }
-	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
-	  var startFrame = this.frame;
-	  this.wake(timeoutID, function () {
-	    var moment = (_this.frame - startFrame) * _this.perFrame;
-	    if (moment >= (time || 0)) {
-	      _this.clear(timeoutID);
-	      fn();
-	    }
-	  });
-	  timeoutIdNumber++;
-	  return timeoutID;
-	};
-	var intervalIdNumber = 0;
-	p.interval = function (fn, time) {
-	  var _this2 = this;
-	
-	  if (!(typeof fn === 'function')) {
-	    console.warn('Is no function'); // eslint-disable-line
-	    return null;
-	  }
-	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
-	  var starFrame = this.frame;
-	  this.wake(intervalID, function () {
-	    var moment = (_this2.frame - starFrame) * _this2.perFrame;
-	    if (moment >= (time || 0)) {
-	      starFrame = _this2.frame;
-	      fn();
-	    }
-	  });
-	  intervalIdNumber++;
-	  return intervalID;
-	};
-	exports["default"] = ticker;
-	module.exports = exports['default'];
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(190)
-	  , root = typeof window === 'undefined' ? global : window
-	  , vendors = ['moz', 'webkit']
-	  , suffix = 'AnimationFrame'
-	  , raf = root['request' + suffix]
-	  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
-	
-	for(var i = 0; !raf && i < vendors.length; i++) {
-	  raf = root[vendors[i] + 'Request' + suffix]
-	  caf = root[vendors[i] + 'Cancel' + suffix]
-	      || root[vendors[i] + 'CancelRequest' + suffix]
-	}
-	
-	// Some versions of FF have rAF but not cAF
-	if(!raf || !caf) {
-	  var last = 0
-	    , id = 0
-	    , queue = []
-	    , frameDuration = 1000 / 60
-	
-	  raf = function(callback) {
-	    if(queue.length === 0) {
-	      var _now = now()
-	        , next = Math.max(0, frameDuration - (_now - last))
-	      last = next + _now
-	      setTimeout(function() {
-	        var cp = queue.slice(0)
-	        // Clear queue here to prevent
-	        // callbacks from appending listeners
-	        // to the current frame's queue
-	        queue.length = 0
-	        for(var i = 0; i < cp.length; i++) {
-	          if(!cp[i].cancelled) {
-	            try{
-	              cp[i].callback(last)
-	            } catch(e) {
-	              setTimeout(function() { throw e }, 0)
-	            }
-	          }
-	        }
-	      }, Math.round(next))
-	    }
-	    queue.push({
-	      handle: ++id,
-	      callback: callback,
-	      cancelled: false
-	    })
-	    return id
-	  }
-	
-	  caf = function(handle) {
-	    for(var i = 0; i < queue.length; i++) {
-	      if(queue[i].handle === handle) {
-	        queue[i].cancelled = true
-	      }
-	    }
-	  }
-	}
-	
-	module.exports = function(fn) {
-	  // Wrap in a new function to prevent
-	  // `cancel` potentially being assigned
-	  // to the native rAF function
-	  return raf.call(root, fn)
-	}
-	module.exports.cancel = function() {
-	  caf.apply(root, arguments)
-	}
-	module.exports.polyfill = function() {
-	  root.requestAnimationFrame = raf
-	  root.cancelAnimationFrame = caf
-	}
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
-	(function() {
-	  var getNanoSeconds, hrtime, loadTime;
-	
-	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
-	    module.exports = function() {
-	      return performance.now();
-	    };
-	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
-	    module.exports = function() {
-	      return (getNanoSeconds() - loadTime) / 1e6;
-	    };
-	    hrtime = process.hrtime;
-	    getNanoSeconds = function() {
-	      var hr;
-	      hr = hrtime();
-	      return hr[0] * 1e9 + hr[1];
-	    };
-	    loadTime = getNanoSeconds();
-	  } else if (Date.now) {
-	    module.exports = function() {
-	      return Date.now() - loadTime;
-	    };
-	    loadTime = Date.now();
-	  } else {
-	    module.exports = function() {
-	      return new Date().getTime() - loadTime;
-	    };
-	    loadTime = new Date().getTime();
-	  }
-	
-	}).call(this);
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ },
-/* 191 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24700,11 +24965,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TweenOne = __webpack_require__(182);
+	var _TweenOne = __webpack_require__(186);
 	
 	var _TweenOne2 = _interopRequireDefault(_TweenOne);
 	
-	var _util = __webpack_require__(183);
+	var _util = __webpack_require__(187);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
@@ -24726,24 +24991,17 @@
 	
 	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
 	
+	    _initialiseProps.call(_this);
+	
 	    _this.keysToEnter = [];
 	    _this.keysToLeave = [];
 	    _this.onEnterBool = false;
 	    _this.isTween = {};
 	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
 	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(_this.props));
-	    children.forEach(function (child) {
-	      if (!child || !child.key) {
-	        return;
-	      }
-	      _this.keysToEnter.push(child.key);
-	    });
 	    _this.state = {
 	      children: children
 	    };
-	    ['getChildrenToRender', 'getCoverAnimation', 'onChange'].forEach(function (method) {
-	      return _this[method] = _this[method].bind(_this);
-	    });
 	    return _this;
 	  }
 	
@@ -24755,7 +25013,7 @@
 	    var _this2 = this;
 	
 	    var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
-	    var currentChildren = this.state.children;
+	    var currentChildren = (0, _util.toArrayChildren)(this.state.children);
 	    var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
 	
 	    this.keysToEnter = [];
@@ -24786,79 +25044,13 @@
 	    });
 	  };
 	
-	  TweenOneGroup.prototype.onChange = function onChange(animation, key, type, obj) {
-	    var length = (0, _util.dataToArray)(animation).length;
-	    var animatingClassName = this.props.animatingClassName;
-	    var tag = obj.target;
-	    if (obj.mode === 'onStart') {
-	      tag.className = tag.className.replace(animatingClassName[type === 'enter' ? 1 : 0], '').trim();
-	      if (tag.className.indexOf(animatingClassName[type === 'enter' ? 0 : 1]) === -1) {
-	        tag.className = (tag.className + ' ' + animatingClassName[type === 'enter' ? 0 : 1]).trim();
-	      }
-	    } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
-	      var children = void 0;
-	      if (type === 'enter') {
-	        children = this.state.children;
-	        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
-	      } else {
-	        children = this.state.children.filter(function (child) {
-	          return key !== child.key;
-	        });
-	        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-	      }
-	      tag.className = tag.className.replace(animatingClassName[type === 'enter' ? 0 : 1], '').trim();
-	      delete this.isTween[key];
-	      this.setState({
-	        children: children
-	      });
-	      var _obj = { key: key, type: type };
-	      this.props.onEnd(_obj);
-	    }
-	  };
-	
-	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
-	    var animation = void 0;
-	    var onChange = void 0;
-	    var appear = (0, _util.transformArguments)(this.props.appear, child.key, i);
-	    if (appear || this.onEnterBool) {
-	      animation = type === 'leave' ? this.props.leave : this.props.enter;
-	      onChange = this.onChange.bind(this, animation, child.key, type);
-	    }
-	    var children = _react2["default"].createElement(_TweenOne2["default"], _extends({}, child.props, {
-	      key: child.key,
-	      component: child.type,
-	      animation: (0, _util.transformArguments)(animation, child.key, i),
-	      onChange: onChange,
-	      resetStyleBool: child.key in this.isTween
-	    }));
-	    if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0) {
-	      this.isTween[child.key] = true;
-	    }
-	    return children;
-	  };
-	
-	  TweenOneGroup.prototype.getChildrenToRender = function getChildrenToRender(children) {
-	    var _this3 = this;
-	
-	    return children.map(function (child, i) {
-	      if (!child || !child.key) {
-	        return child;
-	      }
-	      var key = child.key;
-	      if (_this3.keysToLeave.indexOf(key) >= 0) {
-	        return _this3.getCoverAnimation(child, i, 'leave');
-	      }
-	      return _this3.getCoverAnimation(child, i, 'enter');
-	    });
-	  };
-	
 	  TweenOneGroup.prototype.render = function render() {
 	    var childrenToRender = this.getChildrenToRender(this.state.children);
 	    if (!this.props.component) {
 	      return childrenToRender[0] || null;
 	    }
 	    var componentProps = _extends({}, this.props);
-	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd'].forEach(function (key) {
+	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool'].forEach(function (key) {
 	      return delete componentProps[key];
 	    });
 	    return (0, _react.createElement)(this.props.component, componentProps, childrenToRender);
@@ -24866,6 +25058,79 @@
 	
 	  return TweenOneGroup;
 	}(_react.Component);
+	
+	var _initialiseProps = function _initialiseProps() {
+	  var _this3 = this;
+	
+	  this.onChange = function (animation, key, type, obj) {
+	    var length = (0, _util.dataToArray)(animation).length;
+	    var animatingClassName = _this3.props.animatingClassName;
+	    var tag = obj.target;
+	    var isEnter = type === 'enter' || type === 'appear';
+	    if (obj.mode === 'onStart') {
+	      tag.className = tag.className.replace(animatingClassName[isEnter ? 1 : 0], '').trim();
+	      if (tag.className.indexOf(animatingClassName[isEnter ? 0 : 1]) === -1) {
+	        tag.className = (tag.className + ' ' + animatingClassName[isEnter ? 0 : 1]).trim();
+	      }
+	    } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
+	      var children = _this3.state.children;
+	      if (type === 'enter') {
+	        _this3.keysToEnter.splice(_this3.keysToEnter.indexOf(key), 1);
+	      } else if (type === 'leave') {
+	        children = _this3.state.children.filter(function (child) {
+	          return key !== child.key;
+	        });
+	        _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
+	      }
+	      tag.className = tag.className.replace(animatingClassName[isEnter ? 0 : 1], '').trim();
+	      delete _this3.isTween[key];
+	      _this3.setState({
+	        children: children
+	      });
+	      var _obj = { key: key, type: type };
+	      _this3.props.onEnd(_obj);
+	    }
+	  };
+	
+	  this.getCoverAnimation = function (child, i, type) {
+	    var animation = void 0;
+	    var onChange = void 0;
+	    animation = type === 'leave' ? _this3.props.leave : _this3.props.enter;
+	    if (type === 'appear') {
+	      var appear = (0, _util.transformArguments)(_this3.props.appear, child.key, i);
+	      animation = appear && _this3.props.enter || null;
+	    }
+	    onChange = _this3.onChange.bind(_this3, animation, child.key, type);
+	    var children = _react2["default"].createElement(_TweenOne2["default"], _extends({}, child.props, {
+	      key: child.key,
+	      component: child.type,
+	      animation: (0, _util.transformArguments)(animation, child.key, i),
+	      onChange: onChange,
+	      resetStyleBool: _this3.props.resetStyleBool
+	    }));
+	    if (_this3.keysToEnter.concat(_this3.keysToLeave).indexOf(child.key) >= 0 || !_this3.onEnterBool && animation) {
+	      _this3.isTween[child.key] = type;
+	    }
+	    return children;
+	  };
+	
+	  this.getChildrenToRender = function (children) {
+	    return children.map(function (child, i) {
+	      if (!child || !child.key) {
+	        return child;
+	      }
+	      var key = child.key;
+	      if (_this3.keysToLeave.indexOf(key) >= 0) {
+	        return _this3.getCoverAnimation(child, i, 'leave');
+	      } else if (_this3.keysToEnter.indexOf(key) >= 0 || _this3.isTween[child.key] && _this3.keysToLeave.indexOf(key) === -1) {
+	        return _this3.getCoverAnimation(child, i, 'enter');
+	      } else if (!_this3.onEnterBool) {
+	        return _this3.getCoverAnimation(child, i, 'appear');
+	      }
+	      return _this3.isTween[child.key] && _this3.getCoverAnimation(child, i, _this3.isTween[child.key]) || _react2["default"].createElement(_TweenOne2["default"], _extends({}, child.props, { component: child.type, key: child.key }));
+	    });
+	  };
+	};
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	var objectOrArrayOrFunc = _react.PropTypes.oneOfType([objectOrArray, _react.PropTypes.func]);
@@ -24878,7 +25143,8 @@
 	  enter: objectOrArrayOrFunc,
 	  leave: objectOrArrayOrFunc,
 	  animatingClassName: _react.PropTypes.array,
-	  onEnd: _react.PropTypes.func
+	  onEnd: _react.PropTypes.func,
+	  resetStyleBool: _react.PropTypes.bool
 	};
 	
 	TweenOneGroup.defaultProps = {
@@ -24887,212 +25153,14 @@
 	  animatingClassName: ['tween-one-entering', 'tween-one-leaving'],
 	  enter: { x: 50, opacity: 0, type: 'from' },
 	  leave: { x: -50, opacity: 0 },
-	  onEnd: noop
+	  onEnd: noop,
+	  resetStyleBool: true
 	};
 	exports["default"] = TweenOneGroup;
 	module.exports = exports['default'];
 
 /***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _react = __webpack_require__(5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _utils = __webpack_require__(180);
-	
-	var _ticker = __webpack_require__(188);
-	
-	var _ticker2 = _interopRequireDefault(_ticker);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  across: function across(elem, type, direction, animData, elemOffset, hideProps) {
-	    var _x = void 0;
-	    var props = _extends({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _x = direction === 'next' ? '100%' : '-100%';
-	    } else {
-	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
-	      _x = direction === 'next' ? '-100%' : '100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
-	    }
-	    return (0, _react.cloneElement)(elem, {
-	      animation: _extends({}, animData, {
-	        x: _x,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }, children);
-	  },
-	  vertical: function vertical(elem, type, direction, animData, elemOffset, hideProps) {
-	    var _y = void 0;
-	    var props = _extends({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _y = direction === 'next' ? '-100%' : '100%';
-	    } else {
-	      // 时间轴不同，导致中间有空隙， 等修复 twee-one,先加delay
-	      _y = direction === 'next' ? '100%' : '-100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        y: _y,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  acrossOverlay: function acrossOverlay(elem, type, direction, animData, elemOffset, hideProps) {
-	    var _x = void 0;
-	    var props = _extends({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _x = direction === 'next' ? '100%' : '-100%';
-	    } else {
-	      _x = direction === 'next' ? '-20%' : '20%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        x: _x,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  verticalOverlay: function verticalOverlay(elem, type, direction, animData, elemOffset, hideProps) {
-	    var _y = void 0;
-	    var props = _extends({}, elem.props);
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _y = direction === 'next' ? '-100%' : '100%';
-	    } else {
-	      _y = direction === 'next' ? '20%' : '-20%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.switchChildren.bind(this, hideProps));
-	    }
-	    return (0, _react.cloneElement)(elem, _extends({}, props, {
-	      animation: _extends({}, animData, {
-	        y: _y,
-	        type: type === 'enter' ? 'from' : 'to'
-	      })
-	    }), children);
-	  },
-	  gridBar: function gridBar(elem, type, direction, animData, elemOffset) {
-	    var props = _extends({}, elem.props);
-	    var animChild = [];
-	    var girdNum = 10;
-	    var girdSize = 100 / girdNum;
-	
-	    var _y = void 0;
-	    var children = props.children;
-	    if (type === 'enter') {
-	      _y = direction === 'next' ? '-100%' : '100%';
-	    } else {
-	      _y = direction === 'next' ? '100%' : '-100%';
-	      children = (0, _utils.toArrayChildren)(children).map(_utils.setAnimCompToTagComp);
-	    }
-	    for (var i = 0; i < girdNum; i++) {
-	      var style = _extends({}, props.style);
-	      style.width = girdSize + '%';
-	      style.left = i * girdSize + 0.01 + '%';
-	      style.position = 'absolute';
-	      style.overflow = 'hidden';
-	      var _style = _extends({}, props.style);
-	      _style.width = elemOffset.width + 'px';
-	      _style.height = elemOffset.height + 'px';
-	      _style.float = 'left';
-	      _style.position = 'relative';
-	      _style.left = -i * girdSize / 100 * elemOffset.width + 'px';
-	      props.style = _style;
-	      props.animation = _extends({}, animData, {
-	        y: _y,
-	        type: type === 'enter' ? 'from' : 'to',
-	        delay: i * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0),
-	        onComplete: i === girdNum - 1 ? animData.onComplete : null
-	      });
-	
-	      var mask = _react2.default.createElement(
-	        'div',
-	        { style: style, key: i },
-	        (0, _react.cloneElement)(elem, props, children)
-	      );
-	      animChild.push(mask);
-	    }
-	    var animSlot = _react2.default.createElement(
-	      'div',
-	      { style: { width: '100%', position: 'absolute', top: 0 } },
-	      animChild
-	    );
-	    var _props = _extends({}, elem.props);
-	    _props.children = animSlot;
-	    return (0, _react.cloneElement)(elem, _props);
-	  },
-	  grid: function grid(elem, type, direction, animData, elemOffset) {
-	    var props = _extends({}, elem.props);
-	    var animChild = [];
-	    var gridNum = 10;
-	    var gridWidth = elemOffset.width / gridNum;
-	    var gridNumH = Math.ceil(elemOffset.height / gridWidth);
-	    if (type === 'leave') {
-	      var _delay = (gridNum * gridNumH - 1) % gridNum * 50 + Math.floor((gridNum * gridNumH - 1) / gridNum) * 50;
-	      _ticker2.default.timeout(function () {
-	        animData.onComplete();
-	      }, _delay + animData.duration);
-	      props.children = (0, _utils.toArrayChildren)(props.children).map(_utils.setAnimCompToTagComp);
-	      return _react2.default.cloneElement(elem, props);
-	    }
-	    for (var i = 0; i < gridNum * gridNumH; i++) {
-	      // mask样式
-	      var style = _extends({}, props.style);
-	      style.position = 'absolute';
-	      style.overflow = 'hidden';
-	      style.width = gridWidth + 1 + 'px';
-	      style.height = gridWidth + 1 + 'px';
-	      style.left = i % gridNum * gridWidth;
-	      style.top = Math.floor(i / gridNum) * gridWidth;
-	      // clone 的样式
-	      var _style = _extends({}, props.style);
-	      _style.width = elemOffset.width + 'px';
-	      _style.height = elemOffset.height + 'px';
-	      _style.position = 'relative';
-	      _style.left = -i % gridNum * gridWidth;
-	      _style.top = -Math.floor(i / gridNum) * gridWidth;
-	      props.style = _style;
-	      var delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 : (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
-	      delay += animData.delay || 0;
-	      var length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
-	      var animation = _extends({}, animData, {
-	        opacity: 0,
-	        type: 'from',
-	        delay: delay,
-	        onComplete: i === length ? animData.onComplete : null
-	      });
-	      var mask = _react2.default.createElement(
-	        elem.type,
-	        { style: style, key: i, animation: animation },
-	        (0, _react.cloneElement)(elem, props)
-	      );
-	      animChild.push(mask);
-	    }
-	    var _props = _extends({}, elem.props);
-	    _props.children = animChild;
-	    return (0, _react.cloneElement)(elem, _props);
-	  }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25185,7 +25253,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25194,7 +25262,7 @@
 	  value: true
 	});
 	
-	var _QueueAnim = __webpack_require__(195);
+	var _QueueAnim = __webpack_require__(196);
 	
 	var _QueueAnim2 = _interopRequireDefault(_QueueAnim);
 	
@@ -25205,7 +25273,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate) {'use strict';
@@ -25222,9 +25290,9 @@
 	
 	var _reactDom = __webpack_require__(38);
 	
-	var _utils = __webpack_require__(197);
+	var _utils = __webpack_require__(198);
 	
-	var _animTypes = __webpack_require__(198);
+	var _animTypes = __webpack_require__(199);
 	
 	var _animTypes2 = _interopRequireDefault(_animTypes);
 	
@@ -25309,7 +25377,7 @@
 	var velocity = void 0;
 	if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 	  // only load velocity on the client
-	  velocity = __webpack_require__(199);
+	  velocity = __webpack_require__(200);
 	  Object.keys(_ease).forEach(function (key) {
 	    if (velocity.Easings) {
 	      velocity.Easings[key] = _ease[key];
@@ -25662,10 +25730,10 @@
 	
 	exports["default"] = QueueAnim;
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(196).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(197).setImmediate))
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(7).nextTick;
@@ -25744,10 +25812,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(196).setImmediate, __webpack_require__(196).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(197).setImmediate, __webpack_require__(197).clearImmediate))
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25852,7 +25920,7 @@
 	}
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -25900,7 +25968,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! VelocityJS.org (1.2.3). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
@@ -29791,13 +29859,13 @@
 	will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 201 */
-200
+/* 202 */
+201
 /******/ ])));
 //# sourceMappingURL=common.js.map

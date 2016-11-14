@@ -3,12 +3,12 @@ webpackJsonp([5],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(207);
+	module.exports = __webpack_require__(208);
 
 
 /***/ },
 
-/***/ 207:
+/***/ 208:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,11 +17,11 @@ webpackJsonp([5],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(194);
+	var _rcQueueAnim = __webpack_require__(195);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(181);
+	var _rcTweenOne = __webpack_require__(185);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -33,11 +33,11 @@ webpackJsonp([5],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(200);
-	
-	__webpack_require__(208);
-	
 	__webpack_require__(201);
+	
+	__webpack_require__(209);
+	
+	__webpack_require__(202);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -49,8 +49,8 @@ webpackJsonp([5],{
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); } // use jsx to render html, do not modify simple.html
 	
-	var Element = _rcBannerAnim2.default.Element;
-	var Thumb = _rcBannerAnim2.default.Thumb;
+	var Element = _rcBannerAnim2.default.Element,
+	    Thumb = _rcBannerAnim2.default.Thumb;
 	
 	var BgElement = Element.BgElement;
 	
@@ -188,8 +188,8 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 208:
-200
+/***/ 209:
+201
 
 });
 //# sourceMappingURL=customThumb.js.map

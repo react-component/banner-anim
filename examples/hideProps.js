@@ -3,12 +3,12 @@ webpackJsonp([7],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(210);
+	module.exports = __webpack_require__(211);
 
 
 /***/ },
 
-/***/ 210:
+/***/ 211:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,11 +17,11 @@ webpackJsonp([7],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(194);
+	var _rcQueueAnim = __webpack_require__(195);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(181);
+	var _rcTweenOne = __webpack_require__(185);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -33,9 +33,9 @@ webpackJsonp([7],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	__webpack_require__(200);
-	
 	__webpack_require__(201);
+	
+	__webpack_require__(202);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -87,7 +87,7 @@ webpackJsonp([7],{
 	      _react2.default.createElement(
 	        'a',
 	        { onClick: this.onClick },
-	        '点击跳到第二块'
+	        '\u70B9\u51FB\u8DF3\u5230\u7B2C\u4E8C\u5757'
 	      ),
 	      _react2.default.createElement(
 	        _rcBannerAnim2.default,
