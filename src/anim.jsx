@@ -96,8 +96,8 @@ export default {
     }
     for (let i = 0; i < girdNum; i++) {
       const style = { ...props.style };
-      style.width = `${girdSize}%`;
-      style.left = `${i * girdSize + 0.01}%`;
+      style.width = `${girdSize + 0.1}%`;
+      style.left = `${i * girdSize}%`;
       style.position = 'absolute';
       style.overflow = 'hidden';
       const _style = { ...props.style };
@@ -139,7 +139,6 @@ export default {
       ticker.timeout(() => {
         animData.onComplete();
       }, _delay + animData.duration);
-      props.children = toArrayChildren(props.children).map(setAnimCompToTagComp);
       return React.cloneElement(elem, props);
     }
     for (let i = 0; i < gridNum * gridNumH; i++) {

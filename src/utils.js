@@ -1,5 +1,4 @@
 import React from 'react';
-import TweenOne from 'rc-tween-one';
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -30,13 +29,11 @@ export function setAnimCompToTagComp(item, i) {
   if (propTypes && (propTypes.animConfig &&
       propTypes.animatingClassName && propTypes.leaveReverse &&
       propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration
-      || item.type === TweenOne
+      || propTypes.animation && propTypes.paused && propTypes.reverse &&
+      propTypes.attr && propTypes.moment
       || propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
       propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave &&
       propTypes.onEnd && propTypes.animation
-      || props.name === 'QueueAnim'
-      || props.name === 'TweenOne'
-      || props.name === 'Animate'
     )) {
     // queueAnim or tweeOne or animate;
     const style = { ...props.style };
@@ -44,25 +41,29 @@ export function setAnimCompToTagComp(item, i) {
     props.style = style;
     const component = props.component;
     [
-      `component`,
-      `interval`,
-      `duration`,
-      `delay`,
-      `animConfig`,
-      `ease`,
-      `enterForcedRePlay`,
-      `leaveReverse`,
-      `animatingClassName`,
-      `animation`,
-      `reverseDelay`,
-      `attr`,
-      `showProp`,
-      `exclusive`,
-      `transitionName`,
-      `transitionAppear`,
-      `transitionEnter`,
-      `transitionLeave`,
-      `onEnd`,
+      'component',
+      'interval',
+      'duration',
+      'delay',
+      'animConfig',
+      'ease',
+      'enterForcedRePlay',
+      'leaveReverse',
+      'animatingClassName',
+      'animation',
+      'reverseDelay',
+      'attr',
+      'paused',
+      'reverse',
+      'moment',
+      'resetStyleBool',
+      'showProp',
+      'exclusive',
+      'transitionName',
+      'transitionAppear',
+      'transitionEnter',
+      'transitionLeave',
+      'onEnd',
     ].forEach(key => delete props[key]);
     return React.createElement(component, props);
   }
@@ -76,23 +77,11 @@ setAnimCompToTagComp.propTypes = {
 };
 
 export function currentScrollTop() {
-  const supportPageOffset = window.pageYOffset !== undefined;
-  if (supportPageOffset) {
-    return window.pageYOffset;
-  }
-  const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
-  return isCSS1Compat ?
-    document.documentElement.scrollTop : document.body.scrollTop;
+  return window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop;
 }
 
 export function currentScrollLeft() {
-  const supportPageOffset = window.pageXOffset !== undefined;
-  if (supportPageOffset) {
-    return window.pageXOffset;
-  }
-  const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
-  return isCSS1Compat ?
-    document.documentElement.scrollLeft : document.body.scrollLeft;
+  return window.pageXOffset || document.body.scrollLeft || document.documentElement.scrollLeft;
 }
 
 export function switchChildren(hideProps, item) {
