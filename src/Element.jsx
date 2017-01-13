@@ -30,6 +30,7 @@ class Element extends Component {
     this.enterMouse = null;
     this.delayTimeout = null;
     this.show = this.state.show;
+    this.transform = checkStyleName('transform');
   }
 
   componentDidMount() {
@@ -217,7 +218,7 @@ class Element extends Component {
       'show', 'type', 'direction', 'hideProps', 'sync',
     ].forEach(key => delete props[key]);
     if (this.show === this.state.show) {
-      style.transform = null;
+      style[this.transform] = null;
       if (!this.state.show) {
         this.enterMouse = null;
         return React.createElement(TweenOne, props, bgElem);
