@@ -42,6 +42,7 @@ export function setAnimCompToTagComp(item, i) {
     const component = props.component;
     [
       'component',
+      'appear',
       'interval',
       'duration',
       'delay',
