@@ -8,8 +8,7 @@ import {
   toArrayChildren,
 } from './utils';
 import animType from './anim';
-import TweenOne from 'rc-tween-one';
-
+import TimeLine from 'rc-tween-one/lib/TimeLine';
 
 export default class BgElement extends React.Component {
   constructor() {
@@ -20,9 +19,6 @@ export default class BgElement extends React.Component {
       delete animType.grid;
       delete animType.gridBar;
     }
-    this.state = {
-      moment: null,
-    };
     if (this.props.scrollParallax) {
       this.scrollParallaxDuration = this.props.scrollParallax.duration || 450;
     }
@@ -31,14 +27,19 @@ export default class BgElement extends React.Component {
   }
 
   componentDidMount() {
+    this.dom = ReactDOM.findDOMNode(this);
     if (!this.videoLoad) {
-      this.dom = ReactDOM.findDOMNode(this);
       this.video = ReactDOM.findDOMNode(this.refs.video);
       if (this.video && this.props.videoResize) {
         this.video.onloadeddata = this.videoLoadedData;
       }
     }
     if (this.props.scrollParallax) {
+      this.timeLine = new TimeLine(this.dom, [{
+        ease: 'linear', // 放前面是为了在外面设置了可覆盖。
+        ...this.props.scrollParallax,
+      }], { attr: 'style' });
+      this.timeLine.frame(0);
       this.onScroll();
       if (window.addEventListener) {
         window.addEventListener('scroll', this.onScroll);
@@ -53,7 +54,9 @@ export default class BgElement extends React.Component {
       if (this.video && this.props.videoResize && this.videoLoad) {
         this.videoLoadedData();
       }
-      this.componentDidMount();
+      if (this.props.scrollParallax) {
+        this.onScroll();
+      }
     } else {
       this.componentWillUnmount();
     }
@@ -79,9 +82,7 @@ export default class BgElement extends React.Component {
     let scale = scrollTop / (domHeight + offsetTop);
     scale = scale || 0;
     scale = scale >= 1 ? 1 : scale;
-    this.setState({
-      moment: scale * this.scrollParallaxDuration,
-    });
+    this.timeLine.frame(scale * this.scrollParallaxDuration);
   };
 
   onResize = () => {
@@ -123,23 +124,19 @@ export default class BgElement extends React.Component {
   render() {
     const props = { ...this.props };
     [
-      'videoResize', 'scrollParallax', 'scrollParallaxDuration', 'show',
+      'videoResize',
+      'scrollParallax',
+      'scrollParallaxDuration',
+      'show',
+      'component',
     ].forEach(key => delete props[key]);
-    if (this.props.scrollParallax) {
-      props.animation = {
-        ease: 'linear', // 放前面是为了在外面设置了可覆盖。
-        ...this.props.scrollParallax,
-      };
-      props.paused = true;
-      props.moment = this.state.moment;
-    }
     if (this.isVideo && this.props.videoResize) {
       props.children = toArrayChildren(props.children).map(item => {
         const ref = item.type === 'video' ? 'video' : null;
         return React.cloneElement(item, { ...item.props, ref });
       });
     }
-    return React.createElement(TweenOne, props);
+    return React.createElement(this.props.component, props);
   }
 }
 
