@@ -30,6 +30,7 @@ class Element extends Component {
     this.enterMouse = null;
     this.delayTimeout = null;
     this.show = this.state.show;
+    this.followParallax = this.props.followParallax;
     this.transform = checkStyleName('transform');
   }
 
@@ -39,7 +40,25 @@ class Element extends Component {
 
   componentWillReceiveProps(nextProps) {
     const show = nextProps.show;
+    if (this.tickerId !== -1) {
+      ticker.clear(this.tickerId);
+      this.tickerId = -1;
+    }
+    const followParallax = nextProps.followParallax;
+    if (this.followParallax && !followParallax) {
+      this.reFollowParallax();
+    } else {
+      this.followParallax = followParallax;
+    }
     this.setState({ show });
+  }
+
+  componentDidUpdate() {
+    if (this.followParallax) {
+      this.doms = this.followParallax.data.map(item => {
+        return document.getElementById(item.id);
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -50,54 +69,57 @@ class Element extends Component {
   }
 
   onMouseMove = (e) => {
-    const domRect = this.dom.getBoundingClientRect();
-    this.doms = this.props.followParallax.data.map(item => {
-      return document.getElementById(item.id);
-    });
+    this.domRect = this.dom.getBoundingClientRect();
     this.enterMouse = this.enterMouse ||
-      {
-        x: domRect.width / 2,
-        y: domRect.height / 2,
-      };
-    const offsetTop = domRect.top + currentScrollTop();
-    const offsetLeft = domRect.left + currentScrollLeft();
+      { x: this.domRect.width / 2, y: this.domRect.height / 2 };
+    this.domWH = {
+      w: this.domRect.width,
+      h: this.domRect.height,
+    };
+    this.offsetTop = this.domRect.top + currentScrollTop();
+    this.offsetLeft = this.domRect.left + currentScrollLeft();
     const mouseXY = {
-      x: e.pageX - offsetLeft,
-      y: e.pageY - offsetTop,
+      x: e.pageX - this.offsetLeft,
+      y: e.pageY - this.offsetTop,
     };
-    const domWH = {
-      w: domRect.width,
-      h: domRect.height,
-    };
+    this.setTicker(this.followParallax, mouseXY);
+  };
+
+  setTicker = (followParallax, mouseXY, callback = noop) => {
     ticker.clear(this.tickerId);
     this.tickerId = `bannerElementTicker${Date.now() + Math.random()}`;
     const startFrame = ticker.frame;
+    const startX = this.enterMouse.x;
+    const startY = this.enterMouse.y;
+    const duration = followParallax.duration || 450;
+    const easeFunc = ease[followParallax.ease ||
+    'easeOutQuad'];
+    const start = typeof followParallax.minMove === 'number' ?
+      followParallax.minMove : 0.08;
     ticker.wake(this.tickerId, () => {
       const moment = (ticker.frame - startFrame) * ticker.perFrame;
-      const start = typeof this.props.followParallax.minMove === 'number' ?
-        this.props.followParallax.minMove : 0.08;
-      const ratio = ease[this.props.followParallax.ease ||
-      'easeOutQuad'](moment, start, 1, 1000);
-      this.enterMouse.x = this.enterMouse.x + (mouseXY.x - this.enterMouse.x) * ratio;
-      this.enterMouse.y = this.enterMouse.y + (mouseXY.y - this.enterMouse.y) * ratio;
-      this.setFollowStyle(domWH);
-      if (moment >= 1000) {
+      const ratio = easeFunc(moment, start, 1, duration);
+      this.enterMouse.x = startX + (mouseXY.x - startX) * ratio;
+      this.enterMouse.y = startY + (mouseXY.y - startY) * ratio;
+      this.setFollowStyle(this.domWH);
+      if (moment >= duration) {
         ticker.clear(this.tickerId);
+        callback();
       }
     });
-  };
+  }
 
   getFollowMouseMove = () => {
     let onMouseMove;
-    if (this.props.followParallax) {
-      if (this.props.followParallax.delay) {
+    if (this.followParallax) {
+      if (this.followParallax.delay) {
         onMouseMove = !this.delayTimeout ? null : this.state.onMouseMove;
         this.delayTimeout = this.delayTimeout ||
           ticker.timeout(() => {
             this.setState({
               onMouseMove: this.onMouseMove,
             });
-          }, this.props.followParallax.delay);
+          }, this.followParallax.delay);
       } else {
         onMouseMove = this.onMouseMove;
       }
@@ -138,7 +160,7 @@ class Element extends Component {
       if (!item) {
         return;
       }
-      const data = this.props.followParallax.data[i];
+      const data = this.followParallax.data[i];
       const style = this.getFollowStyle(data, domWH);
       Object.keys(style).forEach(key => {
         if (typeof style[key] === 'object') {
@@ -161,6 +183,15 @@ class Element extends Component {
         return React.cloneElement(item, { show: this.state.show });
       }
       return item;
+    });
+  }
+
+  reFollowParallax = () => {
+    this.setTicker(this.followParallax, {
+      x: this.domRect.width / 2 - this.offsetLeft,
+      y: this.domRect.height / 2 - this.offsetTop,
+    }, () => {
+      this.followParallax = null;
     });
   }
 
@@ -245,7 +276,7 @@ Element.propTypes = {
   delay: PropTypes.number,
   direction: PropTypes.string,
   callBack: PropTypes.func,
-  followParallax: PropTypes.object,
+  followParallax: PropTypes.any,
   show: PropTypes.bool,
   hideProps: PropTypes.any,
   sync: PropTypes.bool,
