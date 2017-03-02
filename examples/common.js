@@ -21654,50 +21654,55 @@
 	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
 	
 	    _this.onMouseMove = function (e) {
-	      var domRect = _this.dom.getBoundingClientRect();
-	      _this.doms = _this.props.followParallax.data.map(function (item) {
-	        return document.getElementById(item.id);
-	      });
-	      _this.enterMouse = _this.enterMouse || {
-	        x: domRect.width / 2,
-	        y: domRect.height / 2
+	      _this.domRect = _this.dom.getBoundingClientRect();
+	      _this.enterMouse = _this.enterMouse || { x: _this.domRect.width / 2, y: _this.domRect.height / 2 };
+	      _this.domWH = {
+	        w: _this.domRect.width,
+	        h: _this.domRect.height
 	      };
-	      var offsetTop = domRect.top + (0, _utils.currentScrollTop)();
-	      var offsetLeft = domRect.left + (0, _utils.currentScrollLeft)();
+	      _this.offsetTop = _this.domRect.top + (0, _utils.currentScrollTop)();
+	      _this.offsetLeft = _this.domRect.left + (0, _utils.currentScrollLeft)();
 	      var mouseXY = {
-	        x: e.pageX - offsetLeft,
-	        y: e.pageY - offsetTop
+	        x: e.pageX - _this.offsetLeft,
+	        y: e.pageY - _this.offsetTop
 	      };
-	      var domWH = {
-	        w: domRect.width,
-	        h: domRect.height
-	      };
+	      _this.setTicker(_this.followParallax, mouseXY);
+	    };
+	
+	    _this.setTicker = function (followParallax, mouseXY) {
+	      var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : noop;
+	
 	      _ticker2.default.clear(_this.tickerId);
 	      _this.tickerId = 'bannerElementTicker' + (Date.now() + Math.random());
 	      var startFrame = _ticker2.default.frame;
+	      var startX = _this.enterMouse.x;
+	      var startY = _this.enterMouse.y;
+	      var duration = followParallax.duration || 450;
+	      var easeFunc = _tweenFunctions2.default[followParallax.ease || 'easeOutQuad'];
+	      var start = typeof followParallax.minMove === 'number' ? followParallax.minMove : 0.08;
 	      _ticker2.default.wake(_this.tickerId, function () {
 	        var moment = (_ticker2.default.frame - startFrame) * _ticker2.default.perFrame;
-	        var start = typeof _this.props.followParallax.minMove === 'number' ? _this.props.followParallax.minMove : 0.08;
-	        var ratio = _tweenFunctions2.default[_this.props.followParallax.ease || 'easeOutQuad'](moment, start, 1, 1000);
-	        _this.enterMouse.x = _this.enterMouse.x + (mouseXY.x - _this.enterMouse.x) * ratio;
-	        _this.enterMouse.y = _this.enterMouse.y + (mouseXY.y - _this.enterMouse.y) * ratio;
-	        _this.setFollowStyle(domWH);
-	        if (moment >= 1000) {
+	        var ratio = easeFunc(moment, start, 1, duration);
+	        _this.enterMouse.x = startX + (mouseXY.x - startX) * ratio;
+	        _this.enterMouse.y = startY + (mouseXY.y - startY) * ratio;
+	        _this.setFollowStyle(_this.domWH);
+	        if (moment >= duration) {
 	          _ticker2.default.clear(_this.tickerId);
+	          callback();
 	        }
 	      });
 	    };
 	
 	    _this.getFollowMouseMove = function () {
 	      var onMouseMove = void 0;
-	      if (_this.props.followParallax) {
-	        if (_this.props.followParallax.delay) {
+	      if (_this.followParallax) {
+	        if (_this.followParallax.delay) {
 	          onMouseMove = !_this.delayTimeout ? null : _this.state.onMouseMove;
 	          _this.delayTimeout = _this.delayTimeout || _ticker2.default.timeout(function () {
 	            _this.setState({
 	              onMouseMove: _this.onMouseMove
 	            });
-	          }, _this.props.followParallax.delay);
+	          }, _this.followParallax.delay);
 	        } else {
 	          onMouseMove = _this.onMouseMove;
 	        }
@@ -21738,7 +21743,7 @@
 	        if (!item) {
 	          return;
 	        }
-	        var data = _this.props.followParallax.data[i];
+	        var data = _this.followParallax.data[i];
 	        var style = _this.getFollowStyle(data, domWH);
 	        Object.keys(style).forEach(function (key) {
 	          if (_typeof(style[key]) === 'object') {
@@ -21760,6 +21765,15 @@
 	          return _react2.default.cloneElement(item, { show: _this.state.show });
 	        }
 	        return item;
+	      });
+	    };
+	
+	    _this.reFollowParallax = function () {
+	      _this.setTicker(_this.followParallax, {
+	        x: _this.domRect.width / 2 - _this.offsetLeft,
+	        y: _this.domRect.height / 2 - _this.offsetTop
+	      }, function () {
+	        _this.followParallax = null;
 	      });
 	    };
 	
@@ -21799,6 +21813,7 @@
 	    _this.enterMouse = null;
 	    _this.delayTimeout = null;
 	    _this.show = _this.state.show;
+	    _this.followParallax = _this.props.followParallax;
 	    _this.transform = (0, _styleUtils.checkStyleName)('transform');
 	    return _this;
 	  }
@@ -21809,7 +21824,25 @@
 	
 	  Element.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
 	    var show = nextProps.show;
+	    if (this.tickerId !== -1) {
+	      _ticker2.default.clear(this.tickerId);
+	      this.tickerId = -1;
+	    }
+	    var followParallax = nextProps.followParallax;
+	    if (this.followParallax && !followParallax) {
+	      this.reFollowParallax();
+	    } else {
+	      this.followParallax = followParallax;
+	    }
 	    this.setState({ show: show });
+	  };
+	
+	  Element.prototype.componentDidUpdate = function componentDidUpdate() {
+	    if (this.followParallax) {
+	      this.doms = this.followParallax.data.map(function (item) {
+	        return document.getElementById(item.id);
+	      });
+	    }
 	  };
 	
 	  Element.prototype.componentWillUnmount = function componentWillUnmount() {
@@ -21867,7 +21900,7 @@
 	  delay: _react.PropTypes.number,
 	  direction: _react.PropTypes.string,
 	  callBack: _react.PropTypes.func,
-	  followParallax: _react.PropTypes.object,
+	  followParallax: _react.PropTypes.any,
 	  show: _react.PropTypes.bool,
 	  hideProps: _react.PropTypes.any,
 	  sync: _react.PropTypes.bool
