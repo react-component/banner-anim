@@ -21617,7 +21617,7 @@
 	
 	var _BgElement2 = _interopRequireDefault(_BgElement);
 	
-	var _rcTweenOne = __webpack_require__(191);
+	var _rcTweenOne = __webpack_require__(199);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -21625,7 +21625,7 @@
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
-	var _tweenFunctions = __webpack_require__(198);
+	var _tweenFunctions = __webpack_require__(193);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
@@ -21910,9 +21910,9 @@
 	
 	var _anim2 = _interopRequireDefault(_anim);
 	
-	var _rcTweenOne = __webpack_require__(191);
+	var _TimeLine = __webpack_require__(191);
 	
-	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
+	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -21942,9 +21942,7 @@
 	      var scale = scrollTop / (domHeight + offsetTop);
 	      scale = scale || 0;
 	      scale = scale >= 1 ? 1 : scale;
-	      _this.setState({
-	        moment: scale * _this.scrollParallaxDuration
-	      });
+	      _this.timeLine.frame(scale * _this.scrollParallaxDuration);
 	    };
 	
 	    _this.onResize = function () {
@@ -21991,9 +21989,6 @@
 	      delete _anim2.default.grid;
 	      delete _anim2.default.gridBar;
 	    }
-	    _this.state = {
-	      moment: null
-	    };
 	    if (_this.props.scrollParallax) {
 	      _this.scrollParallaxDuration = _this.props.scrollParallax.duration || 450;
 	    }
@@ -22003,14 +21998,17 @@
 	  }
 	
 	  BgElement.prototype.componentDidMount = function componentDidMount() {
+	    this.dom = _reactDom2.default.findDOMNode(this);
 	    if (!this.videoLoad) {
-	      this.dom = _reactDom2.default.findDOMNode(this);
 	      this.video = _reactDom2.default.findDOMNode(this.refs.video);
 	      if (this.video && this.props.videoResize) {
 	        this.video.onloadeddata = this.videoLoadedData;
 	      }
 	    }
 	    if (this.props.scrollParallax) {
+	      this.timeLine = new _TimeLine2.default(this.dom, [_extends({
+	        ease: 'linear' }, this.props.scrollParallax)], { attr: 'style' });
+	      this.timeLine.frame(0);
 	      this.onScroll();
 	      if (window.addEventListener) {
 	        window.addEventListener('scroll', this.onScroll);
@@ -22025,7 +22023,9 @@
 	      if (this.video && this.props.videoResize && this.videoLoad) {
 	        this.videoLoadedData();
 	      }
-	      this.componentDidMount();
+	      if (this.props.scrollParallax) {
+	        this.onScroll();
+	      }
 	    } else {
 	      this.componentWillUnmount();
 	    }
@@ -22043,22 +22043,16 @@
 	
 	  BgElement.prototype.render = function render() {
 	    var props = _extends({}, this.props);
-	    ['videoResize', 'scrollParallax', 'scrollParallaxDuration', 'show'].forEach(function (key) {
+	    ['videoResize', 'scrollParallax', 'scrollParallaxDuration', 'show', 'component'].forEach(function (key) {
 	      return delete props[key];
 	    });
-	    if (this.props.scrollParallax) {
-	      props.animation = _extends({
-	        ease: 'linear' }, this.props.scrollParallax);
-	      props.paused = true;
-	      props.moment = this.state.moment;
-	    }
 	    if (this.isVideo && this.props.videoResize) {
 	      props.children = (0, _utils.toArrayChildren)(props.children).map(function (item) {
 	        var ref = item.type === 'video' ? 'video' : null;
 	        return _react2.default.cloneElement(item, _extends({}, item.props, { ref: ref }));
 	      });
 	    }
-	    return _react2.default.createElement(_rcTweenOne2.default, props);
+	    return _react2.default.createElement(this.props.component, props);
 	  };
 	
 	  return BgElement;
@@ -23096,10 +23090,352 @@
 
 	'use strict';
 	
-	var TweenOne = __webpack_require__(192);
-	TweenOne.TweenOneGroup = __webpack_require__(201);
-	TweenOne.easing = __webpack_require__(197);
-	module.exports = TweenOne;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* eslint-disable func-names */
+	/**
+	 * Created by jljsj on 16/1/27.
+	 */
+	
+	
+	var _easing = __webpack_require__(192);
+	
+	var _easing2 = _interopRequireDefault(_easing);
+	
+	var _plugins = __webpack_require__(197);
+	
+	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	var _StylePlugin = __webpack_require__(198);
+	
+	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
+	
+	var _styleUtils = __webpack_require__(185);
+	
+	var _util = __webpack_require__(194);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	var DEFAULT_EASING = 'easeInOutQuad';
+	var DEFAULT_DURATION = 450;
+	var DEFAULT_DELAY = 0;
+	function noop() {}
+	_plugins2["default"].push(_StylePlugin2["default"]);
+	// 设置默认数据
+	function defaultData(vars, now) {
+	  return {
+	    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
+	    delay: vars.delay || DEFAULT_DELAY,
+	    ease: typeof vars.ease === 'function' ? vars.ease : _easing2["default"][vars.ease || DEFAULT_EASING],
+	    onUpdate: vars.onUpdate || noop,
+	    onComplete: vars.onComplete || noop,
+	    onStart: vars.onStart || noop,
+	    onRepeat: vars.onRepeat || noop,
+	    repeat: vars.repeat || 0,
+	    repeatDelay: vars.repeatDelay || 0,
+	    yoyo: vars.yoyo || false,
+	    type: vars.type || 'to',
+	    initTime: now,
+	    appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null
+	  };
+	}
+	
+	var timeLine = function timeLine(target, toData, props) {
+	  var _this = this;
+	
+	  this.target = target;
+	  this.attr = props.attr || 'style';
+	  this.willChange = props.willChange;
+	  // 记录总时间;
+	  this.totalTime = 0;
+	  // 记录当前时间;
+	  this.progressTime = 0;
+	  // 记录时间轴数据;
+	  this.defaultData = [];
+	  // 每个的开始数据；
+	  this.start = {};
+	  // 记录动画开始;
+	  this.onStart = {};
+	  // 开始默认的数据；
+	  this.startDefaultData = {};
+	  var data = [];
+	  toData.forEach(function (d, i) {
+	    var _d = _extends({}, d);
+	    if (_this.attr === 'style') {
+	      data[i] = {};
+	      Object.keys(_d).forEach(function (key) {
+	        if (key in defaultData({}, 0)) {
+	          data[i][key] = _d[key];
+	          delete _d[key];
+	        }
+	      });
+	      data[i].style = _d;
+	      _this.startDefaultData.style = _this.target.getAttribute('style');
+	    } else if (_this.attr === 'attr') {
+	      Object.keys(_d).forEach(function (key) {
+	        if (key === 'style' && Array.isArray(d[key])) {
+	          throw new Error('Style should be the object.');
+	        }
+	        if (key === 'bezier') {
+	          _d.style = _extends({}, _d.style, { bezier: _d[key] });
+	          delete _d[key];
+	          _this.startDefaultData.style = _this.target.getAttribute('style');
+	        } else {
+	          _this.startDefaultData[key] = _this.target.getAttribute(key);
+	        }
+	      });
+	      data[i] = _d;
+	    }
+	  });
+	  // 动画过程
+	  this.tween = {};
+	  // 每帧的时间;
+	  this.perFrame = Math.round(1000 / 60);
+	  // 注册，第一次进入执行注册
+	  this.register = false;
+	  // 缓动最小值;
+	  this.tinyNum = 0.0000000001;
+	  // 设置默认动画数据;
+	  this.setDefaultData(data);
+	};
+	var p = timeLine.prototype;
+	
+	p.setDefaultData = function (_vars) {
+	  var _this2 = this;
+	
+	  var now = 0;
+	  var repeatMax = false;
+	  var data = _vars.map(function (item) {
+	    var appearToBool = typeof item.appearTo === 'number';
+	    // 加上延时，在没有播放过时；
+	    // !appearToBool && (now += item.delay || 0);
+	    if (!appearToBool) {
+	      now += item.delay || 0;
+	    }
+	    var appearToTime = (item.appearTo || 0) + (item.delay || 0);
+	    // 获取默认数据
+	    var tweenData = defaultData(item, appearToBool ? appearToTime : now);
+	    tweenData.vars = {};
+	    Object.keys(item).forEach(function (_key) {
+	      if (!(_key in tweenData)) {
+	        var _data = item[_key];
+	        if (_key in _plugins2["default"]) {
+	          tweenData.vars[_key] = new _plugins2["default"][_key](_this2.target, _data, tweenData.type);
+	        } else if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+	          tweenData.vars[_key] = { type: 'color', vars: (0, _styleUtils.parseColor)(_data) };
+	        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
+	          var vars = parseFloat(_data);
+	          var unit = _data.toString().replace(/[^a-z|%]/g, '');
+	          var count = _data.toString().replace(/[^+|=|-]/g, '');
+	          tweenData.vars[_key] = { unit: unit, vars: vars, count: count };
+	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2["default"]) {
+	          tweenData.vars[_key] = new _plugins2["default"].SVGMorph(_this2.target, _data, _key);
+	        }
+	      }
+	    });
+	    if (tweenData.yoyo && !tweenData.repeat) {
+	      console.warn('Warning: yoyo must be used together with repeat;'); // eslint-disable-line
+	    }
+	    if (tweenData.repeat === -1) {
+	      repeatMax = true;
+	    }
+	    var repeat = tweenData.repeat === -1 ? 0 : tweenData.repeat;
+	    if (appearToBool) {
+	      // 如果有 appearTo 且这条时间比 now 大时，，总时间用这条；
+	      var appearNow = item.appearTo + (item.delay || 0) + tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+	      now = appearNow >= now ? appearNow : now;
+	    } else {
+	      if (tweenData.delay < -tweenData.duration) {
+	        // 如果延时小于 负时间时,,不加,再减回延时;
+	        now -= tweenData.delay;
+	      } else {
+	        // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
+	        now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+	      }
+	    }
+	    tweenData.mode = '';
+	    return tweenData;
+	  });
+	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
+	  this.defaultData = data;
+	};
+	p.getAnimStartData = function (item) {
+	  var _this3 = this;
+	
+	  var start = {};
+	  Object.keys(item).forEach(function (_key) {
+	    if (_key in _plugins2["default"] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	      start[_key] = item[_key].getAnimStart(_this3.willChange);
+	      return;
+	    }
+	    if (_this3.attr === 'attr') {
+	      // 除了d和这points外的标签动画；
+	      var attribute = _this3.target.getAttribute(_key);
+	      var data = attribute === 'null' || !attribute ? 0 : attribute;
+	      if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+	        data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
+	        data = (0, _styleUtils.parseColor)(data);
+	        start[_key] = data;
+	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
+	        var unit = data.toString().replace(/[^a-z|%]/g, '');
+	        start[_key] = unit !== item[_key].unit ? (0, _util.startConvertToEndUnit)(_this3.target, _key, parseFloat(data), unit, item[_key].unit) : parseFloat(data);
+	      }
+	      // start[_key] = data;
+	      return;
+	    }
+	    start[_key] = _this3.target[_key] || 0;
+	  });
+	  return start;
+	};
+	p.setAnimData = function (data) {
+	  var _this4 = this;
+	
+	  Object.keys(data).forEach(function (key) {
+	    if (key in _plugins2["default"] || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
+	      return;
+	    }
+	    _this4.target[key] = data[key];
+	  });
+	};
+	p.setRatio = function (ratio, endData, i) {
+	  var _this5 = this;
+	
+	  Object.keys(endData.vars).forEach(function (_key) {
+	    if (_key in _plugins2["default"] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	      endData.vars[_key].setRatio(ratio, _this5.tween);
+	      return;
+	    }
+	    var endVars = endData.vars[_key];
+	    var startVars = _this5.start[i][_key];
+	    var data = void 0;
+	    if (_this5.attr === 'attr') {
+	      // 除了d和这points外的标签动画；
+	      if (!endVars.type) {
+	        data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit : (endVars.vars - startVars) * ratio + startVars + endVars.unit;
+	        _this5.target.setAttribute(_key, data);
+	      } else if (endVars.type === 'color') {
+	        if (endVars.vars.length === 3 && startVars.length === 4) {
+	          endVars.vars[3] = 1;
+	        }
+	        data = endVars.vars.map(function (_endData, _i) {
+	          var startData = startVars[_i] || 0;
+	          return (_endData - startData) * ratio + startData;
+	        });
+	        _this5.target.setAttribute(_key, (0, _styleUtils.getColor)(data));
+	      }
+	    }
+	  });
+	  this.setAnimData(this.tween);
+	};
+	p.render = function () {
+	  var _this6 = this;
+	
+	  this.defaultData.forEach(function (item, i) {
+	    var initTime = item.initTime;
+	    var duration = (0, _styleUtils.toFixed)(item.duration);
+	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
+	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
+	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
+	    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    if (item.repeat) {
+	      if (item.repeat < repeatNum && item.repeat !== -1) {
+	        return;
+	      }
+	      if (item.repeat || item.repeat <= repeatNum) {
+	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
+	      }
+	    }
+	    var startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
+	    var endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
+	    //  精度损失，只取小数点后10位。
+	    var progressTime = (0, _styleUtils.toFixed)(_this6.progressTime - initTime);
+	    // 设置 start
+	    var delay = item.delay >= 0 ? item.delay : -item.delay;
+	    var fromDelay = item.type === 'from' ? delay : 0;
+	    if (progressTime + fromDelay > -_this6.perFrame && !_this6.start[i]) {
+	      _this6.start[i] = _this6.getAnimStartData(item.vars);
+	      if (!_this6.register && progressTime <= _this6.perFrame) {
+	        _this6.register = true;
+	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
+	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
+	        var s = delay ? 0 : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
+	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
+	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
+	        _this6.setRatio(st, item, i);
+	      }
+	    }
+	    var e = {
+	      index: i,
+	      target: _this6.target
+	    };
+	
+	    // onRepeat 处理
+	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
+	      // 重新开始, 在第一秒触发时调用;
+	      item.onRepeat(e);
+	    }
+	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
+	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
+	      var compRatio = duration ? item.ease(duration, startData, endData, duration) : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
+	      _this6.setRatio(compRatio, item, i);
+	      if (item.mode !== 'reset') {
+	        item.onComplete(e);
+	      }
+	      item.mode = 'onComplete';
+	    } else if (progressTime >= 0 && progressTime < duration) {
+	      item.mode = progressTime < _this6.perFrame && !_this6.onStart[i] ? 'onStart' : 'onUpdate';
+	      progressTime = progressTime < 0 ? 0 : progressTime;
+	      progressTime = progressTime > duration ? duration : progressTime;
+	      var ratio = item.ease(progressTime, startData, endData, duration);
+	      _this6.setRatio(ratio, item, i);
+	      _this6.onStart[i] = true;
+	      if (progressTime <= _this6.perFrame) {
+	        item.onStart(e);
+	      } else {
+	        item.onUpdate(_extends({ ratio: ratio }, e));
+	      }
+	    }
+	
+	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
+	      _this6.onChange(_extends({
+	        moment: _this6.progressTime,
+	        mode: item.mode
+	      }, e));
+	    }
+	  });
+	};
+	// 播放帧
+	p.frame = function (moment) {
+	  this.progressTime = moment;
+	  this.render();
+	};
+	p.resetAnimData = function () {
+	  this.tween = {};
+	  this.start = {};
+	  this.onStart = {};
+	};
+	
+	p.resetDefaultStyle = function () {
+	  var _this7 = this;
+	
+	  this.tween = {};
+	  this.defaultData = this.defaultData.map(function (item) {
+	    item.mode = 'reset';
+	    return item;
+	  });
+	  Object.keys(this.startDefaultData).forEach(function (key) {
+	    if (!(key in defaultData({}, 0))) {
+	      _this7.target.setAttribute(key, _this7.startDefaultData[key]);
+	    }
+	  });
+	};
+	
+	p.onChange = noop;
+	exports["default"] = timeLine;
+	module.exports = exports['default'];
 
 /***/ },
 /* 192 */
@@ -23111,262 +23447,295 @@
 	  value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _tweenFunctions = __webpack_require__(193);
 	
-	var _react = __webpack_require__(5);
+	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(36);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _util = __webpack_require__(193);
-	
-	var _styleUtils = __webpack_require__(185);
-	
-	var _TimeLine = __webpack_require__(196);
-	
-	var _TimeLine2 = _interopRequireDefault(_TimeLine);
-	
-	var _plugins = __webpack_require__(199);
-	
-	var _plugins2 = _interopRequireDefault(_plugins);
-	
-	var _ticker = __webpack_require__(188);
-	
-	var _ticker2 = _interopRequireDefault(_ticker);
+	var _util = __webpack_require__(194);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-	
-	function noop() {}
-	
-	var perFrame = Math.round(1000 / 60);
-	
-	var TweenOne = function (_Component) {
-	  _inherits(TweenOne, _Component);
-	
-	  function TweenOne() {
-	    _classCallCheck(this, TweenOne);
-	
-	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
-	
-	    _this.restart = function () {
-	      _this.startMoment = _this.timeLine.progressTime;
-	      _this.startFrame = _ticker2["default"].frame;
-	      _this.play();
-	    };
-	
-	    _this.start = function () {
-	      var props = _this.props;
-	      if (props.animation && Object.keys(props.animation).length) {
-	        _this.timeLine = new _TimeLine2["default"](_this.dom, (0, _util.dataToArray)(props.animation), { attr: props.attr, willChange: props.willChange });
-	        // 预先注册 raf, 初始动画数值。
-	        _this.raf(0, true);
-	        // 开始动画
-	        _this.play();
-	      }
-	    };
-	
-	    _this.play = function () {
-	      _this.cancelRequestAnimationFrame();
-	      if (_this.paused) {
-	        return;
-	      }
-	      _this.rafID = _ticker2["default"].add(_this.raf);
-	    };
-	
-	    _this.frame = function (date, register) {
-	      var registerMoment = register ? date : 0;
-	      var moment = (_ticker2["default"].frame - _this.startFrame) * perFrame + registerMoment + _this.startMoment;
-	      if (!register && moment < perFrame && typeof _this.props.moment !== 'number') {
-	        // 注册完后，第一帧预先跑动， 鼠标跟随
-	        moment = perFrame;
-	      }
-	      if (_this.reverse) {
-	        moment = (_this.startMoment || 0) - (_ticker2["default"].frame - _this.startFrame) * perFrame;
-	      }
-	      moment = moment > _this.timeLine.totalTime ? _this.timeLine.totalTime : moment;
-	      moment = moment <= 0 ? 0 : moment;
-	      if (moment < _this.moment && !_this.reverse) {
-	        _this.timeLine.resetDefaultStyle();
-	      }
-	      _this.moment = moment;
-	      _this.timeLine.onChange = _this.onChange;
-	      _this.timeLine.frame(moment);
-	    };
-	
-	    _this.raf = function (date, register) {
-	      _this.frame(date, register);
-	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
-	        return _this.cancelRequestAnimationFrame();
-	      }
-	    };
-	
-	    _this.cancelRequestAnimationFrame = function () {
-	      _ticker2["default"].clear(_this.rafID);
-	      _this.rafID = -1;
-	    };
-	
-	    _this.rafID = -1;
-	    _this.moment = _this.props.moment || 0;
-	    _this.startMoment = _this.props.moment || 0;
-	    _this.startFrame = _ticker2["default"].frame;
-	    _this.paused = _this.props.paused;
-	    _this.reverse = _this.props.reverse;
-	    _this.onChange = _this.props.onChange;
-	    _this.newMomentAnim = false;
-	    return _this;
+	_tweenFunctions2["default"].path = function (_path, _param) {
+	  var param = _param || {};
+	  var pathNode = (0, _util.parsePath)(_path);
+	  var pathLength = pathNode.getTotalLength();
+	  var rect = param.rect || 100; // path 的大小，100 * 100，
+	  var lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1500 段。。
+	  var points = [];
+	  for (var i = 0; i < lengthPixel; i++) {
+	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
 	  }
-	
-	  TweenOne.prototype.componentDidMount = function componentDidMount() {
-	    this.dom = _reactDom2["default"].findDOMNode(this);
-	    this.start();
+	  return function path(t, b, _c, d) {
+	    var p = _tweenFunctions2["default"].linear(t, b, _c, d);
+	    var timePointX = rect * p; // X 轴的百分比;
+	    // 取出 x 轴百分比上的点;
+	    var point = points.filter(function (item) {
+	      return item.x >= timePointX;
+	    })[0] || pathNode.getPointAtLength(p * pathLength);
+	    return 1 - point.y / rect;
 	  };
-	
-	  TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-	    var _this2 = this;
-	
-	    this.onChange = nextProps.onChange;
-	    // 跳帧事件 moment;
-	    var newMoment = nextProps.moment;
-	    this.newMomentAnim = false;
-	    if (typeof newMoment === 'number' && newMoment !== this.moment) {
-	      this.startMoment = newMoment;
-	      this.startFrame = _ticker2["default"].frame;
-	      if (this.rafID === -1 && !nextProps.paused) {
-	        (function () {
-	          _this2.timeLine.resetAnimData();
-	          var style = nextProps.style;
-	          _this2.dom.setAttribute('style', '');
-	          Object.keys(style).forEach(function (key) {
-	            _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
-	          });
-	          _this2.play();
-	        })();
-	      } else {
-	        this.newMomentAnim = true;
-	      }
-	    }
-	    // 动画处理
-	    var newAnimation = nextProps.animation;
-	    var currentAnimation = this.props.animation;
-	    var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
-	    var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
-	    // 如果 animation 不同， 重新动画
-	    this.restartAnim = false;
-	    if (!equal) {
-	      this.cancelRequestAnimationFrame();
-	      if (nextProps.resetStyleBool && this.timeLine) {
-	        this.timeLine.resetDefaultStyle();
-	      }
-	      this.startMoment = 0;
-	      this.startFrame = _ticker2["default"].frame;
-	      this.restartAnim = true;
-	      // this.start(nextProps);
-	    } else if (!styleEqual) {
-	      // 如果 animation 相同，，style 不同，从当前时间开放。
-	      if (this.rafID !== -1) {
-	        this.cancelRequestAnimationFrame();
-	        this.startMoment = this.timeLine.progressTime;
-	        this.startFrame = _ticker2["default"].frame;
-	        this.restartAnim = true;
-	        // this.start(nextProps);
-	      }
-	    }
-	    // 暂停倒放
-	    if (this.paused !== nextProps.paused || this.reverse !== nextProps.reverse) {
-	      this.paused = nextProps.paused;
-	      this.reverse = nextProps.reverse;
-	      if (this.paused) {
-	        this.cancelRequestAnimationFrame();
-	      } else {
-	        if (this.reverse && nextProps.reverseDelay) {
-	          this.cancelRequestAnimationFrame();
-	          _ticker2["default"].timeout(this.restart, nextProps.reverseDelay);
-	        } else {
-	          this.restart();
-	        }
-	      }
-	    }
-	  };
-	
-	  TweenOne.prototype.componentDidUpdate = function componentDidUpdate() {
-	    // 样式更新了后再执行动画；
-	    if (this.restartAnim) {
-	      this.start();
-	    }
-	    if (this.newMomentAnim) {
-	      this.raf();
-	    }
-	  };
-	
-	  TweenOne.prototype.componentWillUnmount = function componentWillUnmount() {
-	    this.cancelRequestAnimationFrame();
-	  };
-	
-	  TweenOne.prototype.render = function render() {
-	    var props = _extends({}, this.props);
-	    ['animation', 'component', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'willChange'].forEach(function (key) {
-	      return delete props[key];
-	    });
-	    props.style = _extends({}, this.props.style);
-	    Object.keys(props.style).forEach(function (p) {
-	      if (p.match(/filter/i)) {
-	        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(function (prefix) {
-	          return props.style[prefix + 'Filter'] = props.style[p];
-	        });
-	      }
-	    });
-	    props.component = typeof props.component === 'function' ? this.props.componentReplace : props.component;
-	    if (!props.component) {
-	      delete props.component;
-	    }
-	    return _react2["default"].createElement(this.props.component, props);
-	  };
-	
-	  return TweenOne;
-	}(_react.Component);
-	
-	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
-	
-	TweenOne.propTypes = {
-	  component: _react.PropTypes.any,
-	  componentReplace: _react.PropTypes.string,
-	  animation: objectOrArray,
-	  children: _react.PropTypes.any,
-	  style: _react.PropTypes.object,
-	  paused: _react.PropTypes.bool,
-	  reverse: _react.PropTypes.bool,
-	  reverseDelay: _react.PropTypes.number,
-	  moment: _react.PropTypes.number,
-	  attr: _react.PropTypes.string,
-	  willChange: _react.PropTypes.bool,
-	  onChange: _react.PropTypes.func,
-	  resetStyleBool: _react.PropTypes.bool
 	};
 	
-	TweenOne.defaultProps = {
-	  component: 'div',
-	  reverseDelay: 0,
-	  attr: 'style',
-	  onChange: noop,
-	  willChange: true
-	};
-	TweenOne.plugins = _plugins2["default"];
-	exports["default"] = TweenOne;
+	exports["default"] = _tweenFunctions2["default"];
 	module.exports = exports['default'];
 
 /***/ },
 /* 193 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// t: current time, b: beginning value, _c: final value, d: total duration
+	var tweenFunctions = {
+	  linear: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * t / d + b;
+	  },
+	  easeInQuad: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * (t /= d) * t + b;
+	  },
+	  easeOutQuad: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return -c * (t /= d) * (t - 2) + b;
+	  },
+	  easeInOutQuad: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if ((t /= d / 2) < 1) {
+	      return c / 2 * t * t + b;
+	    } else {
+	      return -c / 2 * ((--t) * (t - 2) - 1) + b;
+	    }
+	  },
+	  easeInCubic: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * (t /= d) * t * t + b;
+	  },
+	  easeOutCubic: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * ((t = t / d - 1) * t * t + 1) + b;
+	  },
+	  easeInOutCubic: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if ((t /= d / 2) < 1) {
+	      return c / 2 * t * t * t + b;
+	    } else {
+	      return c / 2 * ((t -= 2) * t * t + 2) + b;
+	    }
+	  },
+	  easeInQuart: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * (t /= d) * t * t * t + b;
+	  },
+	  easeOutQuart: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+	  },
+	  easeInOutQuart: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if ((t /= d / 2) < 1) {
+	      return c / 2 * t * t * t * t + b;
+	    } else {
+	      return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+	    }
+	  },
+	  easeInQuint: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * (t /= d) * t * t * t * t + b;
+	  },
+	  easeOutQuint: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+	  },
+	  easeInOutQuint: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if ((t /= d / 2) < 1) {
+	      return c / 2 * t * t * t * t * t + b;
+	    } else {
+	      return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+	    }
+	  },
+	  easeInSine: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+	  },
+	  easeOutSine: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * Math.sin(t / d * (Math.PI / 2)) + b;
+	  },
+	  easeInOutSine: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+	  },
+	  easeInExpo: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
+	  },
+	  easeOutExpo: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
+	  },
+	  easeInOutExpo: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if (t === 0) {
+	      return b;
+	    }
+	    if (t === d) {
+	      return b + c;
+	    }
+	    if ((t /= d / 2) < 1) {
+	      return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+	    } else {
+	      return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+	    }
+	  },
+	  easeInCirc: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+	  },
+	  easeOutCirc: function(t, b, _c, d) {
+	    var c = _c - b;
+	    return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+	  },
+	  easeInOutCirc: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if ((t /= d / 2) < 1) {
+	      return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+	    } else {
+	      return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+	    }
+	  },
+	  easeInElastic: function(t, b, _c, d) {
+	    var c = _c - b;
+	    var a, p, s;
+	    s = 1.70158;
+	    p = 0;
+	    a = c;
+	    if (t === 0) {
+	      return b;
+	    } else if ((t /= d) === 1) {
+	      return b + c;
+	    }
+	    if (!p) {
+	      p = d * 0.3;
+	    }
+	    if (a < Math.abs(c)) {
+	      a = c;
+	      s = p / 4;
+	    } else {
+	      s = p / (2 * Math.PI) * Math.asin(c / a);
+	    }
+	    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+	  },
+	  easeOutElastic: function(t, b, _c, d) {
+	    var c = _c - b;
+	    var a, p, s;
+	    s = 1.70158;
+	    p = 0;
+	    a = c;
+	    if (t === 0) {
+	      return b;
+	    } else if ((t /= d) === 1) {
+	      return b + c;
+	    }
+	    if (!p) {
+	      p = d * 0.3;
+	    }
+	    if (a < Math.abs(c)) {
+	      a = c;
+	      s = p / 4;
+	    } else {
+	      s = p / (2 * Math.PI) * Math.asin(c / a);
+	    }
+	    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+	  },
+	  easeInOutElastic: function(t, b, _c, d) {
+	    var c = _c - b;
+	    var a, p, s;
+	    s = 1.70158;
+	    p = 0;
+	    a = c;
+	    if (t === 0) {
+	      return b;
+	    } else if ((t /= d / 2) === 2) {
+	      return b + c;
+	    }
+	    if (!p) {
+	      p = d * (0.3 * 1.5);
+	    }
+	    if (a < Math.abs(c)) {
+	      a = c;
+	      s = p / 4;
+	    } else {
+	      s = p / (2 * Math.PI) * Math.asin(c / a);
+	    }
+	    if (t < 1) {
+	      return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+	    } else {
+	      return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * 0.5 + c + b;
+	    }
+	  },
+	  easeInBack: function(t, b, _c, d, s) {
+	    var c = _c - b;
+	    if (s === void 0) {
+	      s = 1.70158;
+	    }
+	    return c * (t /= d) * t * ((s + 1) * t - s) + b;
+	  },
+	  easeOutBack: function(t, b, _c, d, s) {
+	    var c = _c - b;
+	    if (s === void 0) {
+	      s = 1.70158;
+	    }
+	    return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+	  },
+	  easeInOutBack: function(t, b, _c, d, s) {
+	    var c = _c - b;
+	    if (s === void 0) {
+	      s = 1.70158;
+	    }
+	    if ((t /= d / 2) < 1) {
+	      return c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b;
+	    } else {
+	      return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
+	    }
+	  },
+	  easeInBounce: function(t, b, _c, d) {
+	    var c = _c - b;
+	    var v;
+	    v = tweenFunctions.easeOutBounce(d - t, 0, c, d);
+	    return c - v + b;
+	  },
+	  easeOutBounce: function(t, b, _c, d) {
+	    var c = _c - b;
+	    if ((t /= d) < 1 / 2.75) {
+	      return c * (7.5625 * t * t) + b;
+	    } else if (t < 2 / 2.75) {
+	      return c * (7.5625 * (t -= 1.5 / 2.75) * t + 0.75) + b;
+	    } else if (t < 2.5 / 2.75) {
+	      return c * (7.5625 * (t -= 2.25 / 2.75) * t + 0.9375) + b;
+	    } else {
+	      return c * (7.5625 * (t -= 2.625 / 2.75) * t + 0.984375) + b;
+	    }
+	  },
+	  easeInOutBounce: function(t, b, _c, d) {
+	    var c = _c - b;
+	    var v;
+	    if (t < d / 2) {
+	      v = tweenFunctions.easeInBounce(t * 2, 0, c, d);
+	      return v * 0.5 + b;
+	    } else {
+	      v = tweenFunctions.easeOutBounce(t * 2 - d, 0, c, d);
+	      return v * 0.5 + c * 0.5 + b;
+	    }
+	  }
+	};
+	
+	module.exports = tweenFunctions;
+
+
+/***/ },
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23392,7 +23761,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _deepEql = __webpack_require__(194);
+	var _deepEql = __webpack_require__(195);
 	
 	var _deepEql2 = _interopRequireDefault(_deepEql);
 	
@@ -23624,7 +23993,7 @@
 	}
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23639,7 +24008,7 @@
 	 * Module dependencies
 	 */
 	
-	var type = __webpack_require__(195);
+	var type = __webpack_require__(196);
 	function FakeMap() {
 	  this.clear();
 	}
@@ -24109,7 +24478,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -24487,657 +24856,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 196 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* eslint-disable func-names */
-	/**
-	 * Created by jljsj on 16/1/27.
-	 */
-	
-	
-	var _easing = __webpack_require__(197);
-	
-	var _easing2 = _interopRequireDefault(_easing);
-	
-	var _plugins = __webpack_require__(199);
-	
-	var _plugins2 = _interopRequireDefault(_plugins);
-	
-	var _StylePlugin = __webpack_require__(200);
-	
-	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
-	
-	var _styleUtils = __webpack_require__(185);
-	
-	var _util = __webpack_require__(193);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	var DEFAULT_EASING = 'easeInOutQuad';
-	var DEFAULT_DURATION = 450;
-	var DEFAULT_DELAY = 0;
-	function noop() {}
-	_plugins2["default"].push(_StylePlugin2["default"]);
-	// 设置默认数据
-	function defaultData(vars, now) {
-	  return {
-	    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
-	    delay: vars.delay || DEFAULT_DELAY,
-	    ease: typeof vars.ease === 'function' ? vars.ease : _easing2["default"][vars.ease || DEFAULT_EASING],
-	    onUpdate: vars.onUpdate || noop,
-	    onComplete: vars.onComplete || noop,
-	    onStart: vars.onStart || noop,
-	    onRepeat: vars.onRepeat || noop,
-	    repeat: vars.repeat || 0,
-	    repeatDelay: vars.repeatDelay || 0,
-	    yoyo: vars.yoyo || false,
-	    type: vars.type || 'to',
-	    initTime: now,
-	    appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null
-	  };
-	}
-	
-	var timeLine = function timeLine(target, toData, props) {
-	  var _this = this;
-	
-	  this.target = target;
-	  this.attr = props.attr || 'style';
-	  this.willChange = props.willChange;
-	  // 记录总时间;
-	  this.totalTime = 0;
-	  // 记录当前时间;
-	  this.progressTime = 0;
-	  // 记录时间轴数据;
-	  this.defaultData = [];
-	  // 每个的开始数据；
-	  this.start = {};
-	  // 记录动画开始;
-	  this.onStart = {};
-	  // 开始默认的数据；
-	  this.startDefaultData = {};
-	  var data = [];
-	  toData.forEach(function (d, i) {
-	    var _d = _extends({}, d);
-	    if (_this.attr === 'style') {
-	      data[i] = {};
-	      Object.keys(_d).forEach(function (key) {
-	        if (key in defaultData({}, 0)) {
-	          data[i][key] = _d[key];
-	          delete _d[key];
-	        }
-	      });
-	      data[i].style = _d;
-	      _this.startDefaultData.style = _this.target.getAttribute('style');
-	    } else if (_this.attr === 'attr') {
-	      Object.keys(_d).forEach(function (key) {
-	        if (key === 'style' && Array.isArray(d[key])) {
-	          throw new Error('Style should be the object.');
-	        }
-	        if (key === 'bezier') {
-	          _d.style = _extends({}, _d.style, { bezier: _d[key] });
-	          delete _d[key];
-	          _this.startDefaultData.style = _this.target.getAttribute('style');
-	        } else {
-	          _this.startDefaultData[key] = _this.target.getAttribute(key);
-	        }
-	      });
-	      data[i] = _d;
-	    }
-	  });
-	  // 动画过程
-	  this.tween = {};
-	  // 每帧的时间;
-	  this.perFrame = Math.round(1000 / 60);
-	  // 注册，第一次进入执行注册
-	  this.register = false;
-	  // 缓动最小值;
-	  this.tinyNum = 0.0000000001;
-	  // 设置默认动画数据;
-	  this.setDefaultData(data);
-	};
-	var p = timeLine.prototype;
-	
-	p.setDefaultData = function (_vars) {
-	  var _this2 = this;
-	
-	  var now = 0;
-	  var repeatMax = false;
-	  var data = _vars.map(function (item) {
-	    var appearToBool = typeof item.appearTo === 'number';
-	    // 加上延时，在没有播放过时；
-	    // !appearToBool && (now += item.delay || 0);
-	    if (!appearToBool) {
-	      now += item.delay || 0;
-	    }
-	    var appearToTime = (item.appearTo || 0) + (item.delay || 0);
-	    // 获取默认数据
-	    var tweenData = defaultData(item, appearToBool ? appearToTime : now);
-	    tweenData.vars = {};
-	    Object.keys(item).forEach(function (_key) {
-	      if (!(_key in tweenData)) {
-	        var _data = item[_key];
-	        if (_key in _plugins2["default"]) {
-	          tweenData.vars[_key] = new _plugins2["default"][_key](_this2.target, _data, tweenData.type);
-	        } else if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
-	          tweenData.vars[_key] = { type: 'color', vars: (0, _styleUtils.parseColor)(_data) };
-	        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
-	          var vars = parseFloat(_data);
-	          var unit = _data.toString().replace(/[^a-z|%]/g, '');
-	          var count = _data.toString().replace(/[^+|=|-]/g, '');
-	          tweenData.vars[_key] = { unit: unit, vars: vars, count: count };
-	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2["default"]) {
-	          tweenData.vars[_key] = new _plugins2["default"].SVGMorph(_this2.target, _data, _key);
-	        }
-	      }
-	    });
-	    if (tweenData.yoyo && !tweenData.repeat) {
-	      console.warn('Warning: yoyo must be used together with repeat;'); // eslint-disable-line
-	    }
-	    if (tweenData.repeat === -1) {
-	      repeatMax = true;
-	    }
-	    var repeat = tweenData.repeat === -1 ? 0 : tweenData.repeat;
-	    if (appearToBool) {
-	      // 如果有 appearTo 且这条时间比 now 大时，，总时间用这条；
-	      var appearNow = item.appearTo + (item.delay || 0) + tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
-	      now = appearNow >= now ? appearNow : now;
-	    } else {
-	      if (tweenData.delay < -tweenData.duration) {
-	        // 如果延时小于 负时间时,,不加,再减回延时;
-	        now -= tweenData.delay;
-	      } else {
-	        // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
-	        now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
-	      }
-	    }
-	    tweenData.mode = '';
-	    return tweenData;
-	  });
-	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
-	  this.defaultData = data;
-	};
-	p.getAnimStartData = function (item) {
-	  var _this3 = this;
-	
-	  var start = {};
-	  Object.keys(item).forEach(function (_key) {
-	    if (_key in _plugins2["default"] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-	      start[_key] = item[_key].getAnimStart(_this3.willChange);
-	      return;
-	    }
-	    if (_this3.attr === 'attr') {
-	      // 除了d和这points外的标签动画；
-	      var attribute = _this3.target.getAttribute(_key);
-	      var data = attribute === 'null' || !attribute ? 0 : attribute;
-	      if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
-	        data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
-	        data = (0, _styleUtils.parseColor)(data);
-	        start[_key] = data;
-	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
-	        var unit = data.toString().replace(/[^a-z|%]/g, '');
-	        start[_key] = unit !== item[_key].unit ? (0, _util.startConvertToEndUnit)(_this3.target, _key, parseFloat(data), unit, item[_key].unit) : parseFloat(data);
-	      }
-	      // start[_key] = data;
-	      return;
-	    }
-	    start[_key] = _this3.target[_key] || 0;
-	  });
-	  return start;
-	};
-	p.setAnimData = function (data) {
-	  var _this4 = this;
-	
-	  Object.keys(data).forEach(function (key) {
-	    if (key in _plugins2["default"] || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
-	      return;
-	    }
-	    _this4.target[key] = data[key];
-	  });
-	};
-	p.setRatio = function (ratio, endData, i) {
-	  var _this5 = this;
-	
-	  Object.keys(endData.vars).forEach(function (_key) {
-	    if (_key in _plugins2["default"] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-	      endData.vars[_key].setRatio(ratio, _this5.tween);
-	      return;
-	    }
-	    var endVars = endData.vars[_key];
-	    var startVars = _this5.start[i][_key];
-	    var data = void 0;
-	    if (_this5.attr === 'attr') {
-	      // 除了d和这points外的标签动画；
-	      if (!endVars.type) {
-	        data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit : (endVars.vars - startVars) * ratio + startVars + endVars.unit;
-	        _this5.target.setAttribute(_key, data);
-	      } else if (endVars.type === 'color') {
-	        if (endVars.vars.length === 3 && startVars.length === 4) {
-	          endVars.vars[3] = 1;
-	        }
-	        data = endVars.vars.map(function (_endData, _i) {
-	          var startData = startVars[_i] || 0;
-	          return (_endData - startData) * ratio + startData;
-	        });
-	        _this5.target.setAttribute(_key, (0, _styleUtils.getColor)(data));
-	      }
-	    }
-	  });
-	  this.setAnimData(this.tween);
-	};
-	p.render = function () {
-	  var _this6 = this;
-	
-	  this.defaultData.forEach(function (item, i) {
-	    var initTime = item.initTime;
-	    var duration = (0, _styleUtils.toFixed)(item.duration);
-	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
-	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
-	    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
-	    if (item.repeat) {
-	      if (item.repeat < repeatNum && item.repeat !== -1) {
-	        return;
-	      }
-	      if (item.repeat || item.repeat <= repeatNum) {
-	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
-	      }
-	    }
-	    var startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
-	    var endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
-	    //  精度损失，只取小数点后10位。
-	    var progressTime = (0, _styleUtils.toFixed)(_this6.progressTime - initTime);
-	    // 设置 start
-	    var delay = item.delay >= 0 ? item.delay : -item.delay;
-	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay > -_this6.perFrame && !_this6.start[i]) {
-	      _this6.start[i] = _this6.getAnimStartData(item.vars);
-	      if (!_this6.register && progressTime <= _this6.perFrame) {
-	        _this6.register = true;
-	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
-	        var s = delay ? 0 : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
-	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
-	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
-	        _this6.setRatio(st, item, i);
-	      }
-	    }
-	    var e = {
-	      index: i,
-	      target: _this6.target
-	    };
-	
-	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
-	      // 重新开始, 在第一秒触发时调用;
-	      item.onRepeat(e);
-	    }
-	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
-	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
-	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
-	      var compRatio = duration ? item.ease(duration, startData, endData, duration) : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
-	      _this6.setRatio(compRatio, item, i);
-	      if (item.mode !== 'reset') {
-	        item.onComplete(e);
-	      }
-	      item.mode = 'onComplete';
-	    } else if (progressTime >= 0 && progressTime < duration) {
-	      item.mode = progressTime < _this6.perFrame && !_this6.onStart[i] ? 'onStart' : 'onUpdate';
-	      progressTime = progressTime < 0 ? 0 : progressTime;
-	      progressTime = progressTime > duration ? duration : progressTime;
-	      var ratio = item.ease(progressTime, startData, endData, duration);
-	      _this6.setRatio(ratio, item, i);
-	      _this6.onStart[i] = true;
-	      if (progressTime <= _this6.perFrame) {
-	        item.onStart(e);
-	      } else {
-	        item.onUpdate(_extends({ ratio: ratio }, e));
-	      }
-	    }
-	
-	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
-	      _this6.onChange(_extends({
-	        moment: _this6.progressTime,
-	        mode: item.mode
-	      }, e));
-	    }
-	  });
-	};
-	// 播放帧
-	p.frame = function (moment) {
-	  this.progressTime = moment;
-	  this.render();
-	};
-	p.resetAnimData = function () {
-	  this.tween = {};
-	  this.start = {};
-	  this.onStart = {};
-	};
-	
-	p.resetDefaultStyle = function () {
-	  var _this7 = this;
-	
-	  this.tween = {};
-	  this.defaultData = this.defaultData.map(function (item) {
-	    item.mode = 'reset';
-	    return item;
-	  });
-	  Object.keys(this.startDefaultData).forEach(function (key) {
-	    if (!(key in defaultData({}, 0))) {
-	      _this7.target.setAttribute(key, _this7.startDefaultData[key]);
-	    }
-	  });
-	};
-	
-	p.onChange = noop;
-	exports["default"] = timeLine;
-	module.exports = exports['default'];
-
-/***/ },
 /* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _tweenFunctions = __webpack_require__(198);
-	
-	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
-	
-	var _util = __webpack_require__(193);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	_tweenFunctions2["default"].path = function (_path, _param) {
-	  var param = _param || {};
-	  var pathNode = (0, _util.parsePath)(_path);
-	  var pathLength = pathNode.getTotalLength();
-	  var rect = param.rect || 100; // path 的大小，100 * 100，
-	  var lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1500 段。。
-	  var points = [];
-	  for (var i = 0; i < lengthPixel; i++) {
-	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
-	  }
-	  return function path(t, b, _c, d) {
-	    var p = _tweenFunctions2["default"].linear(t, b, _c, d);
-	    var timePointX = rect * p; // X 轴的百分比;
-	    // 取出 x 轴百分比上的点;
-	    var point = points.filter(function (item) {
-	      return item.x >= timePointX;
-	    })[0] || pathNode.getPointAtLength(p * pathLength);
-	    return 1 - point.y / rect;
-	  };
-	};
-	
-	exports["default"] = _tweenFunctions2["default"];
-	module.exports = exports['default'];
-
-/***/ },
-/* 198 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// t: current time, b: beginning value, _c: final value, d: total duration
-	var tweenFunctions = {
-	  linear: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * t / d + b;
-	  },
-	  easeInQuad: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * (t /= d) * t + b;
-	  },
-	  easeOutQuad: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return -c * (t /= d) * (t - 2) + b;
-	  },
-	  easeInOutQuad: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if ((t /= d / 2) < 1) {
-	      return c / 2 * t * t + b;
-	    } else {
-	      return -c / 2 * ((--t) * (t - 2) - 1) + b;
-	    }
-	  },
-	  easeInCubic: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * (t /= d) * t * t + b;
-	  },
-	  easeOutCubic: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * ((t = t / d - 1) * t * t + 1) + b;
-	  },
-	  easeInOutCubic: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if ((t /= d / 2) < 1) {
-	      return c / 2 * t * t * t + b;
-	    } else {
-	      return c / 2 * ((t -= 2) * t * t + 2) + b;
-	    }
-	  },
-	  easeInQuart: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * (t /= d) * t * t * t + b;
-	  },
-	  easeOutQuart: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return -c * ((t = t / d - 1) * t * t * t - 1) + b;
-	  },
-	  easeInOutQuart: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if ((t /= d / 2) < 1) {
-	      return c / 2 * t * t * t * t + b;
-	    } else {
-	      return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
-	    }
-	  },
-	  easeInQuint: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * (t /= d) * t * t * t * t + b;
-	  },
-	  easeOutQuint: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
-	  },
-	  easeInOutQuint: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if ((t /= d / 2) < 1) {
-	      return c / 2 * t * t * t * t * t + b;
-	    } else {
-	      return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
-	    }
-	  },
-	  easeInSine: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
-	  },
-	  easeOutSine: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * Math.sin(t / d * (Math.PI / 2)) + b;
-	  },
-	  easeInOutSine: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
-	  },
-	  easeInExpo: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
-	  },
-	  easeOutExpo: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
-	  },
-	  easeInOutExpo: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if (t === 0) {
-	      return b;
-	    }
-	    if (t === d) {
-	      return b + c;
-	    }
-	    if ((t /= d / 2) < 1) {
-	      return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
-	    } else {
-	      return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
-	    }
-	  },
-	  easeInCirc: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
-	  },
-	  easeOutCirc: function(t, b, _c, d) {
-	    var c = _c - b;
-	    return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
-	  },
-	  easeInOutCirc: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if ((t /= d / 2) < 1) {
-	      return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
-	    } else {
-	      return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
-	    }
-	  },
-	  easeInElastic: function(t, b, _c, d) {
-	    var c = _c - b;
-	    var a, p, s;
-	    s = 1.70158;
-	    p = 0;
-	    a = c;
-	    if (t === 0) {
-	      return b;
-	    } else if ((t /= d) === 1) {
-	      return b + c;
-	    }
-	    if (!p) {
-	      p = d * 0.3;
-	    }
-	    if (a < Math.abs(c)) {
-	      a = c;
-	      s = p / 4;
-	    } else {
-	      s = p / (2 * Math.PI) * Math.asin(c / a);
-	    }
-	    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
-	  },
-	  easeOutElastic: function(t, b, _c, d) {
-	    var c = _c - b;
-	    var a, p, s;
-	    s = 1.70158;
-	    p = 0;
-	    a = c;
-	    if (t === 0) {
-	      return b;
-	    } else if ((t /= d) === 1) {
-	      return b + c;
-	    }
-	    if (!p) {
-	      p = d * 0.3;
-	    }
-	    if (a < Math.abs(c)) {
-	      a = c;
-	      s = p / 4;
-	    } else {
-	      s = p / (2 * Math.PI) * Math.asin(c / a);
-	    }
-	    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
-	  },
-	  easeInOutElastic: function(t, b, _c, d) {
-	    var c = _c - b;
-	    var a, p, s;
-	    s = 1.70158;
-	    p = 0;
-	    a = c;
-	    if (t === 0) {
-	      return b;
-	    } else if ((t /= d / 2) === 2) {
-	      return b + c;
-	    }
-	    if (!p) {
-	      p = d * (0.3 * 1.5);
-	    }
-	    if (a < Math.abs(c)) {
-	      a = c;
-	      s = p / 4;
-	    } else {
-	      s = p / (2 * Math.PI) * Math.asin(c / a);
-	    }
-	    if (t < 1) {
-	      return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
-	    } else {
-	      return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * 0.5 + c + b;
-	    }
-	  },
-	  easeInBack: function(t, b, _c, d, s) {
-	    var c = _c - b;
-	    if (s === void 0) {
-	      s = 1.70158;
-	    }
-	    return c * (t /= d) * t * ((s + 1) * t - s) + b;
-	  },
-	  easeOutBack: function(t, b, _c, d, s) {
-	    var c = _c - b;
-	    if (s === void 0) {
-	      s = 1.70158;
-	    }
-	    return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
-	  },
-	  easeInOutBack: function(t, b, _c, d, s) {
-	    var c = _c - b;
-	    if (s === void 0) {
-	      s = 1.70158;
-	    }
-	    if ((t /= d / 2) < 1) {
-	      return c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b;
-	    } else {
-	      return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
-	    }
-	  },
-	  easeInBounce: function(t, b, _c, d) {
-	    var c = _c - b;
-	    var v;
-	    v = tweenFunctions.easeOutBounce(d - t, 0, c, d);
-	    return c - v + b;
-	  },
-	  easeOutBounce: function(t, b, _c, d) {
-	    var c = _c - b;
-	    if ((t /= d) < 1 / 2.75) {
-	      return c * (7.5625 * t * t) + b;
-	    } else if (t < 2 / 2.75) {
-	      return c * (7.5625 * (t -= 1.5 / 2.75) * t + 0.75) + b;
-	    } else if (t < 2.5 / 2.75) {
-	      return c * (7.5625 * (t -= 2.25 / 2.75) * t + 0.9375) + b;
-	    } else {
-	      return c * (7.5625 * (t -= 2.625 / 2.75) * t + 0.984375) + b;
-	    }
-	  },
-	  easeInOutBounce: function(t, b, _c, d) {
-	    var c = _c - b;
-	    var v;
-	    if (t < d / 2) {
-	      v = tweenFunctions.easeInBounce(t * 2, 0, c, d);
-	      return v * 0.5 + b;
-	    } else {
-	      v = tweenFunctions.easeOutBounce(t * 2 - d, 0, c, d);
-	      return v * 0.5 + c * 0.5 + b;
-	    }
-	  }
-	};
-	
-	module.exports = tweenFunctions;
-
-
-/***/ },
-/* 199 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -25155,7 +24874,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 200 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25171,9 +24890,9 @@
 	
 	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
-	var _util = __webpack_require__(193);
+	var _util = __webpack_require__(194);
 	
-	var _plugins = __webpack_require__(199);
+	var _plugins = __webpack_require__(197);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
@@ -25491,6 +25210,281 @@
 	module.exports = exports['default'];
 
 /***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var TweenOne = __webpack_require__(200);
+	TweenOne.TweenOneGroup = __webpack_require__(201);
+	TweenOne.easing = __webpack_require__(192);
+	module.exports = TweenOne;
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(36);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _util = __webpack_require__(194);
+	
+	var _styleUtils = __webpack_require__(185);
+	
+	var _TimeLine = __webpack_require__(191);
+	
+	var _TimeLine2 = _interopRequireDefault(_TimeLine);
+	
+	var _plugins = __webpack_require__(197);
+	
+	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	var _ticker = __webpack_require__(188);
+	
+	var _ticker2 = _interopRequireDefault(_ticker);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	function noop() {}
+	
+	var perFrame = Math.round(1000 / 60);
+	
+	var TweenOne = function (_Component) {
+	  _inherits(TweenOne, _Component);
+	
+	  function TweenOne() {
+	    _classCallCheck(this, TweenOne);
+	
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
+	    _this.restart = function () {
+	      _this.startMoment = _this.timeLine.progressTime;
+	      _this.startFrame = _ticker2["default"].frame;
+	      _this.play();
+	    };
+	
+	    _this.start = function () {
+	      var props = _this.props;
+	      if (props.animation && Object.keys(props.animation).length) {
+	        _this.timeLine = new _TimeLine2["default"](_this.dom, (0, _util.dataToArray)(props.animation), { attr: props.attr, willChange: props.willChange });
+	        // 预先注册 raf, 初始动画数值。
+	        _this.raf(0, true);
+	        // 开始动画
+	        _this.play();
+	      }
+	    };
+	
+	    _this.play = function () {
+	      _this.cancelRequestAnimationFrame();
+	      if (_this.paused) {
+	        return;
+	      }
+	      _this.rafID = _ticker2["default"].add(_this.raf);
+	    };
+	
+	    _this.frame = function (date, register) {
+	      var registerMoment = register ? date : 0;
+	      var moment = (_ticker2["default"].frame - _this.startFrame) * perFrame + registerMoment + _this.startMoment;
+	      if (!register && moment < perFrame && typeof _this.props.moment !== 'number') {
+	        // 注册完后，第一帧预先跑动， 鼠标跟随
+	        moment = perFrame;
+	      }
+	      if (_this.reverse) {
+	        moment = (_this.startMoment || 0) - (_ticker2["default"].frame - _this.startFrame) * perFrame;
+	      }
+	      moment = moment > _this.timeLine.totalTime ? _this.timeLine.totalTime : moment;
+	      moment = moment <= 0 ? 0 : moment;
+	      if (moment < _this.moment && !_this.reverse) {
+	        _this.timeLine.resetDefaultStyle();
+	      }
+	      _this.moment = moment;
+	      _this.timeLine.onChange = _this.onChange;
+	      _this.timeLine.frame(moment);
+	    };
+	
+	    _this.raf = function (date, register) {
+	      _this.frame(date, register);
+	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
+	        return _this.cancelRequestAnimationFrame();
+	      }
+	    };
+	
+	    _this.cancelRequestAnimationFrame = function () {
+	      _ticker2["default"].clear(_this.rafID);
+	      _this.rafID = -1;
+	    };
+	
+	    _this.rafID = -1;
+	    _this.moment = _this.props.moment || 0;
+	    _this.startMoment = _this.props.moment || 0;
+	    _this.startFrame = _ticker2["default"].frame;
+	    _this.paused = _this.props.paused;
+	    _this.reverse = _this.props.reverse;
+	    _this.onChange = _this.props.onChange;
+	    _this.newMomentAnim = false;
+	    return _this;
+	  }
+	
+	  TweenOne.prototype.componentDidMount = function componentDidMount() {
+	    this.dom = _reactDom2["default"].findDOMNode(this);
+	    this.start();
+	  };
+	
+	  TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var _this2 = this;
+	
+	    this.onChange = nextProps.onChange;
+	    // 跳帧事件 moment;
+	    var newMoment = nextProps.moment;
+	    this.newMomentAnim = false;
+	    if (typeof newMoment === 'number' && newMoment !== this.moment) {
+	      this.startMoment = newMoment;
+	      this.startFrame = _ticker2["default"].frame;
+	      if (this.rafID === -1 && !nextProps.paused) {
+	        (function () {
+	          _this2.timeLine.resetAnimData();
+	          var style = nextProps.style;
+	          _this2.dom.setAttribute('style', '');
+	          Object.keys(style).forEach(function (key) {
+	            _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	          });
+	          _this2.play();
+	        })();
+	      } else {
+	        this.newMomentAnim = true;
+	      }
+	    }
+	    // 动画处理
+	    var newAnimation = nextProps.animation;
+	    var currentAnimation = this.props.animation;
+	    var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
+	    var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
+	    // 如果 animation 不同， 重新动画
+	    this.restartAnim = false;
+	    if (!equal) {
+	      this.cancelRequestAnimationFrame();
+	      if (nextProps.resetStyleBool && this.timeLine) {
+	        this.timeLine.resetDefaultStyle();
+	      }
+	      this.startMoment = 0;
+	      this.startFrame = _ticker2["default"].frame;
+	      this.restartAnim = true;
+	      // this.start(nextProps);
+	    } else if (!styleEqual) {
+	      // 如果 animation 相同，，style 不同，从当前时间开放。
+	      if (this.rafID !== -1) {
+	        this.cancelRequestAnimationFrame();
+	        this.startMoment = this.timeLine.progressTime;
+	        this.startFrame = _ticker2["default"].frame;
+	        this.restartAnim = true;
+	        // this.start(nextProps);
+	      }
+	    }
+	    // 暂停倒放
+	    if (this.paused !== nextProps.paused || this.reverse !== nextProps.reverse) {
+	      this.paused = nextProps.paused;
+	      this.reverse = nextProps.reverse;
+	      if (this.paused) {
+	        this.cancelRequestAnimationFrame();
+	      } else {
+	        if (this.reverse && nextProps.reverseDelay) {
+	          this.cancelRequestAnimationFrame();
+	          _ticker2["default"].timeout(this.restart, nextProps.reverseDelay);
+	        } else {
+	          this.restart();
+	        }
+	      }
+	    }
+	  };
+	
+	  TweenOne.prototype.componentDidUpdate = function componentDidUpdate() {
+	    // 样式更新了后再执行动画；
+	    if (this.restartAnim) {
+	      this.start();
+	    }
+	    if (this.newMomentAnim) {
+	      this.raf();
+	    }
+	  };
+	
+	  TweenOne.prototype.componentWillUnmount = function componentWillUnmount() {
+	    this.cancelRequestAnimationFrame();
+	  };
+	
+	  TweenOne.prototype.render = function render() {
+	    var props = _extends({}, this.props);
+	    ['animation', 'component', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'willChange'].forEach(function (key) {
+	      return delete props[key];
+	    });
+	    props.style = _extends({}, this.props.style);
+	    Object.keys(props.style).forEach(function (p) {
+	      if (p.match(/filter/i)) {
+	        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(function (prefix) {
+	          return props.style[prefix + 'Filter'] = props.style[p];
+	        });
+	      }
+	    });
+	    props.component = typeof props.component === 'function' ? this.props.componentReplace : props.component;
+	    if (!props.component) {
+	      delete props.component;
+	    }
+	    return _react2["default"].createElement(this.props.component, props);
+	  };
+	
+	  return TweenOne;
+	}(_react.Component);
+	
+	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
+	
+	TweenOne.propTypes = {
+	  component: _react.PropTypes.any,
+	  componentReplace: _react.PropTypes.string,
+	  animation: objectOrArray,
+	  children: _react.PropTypes.any,
+	  style: _react.PropTypes.object,
+	  paused: _react.PropTypes.bool,
+	  reverse: _react.PropTypes.bool,
+	  reverseDelay: _react.PropTypes.number,
+	  moment: _react.PropTypes.number,
+	  attr: _react.PropTypes.string,
+	  willChange: _react.PropTypes.bool,
+	  onChange: _react.PropTypes.func,
+	  resetStyleBool: _react.PropTypes.bool
+	};
+	
+	TweenOne.defaultProps = {
+	  component: 'div',
+	  reverseDelay: 0,
+	  attr: 'style',
+	  onChange: noop,
+	  willChange: true
+	};
+	TweenOne.plugins = _plugins2["default"];
+	exports["default"] = TweenOne;
+	module.exports = exports['default'];
+
+/***/ },
 /* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25506,11 +25500,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TweenOne = __webpack_require__(192);
+	var _TweenOne = __webpack_require__(200);
 	
 	var _TweenOne2 = _interopRequireDefault(_TweenOne);
 	
-	var _util = __webpack_require__(193);
+	var _util = __webpack_require__(194);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	

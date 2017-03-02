@@ -21,7 +21,7 @@ webpackJsonp([2],{
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(191);
+	var _rcTweenOne = __webpack_require__(199);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
