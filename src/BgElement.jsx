@@ -6,6 +6,7 @@ import {
 import {
   currentScrollTop,
   toArrayChildren,
+  windowHeight,
 } from './utils';
 import animType from './anim';
 import TimeLine from 'rc-tween-one/lib/TimeLine';
@@ -75,11 +76,10 @@ export default class BgElement extends React.Component {
   onScroll = () => {
     const scrollTop = currentScrollTop();
     const domRect = this.dom.parentNode.getBoundingClientRect();
-
-    const domHeight = domRect.height;
     const offsetTop = domRect.top + scrollTop;
-    // scale 在出屏出时是 1, scrollTop 为 0 时是 0;
-    let scale = scrollTop / (domHeight + offsetTop);
+    const height = Math.max(domRect.height, windowHeight());
+    const elementShowHeight = scrollTop - offsetTop + height;
+    let scale = elementShowHeight / (height + domRect.height);
     scale = scale || 0;
     scale = scale >= 1 ? 1 : scale;
     this.timeLine.frame(scale * this.scrollParallaxDuration);

@@ -1,6 +1,6 @@
 {
   "name": "rc-banner-anim",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "banner-anim animation component for react",
   "keywords": [
     "react",
@@ -19,10 +19,17 @@
   },
   "files": [
     "lib",
-    "assets/*.css"
+    "assets/*.css",
+    "dist"
   ],
   "licenses": "MIT",
   "main": "./lib/index",
+  "entry": {
+    "rc-banner-anim": [
+      "./assets/index.less",
+      "./src/index.js"
+    ]
+  },
   "config": {
     "port": 8012
   },
@@ -30,7 +37,7 @@
     "build": "rc-tools run build",
     "gh-pages": "rc-tools run gh-pages",
     "start": "rc-tools run server",
-    "pub": "rc-tools run pub",
+    "pub": "rc-tools run pub --babel-runtime",
     "lint": "rc-tools run lint",
     "karma": "rc-tools run karma",
     "saucelabs": "rc-tools run saucelabs",
@@ -48,6 +55,7 @@
     "rc-queue-anim": "0.11.x"
   },
   "dependencies": {
+    "babel-runtime": "6.x",
     "rc-tween-one": "~1.0.0",
     "style-utils": "~0.1.10",
     "tween-functions": "1.x"

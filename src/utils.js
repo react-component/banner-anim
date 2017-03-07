@@ -85,6 +85,11 @@ export function currentScrollLeft() {
   return window.pageXOffset || document.body.scrollLeft || document.documentElement.scrollLeft;
 }
 
+export function windowHeight() {
+  return window.innerHeight ||
+    document.documentElement.clientHeight || document.body.clientHeight;
+}
+
 export function switchChildren(hideProps, item) {
   if (!hideProps) {
     return item;

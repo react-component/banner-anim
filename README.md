@@ -121,7 +121,7 @@ React.render(<BannerAnim>
 |----------|-----------------|--------------|-----------------------|
 | id      |  string         | -            |  must( 0.4.0 key to id, use dom )|
 | className | string         | -            | className             |
-| scrollParallax | object | null | { y: 100 },  scroll Element y to 100 | 
+| scrollParallax | object | null | { y: 100 },  from bottom to top of browser, element leave display area y is 100 | 
 | videoResize | boolean | true | children is video, video follow window resize |
 | component | string | 'div' | component tag        |
 

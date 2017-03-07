@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/index.less';
 import '../assets/index.less';
+import './assets/bgParallax.less';
 
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
@@ -22,8 +23,6 @@ class Demo extends React.Component {
             className="bg"
             style={{
               backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
             }}
             scrollParallax={{ y: 100 }}
           />
@@ -43,8 +42,6 @@ class Demo extends React.Component {
             className="bg"
             style={{
               backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
             }}
             scrollParallax={{ y: 100 }}
           />
