@@ -3,55 +3,63 @@ webpackJsonp([3],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(214);
+	module.exports = __webpack_require__(298);
 
 
 /***/ },
 
-/***/ 214:
+/***/ 298:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // use jsx to render html, do not modify simple.html
+	var _classCallCheck2 = __webpack_require__(2);
 	
-	var _rcBannerAnim = __webpack_require__(2);
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _possibleConstructorReturn2 = __webpack_require__(3);
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = __webpack_require__(72);
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
+	
+	var _extends2 = __webpack_require__(83);
+	
+	var _extends3 = _interopRequireDefault(_extends2);
+	
+	var _rcBannerAnim = __webpack_require__(80);
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(203);
+	var _rcQueueAnim = __webpack_require__(286);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(199);
+	var _rcTweenOne = __webpack_require__(282);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
-	var _react = __webpack_require__(5);
+	var _react = __webpack_require__(88);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(119);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _objectAssign = __webpack_require__(8);
+	var _objectAssign = __webpack_require__(91);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	__webpack_require__(210);
+	__webpack_require__(293);
 	
-	__webpack_require__(211);
+	__webpack_require__(294);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	// use jsx to render html, do not modify simple.html
 	
 	var animType = _rcBannerAnim2.default.animType,
 	    setAnimCompToTagComp = _rcBannerAnim2.default.setAnimCompToTagComp;
@@ -68,8 +76,8 @@ webpackJsonp([3],{
 	    _y = direction === 'next' ? '50%' : '-50%';
 	    children = _react2.default.Children.toArray(children).map(setAnimCompToTagComp);
 	  }
-	  return _react2.default.cloneElement(elem, _extends({}, props, {
-	    animation: _extends({}, animData, {
+	  return _react2.default.cloneElement(elem, (0, _extends3.default)({}, props, {
+	    animation: (0, _extends3.default)({}, animData, {
 	      y: _y,
 	      delay: type === 'enter' ? 0 : 50,
 	      type: type === 'enter' ? 'from' : 'to'
@@ -82,12 +90,11 @@ webpackJsonp([3],{
 	var BgElement = Element.BgElement;
 	
 	var Demo = function (_React$Component) {
-	  _inherits(Demo, _React$Component);
+	  (0, _inherits3.default)(Demo, _React$Component);
 	
 	  function Demo() {
-	    _classCallCheck(this, Demo);
-	
-	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	    (0, _classCallCheck3.default)(this, Demo);
+	    return (0, _possibleConstructorReturn3.default)(this, _React$Component.apply(this, arguments));
 	  }
 	
 	  Demo.prototype.render = function render() {
