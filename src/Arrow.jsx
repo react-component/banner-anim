@@ -41,4 +41,6 @@ Arrow.defaultProps = {
   className: 'banner-anim-arrow',
 };
 
+Arrow.isBannerAnimArrow = true;
+
 export default Arrow;

@@ -320,4 +320,5 @@ BannerAnim.Thumb = Thumb;
 BannerAnim.animType = animType;
 BannerAnim.setAnimCompToTagComp = setAnimCompToTagComp;
 BannerAnim.switchChildren = switchChildren;
+BannerAnim.isBannerAnim = true;
 export default BannerAnim;

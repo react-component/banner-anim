@@ -56,6 +56,6 @@ Thumb.defaultProps = {
   thumbClick: () => {
   },
 };
-
+Thumb.isBannerAnimThumb = true;
 
 export default Thumb;

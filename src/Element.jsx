@@ -287,5 +287,5 @@ Element.defaultProps = {
 };
 
 Element.BgElement = BgElement;
-
+Element.isBannerAnimElement = true;
 export default Element;

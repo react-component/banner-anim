@@ -25,22 +25,19 @@ export function setAnimCompToTagComp(item, i) {
   const props = { ...item.props };
   props.key = item.key || i;
   // 压缩后名称不一样了。
-  const propTypes = item.type.propTypes;
-  if (propTypes && (propTypes.animConfig &&
-      propTypes.animatingClassName && propTypes.leaveReverse &&
-      propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration
-      || propTypes.animation && propTypes.paused && propTypes.reverse &&
-      propTypes.attr && propTypes.moment
-      || propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
+  const type = item.type;
+  const propTypes = type.propTypes;
+  if (propTypes && (propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
       propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave &&
       propTypes.onEnd && propTypes.animation
-    )) {
+    ) || type.isTweenOne || type.isQueueAnim) {
     // queueAnim or tweeOne or animate;
     const style = { ...props.style };
     style.position = 'relative';
     props.style = style;
     const component = props.component;
     [
+      // queueAnim
       'component',
       'appear',
       'interval',
@@ -51,6 +48,7 @@ export function setAnimCompToTagComp(item, i) {
       'enterForcedRePlay',
       'leaveReverse',
       'animatingClassName',
+      // tween-one
       'animation',
       'reverseDelay',
       'attr',
@@ -58,6 +56,10 @@ export function setAnimCompToTagComp(item, i) {
       'reverse',
       'moment',
       'resetStyleBool',
+      'updateReStart',
+      'willChange',
+      'onChange',
+      // animate
       'showProp',
       'exclusive',
       'transitionName',

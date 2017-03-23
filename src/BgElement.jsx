@@ -154,3 +154,5 @@ BgElement.defaultProps = {
   component: 'div',
   videoResize: true,
 };
+
+BgElement.isBannerAnimBaElement = true;
