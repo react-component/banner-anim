@@ -1969,6 +1969,7 @@
 	BannerAnim.animType = _anim2.default;
 	BannerAnim.setAnimCompToTagComp = _utils.setAnimCompToTagComp;
 	BannerAnim.switchChildren = _utils.switchChildren;
+	BannerAnim.isBannerAnim = true;
 	exports.default = BannerAnim;
 	module.exports = exports['default'];
 
@@ -23120,6 +23121,8 @@
 	  className: 'banner-anim-arrow'
 	};
 	
+	Arrow.isBannerAnimArrow = true;
+	
 	exports.default = Arrow;
 	module.exports = exports['default'];
 
@@ -23451,7 +23454,7 @@
 	};
 	
 	Element.BgElement = _BgElement2.default;
-	
+	Element.isBannerAnimElement = true;
 	exports.default = Element;
 	module.exports = exports['default'];
 
@@ -23653,6 +23656,8 @@
 	  component: 'div',
 	  videoResize: true
 	};
+	
+	BgElement.isBannerAnimBaElement = true;
 	module.exports = exports['default'];
 
 /***/ },
@@ -24196,14 +24201,21 @@
 	  var props = (0, _extends3.default)({}, item.props);
 	  props.key = item.key || i;
 	  // 压缩后名称不一样了。
-	  var propTypes = item.type.propTypes;
-	  if (propTypes && (propTypes.animConfig && propTypes.animatingClassName && propTypes.leaveReverse && propTypes.delay && propTypes.ease && propTypes.interval && propTypes.duration || propTypes.animation && propTypes.paused && propTypes.reverse && propTypes.attr && propTypes.moment || propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation)) {
+	  var type = item.type;
+	  var propTypes = type.propTypes;
+	  if (propTypes && propTypes.showProp && propTypes.exclusive && propTypes.transitionName && propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave && propTypes.onEnd && propTypes.animation || type.isTweenOne || type.isQueueAnim) {
 	    // queueAnim or tweeOne or animate;
 	    var style = (0, _extends3.default)({}, props.style);
 	    style.position = 'relative';
 	    props.style = style;
 	    var component = props.component;
-	    ['component', 'appear', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName', 'animation', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'showProp', 'exclusive', 'transitionName', 'transitionAppear', 'transitionEnter', 'transitionLeave', 'onEnd'].forEach(function (key) {
+	    [
+	    // queueAnim
+	    'component', 'appear', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName',
+	    // tween-one
+	    'animation', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'updateReStart', 'willChange', 'onChange',
+	    // animate
+	    'showProp', 'exclusive', 'transitionName', 'transitionAppear', 'transitionEnter', 'transitionLeave', 'onEnd'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    return _react2.default.createElement(component, props);
@@ -27397,6 +27409,7 @@
 	  component: 'div',
 	  thumbClick: function thumbClick() {}
 	};
+	Thumb.isBannerAnimThumb = true;
 	
 	exports.default = Thumb;
 	module.exports = exports['default'];
