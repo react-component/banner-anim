@@ -239,7 +239,7 @@ class Element extends Component {
     props.style = style;
     props.className = `banner-anim-elem ${this.props.prefixCls || ''}`.trim();
     const bgElem = toArrayChildren(this.props.children).filter(item =>
-      (item.type === BgElement || item.type.isBannerAnimBaElement))
+      item.type.isBannerAnimBaElement)
       .map(item => {
         return React.cloneElement(item, { show: this.state.show });
       });
