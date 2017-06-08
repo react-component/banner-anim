@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import {
   stylesToCss,
 } from 'style-utils';
@@ -141,13 +142,13 @@ export default class BgElement extends React.Component {
 }
 
 BgElement.propTypes = {
-  className: React.PropTypes.string,
-  style: React.PropTypes.object,
-  children: React.PropTypes.any,
-  component: React.PropTypes.any,
-  videoResize: React.PropTypes.bool,
-  scrollParallax: React.PropTypes.object,
-  show: React.PropTypes.bool,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  children: PropTypes.any,
+  component: PropTypes.any,
+  videoResize: PropTypes.bool,
+  scrollParallax: PropTypes.object,
+  show: PropTypes.bool,
 };
 
 BgElement.defaultProps = {

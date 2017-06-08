@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -73,10 +74,10 @@ export function setAnimCompToTagComp(item, i) {
   return item;
 }
 setAnimCompToTagComp.propTypes = {
-  key: React.PropTypes.string,
-  style: React.PropTypes.object,
-  component: React.PropTypes.any,
-  name: React.PropTypes.string,
+  key: PropTypes.string,
+  style: PropTypes.object,
+  component: PropTypes.any,
+  name: PropTypes.string,
 };
 
 export function currentScrollTop() {
