@@ -117,7 +117,6 @@ li {
   border-radius: 8px;
   margin: 0 5px;
   background: rgba(102, 102, 102, 0.35);
-  -webkit-transition: background .3s;
   transition: background .3s;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
 }

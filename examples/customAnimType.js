@@ -1,15 +1,15 @@
 webpackJsonp([3],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(299);
+	module.exports = __webpack_require__(312);
 
 
-/***/ },
+/***/ }),
 
-/***/ 299:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 312:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -33,11 +33,11 @@ webpackJsonp([3],{
 	
 	var _rcBannerAnim2 = _interopRequireDefault(_rcBannerAnim);
 	
-	var _rcQueueAnim = __webpack_require__(286);
+	var _rcQueueAnim = __webpack_require__(292);
 	
 	var _rcQueueAnim2 = _interopRequireDefault(_rcQueueAnim);
 	
-	var _rcTweenOne = __webpack_require__(282);
+	var _rcTweenOne = __webpack_require__(288);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
@@ -45,7 +45,7 @@ webpackJsonp([3],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(119);
+	var _reactDom = __webpack_require__(123);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -53,9 +53,9 @@ webpackJsonp([3],{
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	__webpack_require__(294);
+	__webpack_require__(307);
 	
-	__webpack_require__(295);
+	__webpack_require__(308);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -177,7 +177,7 @@ webpackJsonp([3],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=customAnimType.js.map

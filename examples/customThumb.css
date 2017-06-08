@@ -8,7 +8,6 @@
   height: 60px;
   margin: 5px 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-  -webkit-transition: background .3s;
   transition: background .3s;
   background: transparent;
 }
