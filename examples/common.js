@@ -24665,7 +24665,7 @@
 	    var component = props.component;
 	    [
 	    // queueAnim
-	    'component', 'appear', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName',
+	    'component', 'componentProps', 'appear', 'interval', 'duration', 'delay', 'animConfig', 'ease', 'enterForcedRePlay', 'leaveReverse', 'animatingClassName',
 	    // tween-one
 	    'animation', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'updateReStart', 'willChange', 'onChange',
 	    // animate
