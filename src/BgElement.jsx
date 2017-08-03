@@ -10,7 +10,7 @@ import {
   windowHeight,
 } from './utils';
 import animType from './anim';
-import TimeLine from 'rc-tween-one/lib/TimeLine';
+import Tween from 'rc-tween-one/lib/Tween';
 
 export default class BgElement extends React.Component {
   constructor() {
@@ -37,11 +37,11 @@ export default class BgElement extends React.Component {
       }
     }
     if (this.props.scrollParallax) {
-      this.timeLine = new TimeLine(this.dom, [{
+      this.tween = new Tween(this.dom, [{
         ease: 'linear', // 放前面是为了在外面设置了可覆盖。
         ...this.props.scrollParallax,
       }], { attr: 'style' });
-      this.timeLine.frame(0);
+      this.tween.frame(0);
       this.onScroll();
       if (window.addEventListener) {
         window.addEventListener('scroll', this.onScroll);
@@ -83,7 +83,7 @@ export default class BgElement extends React.Component {
     let scale = elementShowHeight / (height + domRect.height);
     scale = scale || 0;
     scale = scale >= 1 ? 1 : scale;
-    this.timeLine.frame(scale * this.scrollParallaxDuration);
+    this.tween.frame(scale * this.scrollParallaxDuration);
   };
 
   onResize = () => {
