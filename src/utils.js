@@ -40,6 +40,7 @@ export function setAnimCompToTagComp(item, i) {
     [
       // queueAnim
       'component',
+      'componentProps',
       'appear',
       'interval',
       'duration',
