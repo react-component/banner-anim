@@ -227,7 +227,7 @@ class Element extends Component {
         onComplete: this.animEnd,
       },
       this.props.elemOffset,
-      this.props.hideProps
+      this.props.leaveChildHide
     );
   }
 
@@ -248,7 +248,7 @@ class Element extends Component {
       `prefixCls`, `callBack`,
       `animType`, `duration`, `delay`, `ease`,
       `elemOffset`, 'followParallax',
-      'show', 'type', 'direction', 'hideProps', 'sync',
+      'show', 'type', 'direction', 'leaveChildHide', 'sync',
     ].forEach(key => delete props[key]);
     if (this.show === this.state.show) {
       style[this.transform] = null;
@@ -280,7 +280,7 @@ Element.propTypes = {
   callBack: PropTypes.func,
   followParallax: PropTypes.any,
   show: PropTypes.bool,
-  hideProps: PropTypes.any,
+  leaveChildHide: PropTypes.bool,
   sync: PropTypes.bool,
 };
 Element.defaultProps = {

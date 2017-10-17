@@ -23,62 +23,23 @@ export function setAnimCompToTagComp(item, i) {
   if (!item) {
     return null;
   }
-  const props = { ...item.props };
+  const itemProps = item.props;
+  const props = {};
   props.key = item.key || i;
-  // 压缩后名称不一样了。
-  const type = item.type;
-  const propTypes = type.propTypes;
-  if (propTypes && (propTypes.showProp && propTypes.exclusive && propTypes.transitionName &&
-      propTypes.transitionAppear && propTypes.transitionEnter && propTypes.transitionLeave &&
-      propTypes.onEnd && propTypes.animation
-    ) || type.isTweenOne || type.isQueueAnim) {
-    // queueAnim or tweeOne or animate;
-    const style = { ...props.style };
-    style.position = 'relative';
-    props.style = style;
-    const component = props.component;
-    [
-      // queueAnim
-      'component',
-      'componentProps',
-      'appear',
-      'interval',
-      'duration',
-      'delay',
-      'animConfig',
-      'ease',
-      'enterForcedRePlay',
-      'leaveReverse',
-      'animatingClassName',
-      // tween-one
-      'animation',
-      'reverseDelay',
-      'attr',
-      'paused',
-      'reverse',
-      'moment',
-      'resetStyleBool',
-      'updateReStart',
-      'willChange',
-      'onChange',
-      // animate
-      'showProp',
-      'exclusive',
-      'transitionName',
-      'transitionAppear',
-      'transitionEnter',
-      'transitionLeave',
-      'onEnd',
-    ].forEach(key => delete props[key]);
-    return React.createElement(component, props);
-  }
-  return item;
+  // dom global attributes
+  const domAttrArray = [
+    'accesskey', 'classname', 'contenteditable', 'contextmenu', 'dir', 'draggable',
+    'dropzone', 'hidden', 'id', 'lang', 'spellcheck', 'style', 'tabindex', 'title',
+  ];
+  Object.keys(itemProps).forEach(key => {
+    if (domAttrArray.indexOf(key.toLocaleLowerCase()) >= 0 || key.match('data-')) {
+      props[key] = itemProps[key];
+    }
+  });
+  return React.createElement(itemProps.component, props, itemProps.children);
 }
 setAnimCompToTagComp.propTypes = {
   key: PropTypes.string,
-  style: PropTypes.object,
-  component: PropTypes.any,
-  name: PropTypes.string,
 };
 
 export function currentScrollTop() {
@@ -98,8 +59,8 @@ export function switchChildren(hideProps, item) {
   if (!hideProps) {
     return item;
   }
-  if (typeof hideProps === 'object' && item.key in hideProps) {
-    return React.cloneElement(item, { ...hideProps[item.key] });
+  if (item.type.isTweenOne) {
+    return React.cloneElement(item, { reverse: true });
   }
   return React.cloneElement(item, item.props, null);
 }

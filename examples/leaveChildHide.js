@@ -46,7 +46,7 @@ class Demo extends React.Component {
         >
           <Element key="aaa"
             prefixCls="banner-user-elem"
-            hideProps={{ 2: { reverse: true } }}
+            leaveChildHide
           >
             <BgElement
               key="bg"
@@ -69,7 +69,7 @@ class Demo extends React.Component {
           </Element>
           <Element key="bbb"
             prefixCls="banner-user-elem"
-            hideProps={{ 2: { reverse: true } }}
+            leaveChildHide
           >
             <BgElement
               key="bg"

@@ -1,10 +1,12 @@
+import 'core-js/es6/map';
+import 'core-js/es6/set';
 import React from 'react';
 import ReactDom from 'react-dom';
 import expect from 'expect.js';
-import BannerAnim from '../index';
+import BannerAnim from 'rc-banner-anim';
 import '../assets/index.less';
 import '../examples/assets/index.less';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
@@ -67,7 +69,9 @@ describe('rc-banner-anim', () => {
   });
 
   it('should render children', () => {
-    const instance = createBannerAnimInstance();
+    const instance = createBannerAnimInstance({
+      type: 'gridBar',
+    });
     const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
     const childrenSpan = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'span');
     // banner-anim elem bg prev next thumb 6个；
@@ -92,7 +96,7 @@ describe('rc-banner-anim', () => {
     const instance = createBannerAnimInstance({
       autoPlay: true,
       autoPlaySpeed: 1000,
-      type: 'across',
+      type: 'vertical',
     });
     let children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
     expect(children[0].style.display).to.be('block');
