@@ -5,7 +5,6 @@ import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import assign from 'object-assign';
 import './assets/index.less';
 import '../assets/index.less';
 const { animType, setAnimCompToTagComp } = BannerAnim;
@@ -13,12 +12,12 @@ const { animType, setAnimCompToTagComp } = BannerAnim;
 animType.custom = (elem, type, direction, animData) => {
   console.log(`custom animType, type:${type}`); // eslint-disable-line no-console
   let _y;
-  const props = assign({}, elem.props);
+  const props = { ...elem.props };
   let children = props.children;
   if (type === 'enter') {
-    _y = direction === 'next' ? '-100%' : '100%';
+    _y = direction === 'next' ? '100%' : '-100%';
   } else {
-    _y = direction === 'next' ? '50%' : '-50%';
+    _y = direction === 'next' ? '-10%' : '10%';
     children = React.Children.toArray(children).map(setAnimCompToTagComp);
   }
   return React.cloneElement(elem, {
@@ -26,7 +25,6 @@ animType.custom = (elem, type, direction, animData) => {
     animation: {
       ...animData,
       y: _y,
-      delay: type === 'enter' ? 0 : 50,
       type: type === 'enter' ? 'from' : 'to',
     },
   }, children);

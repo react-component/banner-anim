@@ -101,7 +101,7 @@ React.render(<BannerAnim>
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | key      |     string      |      -       |  must                 |
-| hideProps |    object / boolean |  false   | children leave switch animation. | 
+| leaveChildHide |   boolean |  false   | children leave switch animation. Replace the `hideProps`.| 
 | sync      |   boolean      |   false       | children and `Element` the same time animation |  
 | prefixCls |     string      |   -           |  user class |
 | followParallax | object   |  null        | follow mouse anim  |

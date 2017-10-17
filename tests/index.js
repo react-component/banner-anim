@@ -1,10 +1,12 @@
+import 'core-js/es6/map';
+import 'core-js/es6/set';
 import React from 'react';
 import ReactDom from 'react-dom';
 import expect from 'expect.js';
-import BannerAnim from '../index';
+import BannerAnim from 'rc-banner-anim';
 import '../assets/index.less';
 import '../examples/assets/index.less';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;

@@ -5,7 +5,7 @@ import Arrow from './Arrow';
 import Element from './Element';
 import Thumb from './Thumb';
 import ticker from 'rc-tween-one/lib/ticker';
-import { toArrayChildren, dataToArray, setAnimCompToTagComp, switchChildren } from './utils';
+import { toArrayChildren, dataToArray } from './utils';
 import animType from './anim';
 
 class BannerAnim extends Component {
@@ -315,11 +315,5 @@ BannerAnim.defaultProps = {
   onMouseLeave: () => {
   },
 };
-BannerAnim.Arrow = Arrow;
-BannerAnim.Element = Element;
-BannerAnim.Thumb = Thumb;
-BannerAnim.animType = animType;
-BannerAnim.setAnimCompToTagComp = setAnimCompToTagComp;
-BannerAnim.switchChildren = switchChildren;
 BannerAnim.isBannerAnim = true;
 export default BannerAnim;
