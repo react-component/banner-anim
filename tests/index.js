@@ -69,7 +69,9 @@ describe('rc-banner-anim', () => {
   });
 
   it('should render children', () => {
-    const instance = createBannerAnimInstance();
+    const instance = createBannerAnimInstance({
+      type: 'gridBar',
+    });
     const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
     const childrenSpan = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'span');
     // banner-anim elem bg prev next thumb 6个；
@@ -94,7 +96,7 @@ describe('rc-banner-anim', () => {
     const instance = createBannerAnimInstance({
       autoPlay: true,
       autoPlaySpeed: 1000,
-      type: 'across',
+      type: 'vertical',
     });
     let children = TestUtils.scryRenderedDOMComponentsWithClass(instance, 'banner-anim-elem');
     expect(children[0].style.display).to.be('block');
