@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>customAnimType.js - example - rc-banner-anim@0.5.16</title>
+  <title>customAnimType.js - example - rc-banner-anim@1.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -257,13 +257,13 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
   }
   </script>
-  <link rel="stylesheet" href="common.css" />
+  <link rel="stylesheet" href="../common.css" />
 </head>
 
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-banner-anim@0.5.16</h1>
+      <h1>rc-banner-anim@1.0.0</h1>
 
       <p>banner-anim animation component for react</p>
     </div>
@@ -276,7 +276,6 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">import</span> TweenOne <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
-<span class="hljs-keyword">import</span> assign <span class="hljs-keyword">from</span> <span class="hljs-string">'object-assign'</span>;
 <span class="hljs-keyword">import</span> <span class="hljs-string">'./assets/index.less'</span>;
 <span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 <span class="hljs-keyword">const</span> { animType, setAnimCompToTagComp } = BannerAnim;
@@ -284,12 +283,12 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 animType.custom = (elem, type, direction, animData) =&gt; {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`custom animType, type:<span class="hljs-subst">${type}</span>`</span>); <span class="hljs-comment">// eslint-disable-line no-console</span>
   <span class="hljs-keyword">let</span> _y;
-  <span class="hljs-keyword">const</span> props = assign({}, elem.props);
+  <span class="hljs-keyword">const</span> props = { ...elem.props };
   <span class="hljs-keyword">let</span> children = props.children;
   <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'enter'</span>) {
-    _y = direction === <span class="hljs-string">'next'</span> ? <span class="hljs-string">'-100%'</span> : <span class="hljs-string">'100%'</span>;
+    _y = direction === <span class="hljs-string">'next'</span> ? <span class="hljs-string">'100%'</span> : <span class="hljs-string">'-100%'</span>;
   } <span class="hljs-keyword">else</span> {
-    _y = direction === <span class="hljs-string">'next'</span> ? <span class="hljs-string">'50%'</span> : <span class="hljs-string">'-50%'</span>;
+    _y = direction === <span class="hljs-string">'next'</span> ? <span class="hljs-string">'-10%'</span> : <span class="hljs-string">'10%'</span>;
     children = React.Children.toArray(children).map(setAnimCompToTagComp);
   }
   <span class="hljs-keyword">return</span> React.cloneElement(elem, {
@@ -297,7 +296,6 @@ animType.custom = (elem, type, direction, animData) =&gt; {
     animation: {
       ...animData,
       y: _y,
-      delay: type === <span class="hljs-string">'enter'</span> ? <span class="hljs-number">0</span> : <span class="hljs-number">50</span>,
       type: type === <span class="hljs-string">'enter'</span> ? <span class="hljs-string">'from'</span> : <span class="hljs-string">'to'</span>,
     },
   }, children);
@@ -363,7 +361,7 @@ ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-t
          data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
   </a>
   <script>FastClick.attach(document.body);</script>
-  <script src="common.js?nowrap"></script>
+  <script src="../common.js?nowrap"></script>
   <script src="customAnimType.js?nowrap"></script>
 </body>
 

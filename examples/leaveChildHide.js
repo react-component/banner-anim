@@ -1,14 +1,14 @@
-webpackJsonp([5],{
+webpackJsonp([6],{
 
-/***/ 186:
+/***/ 185:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(96);
+module.exports = __webpack_require__(95);
 
 
 /***/ }),
 
-/***/ 96:
+/***/ 95:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56,81 +56,120 @@ var Demo = function (_React$Component) {
   function Demo() {
     __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, Demo);
 
-    return __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default()(this, (Demo.__proto__ || Object.getPrototypeOf(Demo)).apply(this, arguments));
+    var _this = __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default()(this, (Demo.__proto__ || Object.getPrototypeOf(Demo)).apply(this, arguments));
+
+    _this.onChange = function (e, int) {
+      // 在切换到下一个后把延时改掉。
+      if (int === 1 && e === 'after' && !_this.openSlide) {
+        _this.setState({
+          delay: 600
+        });
+        _this.openSlide = true;
+      }
+    };
+
+    _this.onClick = function () {
+      _this.refs.banner.slickGoTo(1);
+    };
+
+    _this.state = {
+      delay: 0
+    };
+    _this.openSlide = false;
+    return _this;
   }
 
   __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default()(Demo, [{
     key: 'render',
     value: function render() {
       return __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-        __WEBPACK_IMPORTED_MODULE_4_rc_banner_anim__["a" /* default */],
-        { prefixCls: 'banner-user' },
+        'div',
+        null,
         __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-          Element,
-          { key: 'aaa',
-            prefixCls: 'banner-user-elem'
-          },
-          __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(BgElement, {
-            key: 'bg',
-            className: 'bg',
-            style: {
-              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }
-          }),
-          __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-            __WEBPACK_IMPORTED_MODULE_5_rc_queue_anim__["a" /* default */],
-            { name: 'QueueAnim' },
-            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-              'h1',
-              { key: 'h1' },
-              'Ant Motion Demo'
-            ),
-            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-              'p',
-              { key: 'p' },
-              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
-            )
-          ),
-          __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-            __WEBPACK_IMPORTED_MODULE_6_rc_tween_one__["a" /* default */],
-            { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne1' },
-            'Ant Motion Demo.Ant Motion Demo'
-          )
+          'a',
+          { onClick: this.onClick },
+          '\u70B9\u51FB\u8DF3\u5230\u7B2C\u4E8C\u5757'
         ),
         __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-          Element,
-          { key: 'bbb',
-            prefixCls: 'banner-user-elem'
+          __WEBPACK_IMPORTED_MODULE_4_rc_banner_anim__["a" /* default */],
+          { prefixCls: 'banner-user', type: 'across',
+            onChange: this.onChange,
+            duration: 1000,
+            ease: 'easeInOutExpo',
+            sync: true,
+            ref: 'banner'
           },
-          __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(BgElement, {
-            key: 'bg',
-            className: 'bg',
-            style: {
-              backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }
-          }),
           __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-            __WEBPACK_IMPORTED_MODULE_5_rc_queue_anim__["a" /* default */],
-            { name: 'QueueAnim' },
+            Element,
+            { key: 'aaa',
+              prefixCls: 'banner-user-elem',
+              leaveChildHide: true
+            },
+            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(BgElement, {
+              key: 'bg',
+              className: 'bg',
+              style: {
+                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }
+            }),
             __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-              'h1',
-              { key: 'h1' },
-              'Ant Motion Demo'
+              __WEBPACK_IMPORTED_MODULE_5_rc_queue_anim__["a" /* default */],
+              { key: '1', name: 'QueueAnim', delay: [this.state.delay, 0] },
+              __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+                'h1',
+                { key: 'h1' },
+                'Ant Motion Demo'
+              ),
+              __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+                'p',
+                { key: 'p' },
+                'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+              )
             ),
             __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-              'p',
-              { key: 'p' },
-              'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+              __WEBPACK_IMPORTED_MODULE_6_rc_tween_one__["a" /* default */],
+              { key: '2',
+                animation: { y: 50, opacity: 0, type: 'from', delay: this.state.delay + 200 }
+              },
+              'Ant Motion Demo.Ant Motion Demo'
             )
           ),
           __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
-            __WEBPACK_IMPORTED_MODULE_6_rc_tween_one__["a" /* default */],
-            { animation: { y: 50, opacity: 0, type: 'from', delay: 200 }, name: 'TweenOne2' },
-            'Ant Motion Demo.Ant Motion Demo'
+            Element,
+            { key: 'bbb',
+              prefixCls: 'banner-user-elem',
+              leaveChildHide: true
+            },
+            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(BgElement, {
+              key: 'bg',
+              className: 'bg',
+              style: {
+                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }
+            }),
+            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_5_rc_queue_anim__["a" /* default */],
+              { name: 'QueueAnim', key: '1', delay: [600, 0] },
+              __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+                'h1',
+                { key: 'h1' },
+                'Ant Motion Demo'
+              ),
+              __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+                'p',
+                { key: 'p' },
+                'Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo'
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_6_rc_tween_one__["a" /* default */],
+              { animation: { y: 50, opacity: 0, type: 'from', delay: 800 }, key: '2' },
+              'Ant Motion Demo.Ant Motion Demo'
+            )
           )
         )
       );
@@ -144,5 +183,5 @@ __WEBPACK_IMPORTED_MODULE_8_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[186]);
-//# sourceMappingURL=simple.js.map
+},[185]);
+//# sourceMappingURL=leaveChildHide.js.map
