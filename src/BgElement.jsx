@@ -156,4 +156,4 @@ BgElement.defaultProps = {
   videoResize: true,
 };
 
-BgElement.isBannerAnimBaElement = true;
+BgElement.isBannerAnimBgElement = true;

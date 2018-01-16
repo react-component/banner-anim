@@ -39,6 +39,7 @@ class BannerAnim extends Component {
   componentWillUnmount() {
     if (this.autoPlayId) {
       ticker.clear(this.autoPlayId);
+      this.autoPlayId = 0;
     }
     if (window.addEventListener) {
       window.removeEventListener('resize', this.getDomDataSetToState);
@@ -245,15 +246,16 @@ class BannerAnim extends Component {
     const prefixCls = this.props.prefixCls;
     const props = { ...this.props };
     [
-      `prefixCls`,
-      `component`,
-      `initShow`,
-      `duration`,
-      `delay`,
-      `ease`,
-      `arrow`,
-      `thumb`,
-      `autoPlaySpeed`,
+      'type',
+      'prefixCls',
+      'component',
+      'initShow',
+      'duration',
+      'delay',
+      'ease',
+      'arrow',
+      'thumb',
+      'autoPlaySpeed',
       'autoPlay',
       'thumbFloat',
       'sync',
@@ -275,7 +277,6 @@ class BannerAnim extends Component {
     return React.createElement(this.props.component, props, childrenToRender);
   }
 }
-const stringOrArray = PropTypes.oneOfType([PropTypes.array, PropTypes.string]);
 BannerAnim.propTypes = {
   children: PropTypes.any,
   style: PropTypes.object,
@@ -285,7 +286,7 @@ BannerAnim.propTypes = {
   arrow: PropTypes.bool,
   thumb: PropTypes.bool,
   initShow: PropTypes.number,
-  type: stringOrArray,
+  type: PropTypes.any,
   duration: PropTypes.number,
   delay: PropTypes.number,
   ease: PropTypes.string,

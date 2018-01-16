@@ -14,8 +14,8 @@ class Arrow extends Component {
     className = `${className} ${this.props.arrowType}`;
     const props = { ...this.props };
     [
-      `arrowType`, `next`, `prev`,
-      `elemHeight`, 'component', 'default', 'prefixCls',
+      'arrowType', 'next', 'prev',
+      'elemHeight', 'component', 'default', 'prefixCls',
     ].forEach(key => delete props[key]);
     props.className = className;
     props.onClick = this.onClick;
