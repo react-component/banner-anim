@@ -3615,7 +3615,7 @@ var Element = function (_Component) {
       props.style = style;
       props.className = ('banner-anim-elem ' + (this.props.prefixCls || '')).trim();
       var bgElem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils__["c" /* toArrayChildren */])(this.props.children).filter(function (item) {
-        return item.type.isBannerAnimBaElement;
+        return item.type.isBannerAnimBgElement;
       }).map(function (item) {
         return __WEBPACK_IMPORTED_MODULE_6_react___default.a.cloneElement(item, { show: _this2.state.show });
       });
@@ -5630,6 +5630,7 @@ var BannerAnim = function (_Component) {
     value: function componentWillUnmount() {
       if (this.autoPlayId) {
         __WEBPACK_IMPORTED_MODULE_11_rc_tween_one_lib_ticker___default.a.clear(this.autoPlayId);
+        this.autoPlayId = 0;
       }
       if (window.addEventListener) {
         window.removeEventListener('resize', this.getDomDataSetToState);
@@ -5642,7 +5643,7 @@ var BannerAnim = function (_Component) {
     value: function render() {
       var prefixCls = this.props.prefixCls;
       var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
-      ['prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat', 'sync', 'dragPlay'].forEach(function (key) {
+      ['type', 'prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat', 'sync', 'dragPlay'].forEach(function (key) {
         return delete props[key];
       });
       var childrenToRender = this.getRenderChildren(props.children);
@@ -5665,7 +5666,6 @@ var BannerAnim = function (_Component) {
   return BannerAnim;
 }(__WEBPACK_IMPORTED_MODULE_5_react__["Component"]);
 
-var stringOrArray = __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.array, __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.string]);
 BannerAnim.propTypes = {
   children: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
   style: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.object,
@@ -5675,7 +5675,7 @@ BannerAnim.propTypes = {
   arrow: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
   thumb: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
   initShow: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
-  type: stringOrArray,
+  type: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
   duration: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
   delay: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
   ease: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.string,
@@ -5902,7 +5902,7 @@ BgElement.defaultProps = {
   videoResize: true
 };
 
-BgElement.isBannerAnimBaElement = true;
+BgElement.isBannerAnimBgElement = true;
 
 /***/ }),
 /* 101 */
