@@ -114,7 +114,7 @@ class BannerAnim extends Component {
           itemProps.duration = this.props.duration;
           itemProps.delay = this.props.delay;
           itemProps.ease = this.props.ease;
-          itemProps.sync = this.props.sync;
+          itemProps.sync = this.props.sync || itemProps.sync;
           itemProps.elemOffset = {
             top: this.state.domRect.top,
             width: this.state.domRect.width,
