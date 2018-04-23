@@ -76,6 +76,16 @@ React.render(<BannerAnim>
 
 ### BannerAnim
 
+```
+`ref` control jump: <BannerAnim ref={(c) => { this.banner = c; }}/>
+
+prev: this.banner.prev();
+
+next: this.banner.next();
+
+jump: this.banner.slickGoTo(number); number from 0;
+```
+
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 |   type   |  string / array | All animType | Provide `across`, `vertical`, `acrossOverlay`, `verticalOverlay`, (`gridBar`, `grid`) => duration is a single block of animation time, video bg no use |
