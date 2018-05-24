@@ -37,14 +37,12 @@
   float: left;
 }
 .user-arrow.next .arrow:before {
-  -webkit-transform: rotate(-40deg);
-          transform: rotate(-40deg);
+  transform: rotate(-40deg);
   top: 28px;
   left: 10px;
 }
 .user-arrow.next .arrow:after {
-  -webkit-transform: rotate(40deg);
-          transform: rotate(40deg);
+  transform: rotate(40deg);
   bottom: 27px;
   left: 10px;
 }
@@ -55,14 +53,12 @@
   float: right;
 }
 .user-arrow.prev .arrow:before {
-  -webkit-transform: rotate(40deg);
-          transform: rotate(40deg);
+  transform: rotate(40deg);
   top: 28px;
   left: 8px;
 }
 .user-arrow.prev .arrow:after {
-  -webkit-transform: rotate(-40deg);
-          transform: rotate(-40deg);
+  transform: rotate(-40deg);
   bottom: 27px;
   left: 8px;
 }

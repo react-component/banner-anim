@@ -68,26 +68,22 @@ li {
   position: absolute;
 }
 .banner-anim-arrow-default.next:before {
-  -webkit-transform: rotate(-40deg);
-          transform: rotate(-40deg);
+  transform: rotate(-40deg);
   top: 18px;
   left: 10px;
 }
 .banner-anim-arrow-default.next:after {
-  -webkit-transform: rotate(40deg);
-          transform: rotate(40deg);
+  transform: rotate(40deg);
   bottom: 17px;
   left: 10px;
 }
 .banner-anim-arrow-default.prev:before {
-  -webkit-transform: rotate(40deg);
-          transform: rotate(40deg);
+  transform: rotate(40deg);
   top: 18px;
   left: 8px;
 }
 .banner-anim-arrow-default.prev:after {
-  -webkit-transform: rotate(-40deg);
-          transform: rotate(-40deg);
+  transform: rotate(-40deg);
   bottom: 17px;
   left: 8px;
 }

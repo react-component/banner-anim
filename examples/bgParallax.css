@@ -1,8 +1,7 @@
 .banner-anim-elem .bg {
   height: calc(100% + 200px);
   top: -100px;
-  -webkit-transform: translateY(-100px);
-          transform: translateY(-100px);
+  transform: translateY(-100px);
   background-size: cover;
   background-position: center;
 }
