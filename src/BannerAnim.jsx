@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Arrow from './Arrow';
-import Element from './Element';
 import Thumb from './Thumb';
 import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray } from './utils';
@@ -105,37 +104,31 @@ class BannerAnim extends Component {
         throw new Error('Please add key, key is required');
       }
       const itemProps = { ...item.props };
-      switch (item.type) {
-        case Element:
-          itemProps.key = item.key;
-          itemProps.callBack = this.animEnd;
-          itemProps.show = this.state.currentShow === i;
-          itemProps.animType = _animType;
-          itemProps.duration = this.props.duration;
-          itemProps.delay = this.props.delay;
-          itemProps.ease = this.props.ease;
-          itemProps.sync = this.props.sync || itemProps.sync;
-          itemProps.elemOffset = {
-            top: this.state.domRect.top,
-            width: this.state.domRect.width,
-            height: this.state.wrapperHeight,
-          };
-          itemProps.direction = this.state.direction;
-          elem.push(React.cloneElement(item, itemProps));
-          break;
-        case Arrow:
-          itemProps.next = this.next;
-          itemProps.prev = this.prev;
-          itemProps.elemHeight = this.state.wrapperHeight;
-          arrow.push(React.cloneElement(item, itemProps));
-          break;
-        case Thumb:
-          itemProps.thumbClick = this.slickGoTo;
-          itemProps.active = this.state.currentShow;
-          thumb = React.cloneElement(item, itemProps);
-          break;
-        default:
-          break;
+      if (item.type.isBannerAnimElement) {
+        itemProps.key = item.key;
+        itemProps.callBack = this.animEnd;
+        itemProps.show = this.state.currentShow === i;
+        itemProps.animType = _animType;
+        itemProps.duration = this.props.duration;
+        itemProps.delay = this.props.delay;
+        itemProps.ease = this.props.ease;
+        itemProps.sync = this.props.sync || itemProps.sync;
+        itemProps.elemOffset = {
+          top: this.state.domRect.top,
+          width: this.state.domRect.width,
+          height: this.state.wrapperHeight,
+        };
+        itemProps.direction = this.state.direction;
+        elem.push(React.cloneElement(item, itemProps));
+      } else if (item.type.isBannerAnimArrow) {
+        itemProps.next = this.next;
+        itemProps.prev = this.prev;
+        itemProps.elemHeight = this.state.wrapperHeight;
+        arrow.push(React.cloneElement(item, itemProps));
+      } else if (item.type.isBannerAnimThumb) {
+        itemProps.thumbClick = this.slickGoTo;
+        itemProps.active = this.state.currentShow;
+        thumb = React.cloneElement(item, itemProps);
       }
     });
     if (elem.length > 1) {
