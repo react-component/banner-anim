@@ -4,9 +4,9 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import expect from 'expect.js';
 import BannerAnim from 'rc-banner-anim';
+import TestUtils from 'react-dom/test-utils';
 import '../assets/index.less';
 import '../examples/assets/index.less';
-import TestUtils from 'react-dom/test-utils';
 
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
@@ -14,41 +14,35 @@ describe('rc-banner-anim', () => {
   let div;
 
   function createBannerAnimInstance(props = {}) {
-    class BannerAnimExample extends React.Component {
-      constructor() {
-        super(...arguments);
-      }
-
-      render() {
-        return (
-          <BannerAnim { ...props }>
-            <Element key="a" id="a">
-              <BgElement
-                key="bgElem"
-                className="bg"
-                style={{
-                  backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-              <span>test text</span>
-            </Element>
-            <Element key="b" id="b">
-              <BgElement
-                key="bgElem"
-                className="bg"
-                style={{
-                  backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-              <span>test text</span>
-            </Element>
-          </BannerAnim>
-        );
-      }
+    function BannerAnimExample() {
+      return (
+        <BannerAnim { ...props }>
+          <Element key="a" id="a">
+            <BgElement
+              key="bgElem"
+              className="bg"
+              style={{
+                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+            <span>test text</span>
+          </Element>
+          <Element key="b" id="b">
+            <BgElement
+              key="bgElem"
+              className="bg"
+              style={{
+                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+            <span>test text</span>
+          </Element>
+        </BannerAnim>
+      );
     }
 
     return ReactDom.render(<BannerAnimExample />, div);

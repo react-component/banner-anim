@@ -12,8 +12,8 @@ import '../assets/index.less';
 const { Element, Arrow } = BannerAnim;
 const BgElement = Element.BgElement;
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.imgArray = [
       'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg',
       'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg',
@@ -23,16 +23,9 @@ class Demo extends React.Component {
       prevEnter: false,
       nextEnter: false,
     };
-    [
-      'onChange',
-      'prevEnter',
-      'prevLeave',
-      'nextEnter',
-      'nextLeave',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  onChange(type, int) {
+  onChange = (type, int) => {
     if (type === 'before') {
       this.setState({
         intShow: int,
@@ -40,7 +33,7 @@ class Demo extends React.Component {
     }
   }
 
-  getNextPrevNumber() {
+  getNextPrevNumber = () => {
     let nextInt = this.state.intShow + 1;
     let prevInt = this.state.intShow - 1;
     if (nextInt >= this.imgArray.length) {
@@ -53,25 +46,25 @@ class Demo extends React.Component {
     return [prevInt, nextInt];
   }
 
-  prevEnter() {
+  prevEnter = () => {
     this.setState({
       prevEnter: true,
     });
   }
 
-  prevLeave() {
+  prevLeave = () => {
     this.setState({
       prevEnter: false,
     });
   }
 
-  nextEnter() {
+  nextEnter = () => {
     this.setState({
       nextEnter: true,
     });
   }
 
-  nextLeave() {
+  nextLeave = () => {
     this.setState({
       nextEnter: false,
     });
@@ -134,7 +127,7 @@ class Demo extends React.Component {
           onMouseLeave={this.prevLeave}
           animation={{ left: this.state.prevEnter ? 0 : -120 }}
         >
-          <div className="arrow"></div>
+          <div className="arrow" />
           <TweenOneGroup enter={{ opacity: 0, type: 'from' }} leave={{ opacity: 0 }}
             appear={false} className="img-wrapper" component="ul"
           >
@@ -149,7 +142,7 @@ class Demo extends React.Component {
           onMouseLeave={this.nextLeave}
           animation={{ right: this.state.nextEnter ? 0 : -120 }}
         >
-          <div className="arrow"></div>
+          <div className="arrow" />
           <TweenOneGroup enter={{ opacity: 0, type: 'from', delay: 200 }} leave={{ opacity: 0 }}
             className="img-wrapper" component="ul"
           >

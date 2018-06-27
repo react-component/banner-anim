@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import Tween from 'rc-tween-one/lib/Tween';
 import {
   stylesToCss,
 } from 'style-utils';
@@ -10,11 +11,10 @@ import {
   windowHeight,
 } from './utils';
 import animType from './anim';
-import Tween from 'rc-tween-one/lib/Tween';
 
 export default class BgElement extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.isVideo = toArrayChildren(this.props.children).filter(item => item.type === 'video');
     if (this.isVideo.length) {
       // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
@@ -31,7 +31,6 @@ export default class BgElement extends React.Component {
   componentDidMount() {
     this.dom = ReactDOM.findDOMNode(this);
     if (!this.videoLoad) {
-      this.video = ReactDOM.findDOMNode(this.refs.video);
       if (this.video && this.props.videoResize) {
         this.video.onloadeddata = this.videoLoadedData;
       }
@@ -53,14 +52,15 @@ export default class BgElement extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.show) {
-      if (this.video && this.props.videoResize && this.videoLoad) {
-        this.videoLoadedData();
-      }
-      if (this.props.scrollParallax) {
-        this.onScroll();
-      }
-    } else {
-      this.componentWillUnmount();
+      // 取 dom 在 render 之后；
+      setTimeout(() => {
+        if (this.video && this.props.videoResize && this.videoLoad) {
+          this.onResize();
+        }
+        if (this.props.scrollParallax) {
+          this.onScroll();
+        }
+      })
     }
   }
 
@@ -87,6 +87,9 @@ export default class BgElement extends React.Component {
   };
 
   onResize = () => {
+    if (!this.props.show) {
+      return;
+    }
     const domRect = this.dom.getBoundingClientRect();
     const videoDomRect = this.video.getBoundingClientRect();
     this.videoLoad = true;
@@ -108,6 +111,7 @@ export default class BgElement extends React.Component {
       videoRect.width = videoDomRect.width * scale;
       videoRect.left = -(videoRect.width - domRect.width) / 2;
     }
+
     Object.keys(videoRect).forEach(key => {
       this.video.style[key] = stylesToCss(key, videoRect[key]);
     });
@@ -132,10 +136,11 @@ export default class BgElement extends React.Component {
       'component',
     ].forEach(key => delete props[key]);
     if (this.isVideo && this.props.videoResize) {
-      props.children = toArrayChildren(props.children).map(item => {
-        const ref = item.type === 'video' ? 'video' : null;
+      const children = toArrayChildren(props.children).map(item => {
+        const ref = item.type === 'video' && (c => { this.video = c; });
         return React.cloneElement(item, { ...item.props, ref });
       });
+      props.children = children.length === 1 ? children[0] : children;
     }
     return React.createElement(this.props.component, props);
   }

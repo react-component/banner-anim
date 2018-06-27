@@ -1,6 +1,5 @@
 import React, { cloneElement } from 'react';
 import { toArrayChildren, setAnimCompToTagComp, switchChildren } from './utils';
-import ticker from 'rc-tween-one/lib/ticker';
 
 export default {
   across(elem, type, direction, animData, elemOffset, leaveChildHide) {
@@ -80,11 +79,11 @@ export default {
       },
     }, children);
   },
-  gridBar(elem, type, direction, animData, elemOffset) {
+  gridBar(elem, type, direction, animData, elemOffset, leaveChildHide, ratio, paused) {
     const props = { ...elem.props };
     const animChild = [];
-    const girdNum = 10;
-    const girdSize = 100 / girdNum;
+    const gridNum = 10;
+    const girdSize = 100 / gridNum;
 
     let _y;
     let children = props.children;
@@ -94,7 +93,8 @@ export default {
       _y = direction === 'next' ? '100%' : '-100%';
       children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
-    for (let i = 0; i < girdNum; i++) {
+    const moment = ratio * (animData.duration + animData.delay + gridNum * 50 + 50) || 0;
+    for (let i = 0; i < gridNum; i++) {
       const style = { ...props.style };
       style.width = `${girdSize + 0.1}%`;
       style.left = `${i * girdSize}%`;
@@ -106,17 +106,24 @@ export default {
       _style.float = 'left';
       _style.position = 'relative';
       _style.left = `${-i * girdSize / 100 * elemOffset.width}px`;
-      props.style = _style;
-      props.animation = {
+      const animProps = { ...props };
+      animProps.style = _style;
+      const delay = (direction === 'next' ? i : gridNum - i) * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0);
+      animProps.animation = {
         ...animData,
         y: _y,
         type: type === 'enter' ? 'from' : 'to',
-        delay: i * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0),
-        onComplete: i === girdNum - 1 ? animData.onComplete : null,
+        key: type,
+        direction,
+        delay,
+        i,
+        onComplete: i === (direction === 'next' ? gridNum - 1 : 0) ?
+          animData.onComplete : null,
       };
-
+      animProps.paused = paused;
+      animProps.moment = moment;
       const mask = (<div style={style} key={i}>
-        {cloneElement(elem, props, children)}
+        {cloneElement(elem, animProps, children)}
       </div>);
       animChild.push(mask);
     }
@@ -127,20 +134,23 @@ export default {
     _props.children = animSlot;
     return cloneElement(elem, _props);
   },
-  grid(elem, type, direction, animData, elemOffset) {
+  grid(elem, type, direction, animData, elemOffset, leaveChildHide, ratio, paused) {
     const props = { ...elem.props };
     const animChild = [];
     const gridNum = 10;
     const gridWidth = elemOffset.width / gridNum;
     const gridNumH = Math.ceil(elemOffset.height / gridWidth);
+    const _delay = (gridNum - 1) * 50 + (gridNumH - 1) * 50;
     if (type === 'leave') {
-      const _delay = (gridNum * gridNumH - 1) % gridNum * 50 +
-        Math.floor((gridNum * gridNumH - 1) / gridNum) * 50;
-      ticker.timeout(() => {
-        animData.onComplete();
-      }, _delay + animData.duration);
+      props.animation = {
+        ...animData,
+        duration: _delay + animData.duration,
+      };
+      props.moment = ((animData.delay || 0) + _delay + animData.duration) * ratio || 0;
+      props.paused = paused;
       return React.cloneElement(elem, props);
     }
+    const moment = ratio * (animData.duration + animData.delay + _delay) || 0;
     for (let i = 0; i < gridNum * gridNumH; i++) {
       // mask样式
       const style = { ...props.style };
@@ -159,7 +169,7 @@ export default {
       _style.top = -Math.floor(i / gridNum) * gridWidth;
       props.style = _style;
       let delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
-      (gridNum - i % gridNum) * 50 + (gridNumH - Math.floor(i / gridNum)) * 50;
+        (gridNum - 1 - i % gridNum) * 50 + (gridNumH - 1 - Math.floor(i / gridNum)) * 50;
       delay += animData.delay || 0;
       const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
       const animation = {
@@ -169,9 +179,16 @@ export default {
         delay,
         onComplete: i === length ? animData.onComplete : null,
       };
-      const mask = (<elem.type style={style} key={ i } animation={animation}>
-        { cloneElement(elem, props) }
-      </elem.type>);
+      const mask = (
+        <elem.type
+          style={style}
+          key={i}
+          paused={paused}
+          animation={animation}
+          moment={moment}
+        >
+          {cloneElement(elem, props)}
+        </elem.type>);
       animChild.push(mask);
     }
     const _props = { ...elem.props };

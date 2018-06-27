@@ -11,8 +11,8 @@ import '../assets/index.less';
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       delay: 0,
     };
@@ -30,7 +30,7 @@ class Demo extends React.Component {
   }
 
   onClick = () => {
-    this.refs.banner.slickGoTo(1);
+    this.banner.slickGoTo(1);
   }
 
   render() {
@@ -42,7 +42,7 @@ class Demo extends React.Component {
           duration={1000}
           ease="easeInOutExpo"
           sync
-          ref="banner"
+          ref={(c) => { this.banner = c; }}
         >
           <Element key="aaa"
             prefixCls="banner-user-elem"

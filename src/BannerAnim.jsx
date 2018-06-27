@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import ticker from 'rc-tween-one/lib/ticker';
 import Arrow from './Arrow';
 import Thumb from './Thumb';
-import ticker from 'rc-tween-one/lib/ticker';
 import { toArrayChildren, dataToArray } from './utils';
 import animType from './anim';
 
 class BannerAnim extends Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       currentShow: this.props.initShow,
       direction: null,
@@ -22,8 +22,12 @@ class BannerAnim extends Component {
   componentDidMount() {
     this.getDomDataSetToState();
     if (window.addEventListener) {
+      window.addEventListener('touchend', this.onTouchEnd);
+      window.addEventListener('mouseup', this.onTouchEnd);
       window.addEventListener('resize', this.getDomDataSetToState);
     } else {
+      window.attachEvent('ontouchend', this.onTouchEnd);
+      window.attachEvent('onmouseup', this.onTouchEnd);
       window.attachEvent('onresize', this.getDomDataSetToState);
     }
     if (this.props.autoPlay) {
@@ -41,8 +45,12 @@ class BannerAnim extends Component {
       this.autoPlayId = 0;
     }
     if (window.addEventListener) {
+      window.removeEventListener('touchend', this.onTouchEnd);
+      window.removeEventListener('mouseup', this.onTouchEnd);
       window.removeEventListener('resize', this.getDomDataSetToState);
     } else {
+      window.detachEvent('ontouchend', this.onTouchEnd);
+      window.attachEvent('onmouseup', this.onTouchEnd);
       window.detachEvent('onresize', this.getDomDataSetToState);
     }
   }
@@ -62,35 +70,105 @@ class BannerAnim extends Component {
   }
 
   onTouchStart = (e) => {
-    this.mouseXY = {
+    if (e.touches && e.touches.length > 1 || this.getDomIsArrowOrThumb(e)) {
+      return;
+    }
+    this.animType = this.getAnimType(this.props.type);
+    this.currentShow = this.state.currentShow;
+    // this.mouseMoveType = 'start';
+    this.mouseStartXY = {
       startX: e.touches === undefined ? e.clientX : e.touches[0].clientX,
       startY: e.touches === undefined ? e.clientY : e.touches[0].clientY,
     };
   }
 
   onTouchMove = (e) => {
-    if (!this.mouseXY) {
+    if (!this.mouseStartXY || e.touches && e.touches.length > 1) {
       return;
     }
-    this.mouseXY.currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
-    this.mouseXY.currentY = e.touches === undefined ? e.clientY : e.touches[0].clientY;
+    const currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
+    const differX = currentX - this.mouseStartXY.startX;
+    if (!differX) {
+      return;
+    }
+    const ratio = differX / this.state.domRect.width * 2;
+    let ratioType = this.ratioType;
+    let currentShow = this.currentShow;
+    if (ratio > 0) {
+      ratioType = '+';
+    } else {
+      ratioType = '-';
+    }
+    this.mouseMoveType = 'update';
+    if (this.ratioType !== ratioType) {
+      this.ratioType = ratioType;
+      this.mouseMoveType = 'reChild';
+      this.setState({
+        currentShow,
+      });
+      return;
+    }
+    this.ratio = ratio;
+    if (this.ratio) {
+      let type;
+      if (this.ratio > 0) {
+        currentShow += 1;
+        type = 'next';
+      } else {
+        currentShow -= 1;
+        type = 'prev';
+      }
+      this.ratio = Math.abs(this.ratio);
+      this.ratio = this.ratio > 1 ? 1 : this.ratio;
+      currentShow = currentShow >= this.elemWrapper.length ? 0 : currentShow;
+      currentShow = currentShow < 0 ? this.elemWrapper.length - 1 : currentShow;
+      this.setState({
+        currentShow,
+        direction: type,
+      });
+    }
   }
 
-  onTouchEnd = () => {
-    if (!this.mouseXY) {
+  onTouchEnd = (e) => {
+    if (!this.mouseStartXY ||
+      e.touches && e.touches.length > 1
+    ) {
       return;
     }
-    const differX = this.mouseXY.currentX - this.mouseXY.startX;
-    const differY = this.mouseXY.currentY - this.mouseXY.startY;
-    const r = Math.atan2(differY, differX);
-    let angle = Math.round(r * 180 / Math.PI);
-    angle = angle < 0 ? 360 - Math.abs(angle) : angle;
-    if ((angle >= 0 && angle <= 45 || angle >= 315) && differX > this.state.domRect.width * 0.1) {
-      this.prev();
-    } else if (angle >= 135 && angle <= 225 && differX < -this.state.domRect.width * 0.1) {
-      this.next();
+    const currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
+    const differX = currentX - this.mouseStartXY.startX;
+    delete this.mouseStartXY;
+    this.mouseMoveType = 'end';
+    if (!differX) {
+      this.mouseMoveType = '';
+      return
     }
-    delete this.mouseXY;
+    if (this.ratio > 0.3) {
+      this.forceUpdate(() => {
+        this.ratio = 0;
+        this.mouseMoveType = '';
+      });
+    } else {
+      this.setState({
+        currentShow: this.currentShow,
+        direction: this.ratioType === '+' ? 'prev' : 'next'
+      }, () => {
+        this.ratio = 0;
+        this.mouseMoveType = '';
+      });
+    }
+  }
+
+  getDomIsArrowOrThumb = (e) => {
+    const arrowClassName = e.target.className;
+    const thumbClassName = e.target.parentNode.className;
+    if (
+      arrowClassName.indexOf('banner-anim-arrow') >= 0 ||
+      thumbClassName.indexOf('banner-anim-thumb') >= 0
+    ) {
+      return true;
+    }
+    return false;
   }
 
   getRenderChildren = (children) => {
@@ -98,7 +176,6 @@ class BannerAnim extends Component {
     const arrow = [];
     let thumb;
 
-    const _animType = this.getAnimType(this.props.type);
     toArrayChildren(children).forEach((item, i) => {
       if (!item.key) {
         throw new Error('Please add key, key is required');
@@ -108,7 +185,7 @@ class BannerAnim extends Component {
         itemProps.key = item.key;
         itemProps.callBack = this.animEnd;
         itemProps.show = this.state.currentShow === i;
-        itemProps.animType = _animType;
+        itemProps.animType = this.animType;
         itemProps.duration = this.props.duration;
         itemProps.delay = this.props.delay;
         itemProps.ease = this.props.ease;
@@ -119,6 +196,8 @@ class BannerAnim extends Component {
           height: this.state.wrapperHeight,
         };
         itemProps.direction = this.state.direction;
+        itemProps.ratio = this.ratio;
+        itemProps.mouseMoveType = this.mouseMoveType;
         elem.push(React.cloneElement(item, itemProps));
       } else if (item.type.isBannerAnimArrow) {
         itemProps.next = this.next;
@@ -189,6 +268,7 @@ class BannerAnim extends Component {
   }
 
   animTweenStart = (show, type) => {
+    this.animType = this.getAnimType(this.props.type);
     this.props.onChange('before', show);
     this.setState({
       currentShow: show,
