@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>followMouse.js - example - rc-banner-anim@2.0.0</title>
+  <title>parallax.js - example - rc-banner-anim@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -257,7 +257,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
   }
   </script>
-  <link rel="stylesheet" href="../common.css" />
+  <link rel="stylesheet" href="../common.css" /><link rel="stylesheet" href="parallax.css" />
 </head>
 
 <body>
@@ -276,11 +276,36 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">import</span> TweenOne <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> { Button } <span class="hljs-keyword">from</span> <span class="hljs-string">'antd'</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">'antd/dist/antd.less'</span>;
 <span class="hljs-keyword">import</span> <span class="hljs-string">'./assets/index.less'</span>;
 <span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 
+
 <span class="hljs-keyword">const</span> { Element } = BannerAnim;
 <span class="hljs-keyword">const</span> BgElement = Element.BgElement;
+
+<span class="hljs-keyword">const</span> svgNode = (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">svg</span> <span class="hljs-attribute">width</span>=<span class="hljs-value">"157px"</span> <span class="hljs-attribute">height</span>=<span class="hljs-value">"143px"</span> <span class="hljs-attribute">viewBox</span>=<span class="hljs-value">"0 0 157 143"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Ant-Motion"</span> <span class="hljs-attribute">stroke</span>=<span class="hljs-value">"none"</span> <span class="hljs-attribute">strokeWidth</span>=<span class="hljs-value">"1"</span> <span class="hljs-attribute">fill</span>=<span class="hljs-value">"none"</span> <span class="hljs-attribute">fillRule</span>=<span class="hljs-value">"evenodd"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"设计语言--大气空间"</span> <span class="hljs-attribute">transform</span>=<span class="hljs-value">"translate(-483.000000, -1308.000000)"</span> <span class="hljs-attribute">stroke</span>=<span class="hljs-value">"#455981"</span> <span class="hljs-attribute">opacity</span>=<span class="hljs-value">"0.5"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Group-5"</span> <span class="hljs-attribute">transform</span>=<span class="hljs-value">"translate(420.000000, 1174.000000)"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Group-12-Copy-7"</span> <span class="hljs-attribute">transform</span>=<span class="hljs-value">"translate(0.000000, 109.000000)"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"import-TweenOne-from"</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Group-2"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-title">g</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Group-6"</span> <span class="hljs-attribute">transform</span>=<span class="hljs-value">"translate(83.000000, 40.000000)"</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">"M58.546048,30 C73.2110274,30 86.8344179,32.106261 97.1063916,35.6458256 C109.482662,39.910432 117.092096,46.375008 117.092096,52.2285176 C117.092096,58.3285023 109.027403,65.1958067 95.7371289,69.603373 C85.6889749,72.9356894 72.4670664,74.6749619 58.546048,74.6749619 C44.2734063,74.6749619 30.7580067,73.0422555 20.5990314,69.5665434 C7.74333379,65.1683479 0,58.2119115 0,52.2285176 C0,46.422516 7.26543086,40.0080632 19.4677405,35.7497766 C29.7780335,32.1520256 43.7378067,30 58.546048,30 L58.546048,30 Z"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Shape"</span> /&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">"M39.5802556,40.6922076 C46.9064313,27.9766239 55.5352463,17.2162779 63.7301385,10.0778728 C73.603896,1.47717988 83.0001861,-1.89131225 88.0661748,1.03282745 C93.3455326,4.08009571 95.2601924,14.503745 92.4352309,28.2292008 C90.2993641,38.6064317 85.1994104,50.9397722 78.2448886,63.0105111 C71.114664,75.3861293 62.9498177,86.2892172 54.8663999,93.3615905 C44.6375354,102.311402 34.748755,105.55001 29.5702032,102.560928 C24.5453641,99.6603243 22.6235194,90.1563255 25.0341532,77.448587 C27.0709559,66.7113413 32.1824489,53.5322275 39.5802556,40.6922076 L39.5802556,40.6922076 Z"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Shape"</span> /&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">"M39.5686482,62.9240168 C32.2213534,50.2206369 27.2169803,37.3640546 25.1309721,26.6926227 C22.6175729,13.8351687 24.3946315,4.00449783 29.4558303,1.07185899 C34.7299627,-1.98434426 44.7084452,1.56088638 55.1776764,10.8654823 C63.0932294,17.9001544 71.2212805,28.4820184 78.1960506,40.5412072 C85.3469589,52.9048394 90.7066566,65.4303912 92.7913584,75.9721567 C95.4295132,89.3121003 93.2940818,99.5047473 88.1205377,102.502546 C83.1004885,105.411431 73.9143016,102.331692 64.1189245,93.8946618 C55.8426037,86.7660633 46.9880095,75.7516149 39.5686482,62.9240168 L39.5686482,62.9240168 Z"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"Shape"</span> /&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">g</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">svg</span>&gt;</span>
+)</span>
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Demo</span>(<span class="hljs-params"></span>) </span>{
   <span class="hljs-keyword">return</span> (
     <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">BannerAnim</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"across"</span>&gt;</span>
@@ -290,9 +315,14 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
           <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">1000</span>,
           <span class="hljs-attribute">data:</span> [
             { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">bg</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">20</span>, <span class="hljs-attribute">bgPosition:</span> '<span class="hljs-attribute">50</span>%', <span class="hljs-attribute">type:</span> ['<span class="hljs-attribute">backgroundPositionX</span>'] },
-            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">title</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">-20</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
-            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">queue</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
-            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">JText</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">-30</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">i1</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">i2</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">55</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">i3</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">60</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">title</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">80</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">h2</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">90</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">p</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">p2</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">110</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
+            { <span class="hljs-attribute">id:</span> '<span class="hljs-attribute">button</span>', <span class="hljs-attribute">value:</span> <span class="hljs-attribute">120</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">x</span>' },
           ],
         }}
       &gt;</span>
@@ -303,16 +333,29 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
           <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
             <span class="hljs-attribute">backgroundImage:</span> '<span class="hljs-attribute">url</span>(<span class="hljs-attribute">https:</span>//<span class="hljs-attribute">os.alipayobjects.com</span>/<span class="hljs-attribute">rmsportal</span>/<span class="hljs-attribute">IhCNTqPpLeTNnwr.jpg</span>)',
             <span class="hljs-attribute">backgroundSize:</span> '<span class="hljs-attribute">cover</span>',
+            <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">364D79</span>',
+            <span class="hljs-attribute">backgroundBlendMode:</span> '<span class="hljs-attribute">luminosity</span>',
             <span class="hljs-attribute">backgroundPosition:</span> '<span class="hljs-attribute">center</span>',
           }}
         /&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"queue"</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"queue"</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">h1</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"h1"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"title"</span>&gt;</span>Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"p"</span>&gt;</span>Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"icon-wrapper"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"svg1"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"i1"</span>&gt;</span>
+            {svgNode}
+          <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"svg2"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"i2"</span>&gt;</span>
+            {svgNode}
+          <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"svg3"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"i3"</span>&gt;</span>
+            {svgNode}
+          <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">QueueAnim</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">50</span>, <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">200</span> }} <span class="hljs-attribute">id</span>=<span class="hljs-value">"JText"</span>&gt;</span>
-          Ant Motion Demo.Ant MotionDemo
-        <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"queue"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"text-wrapper"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">h1</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"h1"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"title"</span>&gt;</span>Motion Design<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">h2</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"h2"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"h2"</span>&gt;</span>Animation specification and components of Ant Design.<span class="hljs-tag">&lt;/<span class="hljs-title">h2</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"p"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"p"</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">0</span> }}&gt;</span>使用 Ant Motion 能够快速在 React 框架中使用动画<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"p"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"p2"</span>&gt;</span>我们提供了单项，组合动画，以及整套解决方案<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"button"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"button"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-title">Button</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"primary"</span>&gt;</span>立即使用<span class="hljs-tag">&lt;/<span class="hljs-title">Button</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">QueueAnim</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">Element</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">Element</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"bbb"</span>
         <span class="hljs-attribute">prefixCls</span>=<span class="hljs-value">"banner-user-elem"</span>
@@ -349,7 +392,7 @@ ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-t
   </a>
   <script>FastClick.attach(document.body);</script>
   <script src="../common.js?nowrap"></script>
-  <script src="followMouse.js?nowrap"></script>
+  <script src="parallax.js?nowrap"></script>
 </body>
 
 </html>

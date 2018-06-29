@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>customArrow.js - example - rc-banner-anim@1.0.2</title>
+  <title>customArrow.js - example - rc-banner-anim@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-banner-anim@1.0.2</h1>
+      <h1>rc-banner-anim@2.0.0</h1>
 
       <p>banner-anim animation component for react</p>
     </div>
@@ -283,8 +283,8 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">const</span> { Element, Arrow } = BannerAnim;
 <span class="hljs-keyword">const</span> BgElement = Element.BgElement;
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
-  constructor() {
-    <span class="hljs-keyword">super</span>(...arguments);
+  constructor(props) {
+    <span class="hljs-keyword">super</span>(props);
     <span class="hljs-keyword">this</span>.imgArray = [
       <span class="hljs-string">'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg'</span>,
       <span class="hljs-string">'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'</span>,
@@ -294,16 +294,9 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
       prevEnter: <span class="hljs-literal">false</span>,
       nextEnter: <span class="hljs-literal">false</span>,
     };
-    [
-      <span class="hljs-string">'onChange'</span>,
-      <span class="hljs-string">'prevEnter'</span>,
-      <span class="hljs-string">'prevLeave'</span>,
-      <span class="hljs-string">'nextEnter'</span>,
-      <span class="hljs-string">'nextLeave'</span>,
-    ].forEach((method) =&gt; <span class="hljs-keyword">this</span>[method] = <span class="hljs-keyword">this</span>[method].bind(<span class="hljs-keyword">this</span>));
   }
 
-  onChange(type, int) {
+  onChange = (type, int) =&gt; {
     <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'before'</span>) {
       <span class="hljs-keyword">this</span>.setState({
         intShow: int,
@@ -311,7 +304,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     }
   }
 
-  getNextPrevNumber() {
+  getNextPrevNumber = () =&gt; {
     <span class="hljs-keyword">let</span> nextInt = <span class="hljs-keyword">this</span>.state.intShow + <span class="hljs-number">1</span>;
     <span class="hljs-keyword">let</span> prevInt = <span class="hljs-keyword">this</span>.state.intShow - <span class="hljs-number">1</span>;
     <span class="hljs-keyword">if</span> (nextInt &gt;= <span class="hljs-keyword">this</span>.imgArray.length) {
@@ -324,25 +317,25 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <span class="hljs-keyword">return</span> [prevInt, nextInt];
   }
 
-  prevEnter() {
+  prevEnter = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       prevEnter: <span class="hljs-literal">true</span>,
     });
   }
 
-  prevLeave() {
+  prevLeave = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       prevEnter: <span class="hljs-literal">false</span>,
     });
   }
 
-  nextEnter() {
+  nextEnter = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       nextEnter: <span class="hljs-literal">true</span>,
     });
   }
 
-  nextLeave() {
+  nextLeave = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       nextEnter: <span class="hljs-literal">false</span>,
     });
@@ -405,7 +398,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
           <span class="hljs-attribute">onMouseLeave</span>=<span class="hljs-value">{this.prevLeave}</span>
           <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">left:</span> <span class="hljs-attribute">this.state.prevEnter</span> ? <span class="hljs-attribute">0</span> <span class="hljs-attribute">:</span> <span class="hljs-attribute">-120</span> }}
         &gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"arrow"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"arrow"</span> /&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span> <span class="hljs-attribute">enter</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>' }} <span class="hljs-attribute">leave</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span> }}
             <span class="hljs-attribute">appear</span>=<span class="hljs-value">{false}</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"img-wrapper"</span> <span class="hljs-attribute">component</span>=<span class="hljs-value">"ul"</span>
           &gt;</span>
@@ -420,7 +413,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
           <span class="hljs-attribute">onMouseLeave</span>=<span class="hljs-value">{this.nextLeave}</span>
           <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">right:</span> <span class="hljs-attribute">this.state.nextEnter</span> ? <span class="hljs-attribute">0</span> <span class="hljs-attribute">:</span> <span class="hljs-attribute">-120</span> }}
         &gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"arrow"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"arrow"</span> /&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span> <span class="hljs-attribute">enter</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">200</span> }} <span class="hljs-attribute">leave</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span> }}
             <span class="hljs-attribute">className</span>=<span class="hljs-value">"img-wrapper"</span> <span class="hljs-attribute">component</span>=<span class="hljs-value">"ul"</span>
           &gt;</span>
