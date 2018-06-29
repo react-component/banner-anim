@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import { toArrayChildren } from './utils';
 
 class Thumb extends Component {
-  constructor() {
-    super(...arguments);
-  }
-
   getDefaultThumb = () => {
     const children = [];
     for (let i = 0; i < this.props.length; i++) {

@@ -12,8 +12,8 @@ import '../assets/index.less';
 const { Element, Thumb } = BannerAnim;
 const BgElement = Element.BgElement;
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.imgArray = [
       'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg',
       'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg',
@@ -21,19 +21,15 @@ class Demo extends React.Component {
     this.state = {
       enter: false,
     };
-    [
-      'onMouseEnter',
-      'onMouseLeave',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  onMouseEnter() {
+  onMouseEnter = () => {
     this.setState({
       enter: true,
     });
   }
 
-  onMouseLeave() {
+  onMouseLeave = () => {
     this.setState({
       enter: false,
     });

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class Arrow extends Component {
-  onClick = () => {
-    this.props[this.props.arrowType]();
+  onClick = (e) => {
+    this.props[this.props.arrowType](e);
   }
 
   render() {
