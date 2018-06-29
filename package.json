@@ -63,7 +63,7 @@
   "dependencies": {
     "babel-runtime": "6.x",
     "prop-types": "^15.5.0",
-    "rc-tween-one": "~2.0.7",
+    "rc-tween-one": "~2.1.1",
     "style-utils": "~0.1.13",
     "tween-functions": "1.x"
   },

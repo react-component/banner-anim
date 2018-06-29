@@ -239,7 +239,7 @@ class Element extends Component {
     const { ...tagProps } = tag.props;
     if (tagProps.animation) {
       tagProps.moment = (tagProps.animation.duration + tagProps.animation.delay) * $ratio || 0;
-      tagProps.paused = this.state.mouseMoveType === 'update';
+      tagProps.paused = this.state.mouseMoveType === 'update' || $ratio === 1;
     }
     return React.cloneElement(tag, tagProps);
   }
