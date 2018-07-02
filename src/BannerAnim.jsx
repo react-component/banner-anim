@@ -70,7 +70,9 @@ class BannerAnim extends Component {
   }
 
   onTouchStart = (e) => {
-    if (e.touches && e.touches.length > 1 || this.getDomIsArrowOrThumb(e)) {
+    if (e.touches && e.touches.length > 1 
+      || this.elemWrapper.length <= 1
+      || this.getDomIsArrowOrThumb(e)) {
       return;
     }
     this.animType = this.getAnimType(this.props.type);
