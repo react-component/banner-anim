@@ -59,6 +59,7 @@ class BannerAnim extends Component {
     this.props.onMouseEnter();
     if (this.props.autoPlay) {
       ticker.clear(this.autoPlayId);
+      this.autoPlayId = -1;
     }
   }
 
@@ -74,6 +75,10 @@ class BannerAnim extends Component {
       || this.elemWrapper.length <= 1
       || this.getDomIsArrowOrThumb(e)) {
       return;
+    }
+    if (this.props.autoPlay) {
+      ticker.clear(this.autoPlayId);
+      this.autoPlayId = -1;
     }
     this.animType = this.getAnimType(this.props.type);
     this.currentShow = this.state.currentShow;
@@ -133,11 +138,14 @@ class BannerAnim extends Component {
 
   onTouchEnd = (e) => {
     if (!this.mouseStartXY ||
-      e.touches && e.touches.length > 1
+      e.changedTouches && e.changedTouches.length > 1
     ) {
       return;
     }
-    const currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
+    if (this.props.autoPlay && this.autoPlayId === -1) {
+      this.autoPlay();
+    }
+    const currentX = e.changedTouches === undefined ? e.clientX : e.changedTouches[0].clientX;
     const differX = currentX - this.mouseStartXY.startX;
     delete this.mouseStartXY;
     this.mouseMoveType = 'end';
