@@ -70,7 +70,7 @@ class BannerAnim extends Component {
   }
 
   onTouchStart = (e) => {
-    if (e.touches && e.touches.length > 1 
+    if (e.touches && e.touches.length > 1
       || this.elemWrapper.length <= 1
       || this.getDomIsArrowOrThumb(e)) {
       return;
@@ -339,9 +339,9 @@ class BannerAnim extends Component {
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = { ...props.style };
+    props.onMouseEnter = this.onMouseEnter;
+    props.onMouseLeave = this.onMouseLeave;
     if (childrenToRender.length > 1 && this.props.dragPlay) {
-      props.onMouseEnter = this.onMouseEnter;
-      props.onMouseLeave = this.onMouseLeave;
       props.onTouchStart = this.onTouchStart;
       props.onMouseDown = this.onTouchStart;
       props.onTouchMove = this.onTouchMove;

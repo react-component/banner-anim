@@ -12,7 +12,7 @@ const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 function Demo() {
   return (
-    <BannerAnim prefixCls="banner-user">
+    <BannerAnim prefixCls="banner-user" autoPlay dragPlay={false}>
       <Element key="aaa"
         prefixCls="banner-user-elem"
       >
