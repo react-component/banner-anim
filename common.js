@@ -4879,6 +4879,7 @@ var BannerAnim = function (_Component) {
       _this.props.onMouseEnter();
       if (_this.props.autoPlay) {
         __WEBPACK_IMPORTED_MODULE_7_rc_tween_one_es_ticker__["a" /* default */].clear(_this.autoPlayId);
+        _this.autoPlayId = -1;
       }
     };
 
@@ -4892,6 +4893,10 @@ var BannerAnim = function (_Component) {
     _this.onTouchStart = function (e) {
       if (e.touches && e.touches.length > 1 || _this.elemWrapper.length <= 1 || _this.getDomIsArrowOrThumb(e)) {
         return;
+      }
+      if (_this.props.autoPlay) {
+        __WEBPACK_IMPORTED_MODULE_7_rc_tween_one_es_ticker__["a" /* default */].clear(_this.autoPlayId);
+        _this.autoPlayId = -1;
       }
       _this.animType = _this.getAnimType(_this.props.type);
       _this.currentShow = _this.state.currentShow;
@@ -4950,10 +4955,13 @@ var BannerAnim = function (_Component) {
     };
 
     _this.onTouchEnd = function (e) {
-      if (!_this.mouseStartXY || e.touches && e.touches.length > 1) {
+      if (!_this.mouseStartXY || e.changedTouches && e.changedTouches.length > 1) {
         return;
       }
-      var currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
+      if (_this.props.autoPlay && _this.autoPlayId === -1) {
+        _this.autoPlay();
+      }
+      var currentX = e.changedTouches === undefined ? e.clientX : e.changedTouches[0].clientX;
       var differX = currentX - _this.mouseStartXY.startX;
       delete _this.mouseStartXY;
       _this.mouseMoveType = 'end';
@@ -5180,9 +5188,9 @@ var BannerAnim = function (_Component) {
     var childrenToRender = this.getRenderChildren(props.children);
     props.className = (props.className + ' ' + (prefixCls || '')).trim();
     props.style = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, props.style);
+    props.onMouseEnter = this.onMouseEnter;
+    props.onMouseLeave = this.onMouseLeave;
     if (childrenToRender.length > 1 && this.props.dragPlay) {
-      props.onMouseEnter = this.onMouseEnter;
-      props.onMouseLeave = this.onMouseLeave;
       props.onTouchStart = this.onTouchStart;
       props.onMouseDown = this.onTouchStart;
       props.onTouchMove = this.onTouchMove;
