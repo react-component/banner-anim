@@ -27860,10 +27860,10 @@ var BgElement = function (_React$Component) {
       }
     };
 
-    _this.isVideo = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["f" /* toArrayChildren */])(_this.props.children).filter(function (item) {
+    _this.isVideo = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["f" /* toArrayChildren */])(_this.props.children).some(function (item) {
       return item.type === 'video';
     });
-    if (_this.isVideo.length) {
+    if (_this.isVideo) {
       // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
       delete __WEBPACK_IMPORTED_MODULE_10__anim__["a" /* default */].grid;
       delete __WEBPACK_IMPORTED_MODULE_10__anim__["a" /* default */].gridBar;
@@ -27930,11 +27930,14 @@ var BgElement = function (_React$Component) {
       return delete props[key];
     });
     if (this.isVideo && this.props.videoResize) {
-      var children = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["f" /* toArrayChildren */])(props.children).map(function (item) {
-        var ref = item.type === 'video' && function (c) {
-          _this3.video = c;
-        };
-        return __WEBPACK_IMPORTED_MODULE_4_react___default.a.cloneElement(item, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, item.props, { ref: ref }));
+      var children = Object(__WEBPACK_IMPORTED_MODULE_9__utils__["f" /* toArrayChildren */])(props.children).map(function (item, i) {
+        return __WEBPACK_IMPORTED_MODULE_4_react___default.a.cloneElement(item, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, item.props, { key: item.key || 'bg-video-' + i, ref: function ref(c) {
+            _this3.video = c;
+            if (typeof item.ref === 'function') {
+              item.ref(c);
+            }
+          }
+        }));
       });
       props.children = children.length === 1 ? children[0] : children;
     }
