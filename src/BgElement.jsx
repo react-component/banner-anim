@@ -15,8 +15,8 @@ import animType from './anim';
 export default class BgElement extends React.Component {
   constructor(props) {
     super(props);
-    this.isVideo = toArrayChildren(this.props.children).filter(item => item.type === 'video');
-    if (this.isVideo.length) {
+    this.isVideo = toArrayChildren(this.props.children).some(item => item.type === 'video');
+    if (this.isVideo) {
       // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
       delete animType.grid;
       delete animType.gridBar;
