@@ -136,10 +136,16 @@ export default class BgElement extends React.Component {
       'component',
     ].forEach(key => delete props[key]);
     if (this.isVideo && this.props.videoResize) {
-      const children = toArrayChildren(props.children).map(item => {
-        const ref = item.type === 'video' && (c => { this.video = c; });
-        return React.cloneElement(item, { ...item.props, ref });
-      });
+      const children = toArrayChildren(props.children).map((item, i) =>
+        React.cloneElement(item, {
+          ...item.props, key: item.key || `bg-video-${i}`, ref: (c) => {
+            this.video = c;
+            if (typeof item.ref === 'function') {
+              item.ref(c);
+            }
+          }
+        })
+      );
       props.children = children.length === 1 ? children[0] : children;
     }
     return React.createElement(this.props.component, props);
