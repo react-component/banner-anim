@@ -4891,7 +4891,6 @@ var BannerAnim = function (_Component) {
     };
 
     _this.onTouchStart = function (e) {
-      console.log(e.button);
       if (e.touches && e.touches.length > 1 || _this.elemWrapper.length <= 1 || _this.getDomIsArrowOrThumb(e) || e.button === 2) {
         return;
       }
