@@ -71,9 +71,11 @@ class BannerAnim extends Component {
   }
 
   onTouchStart = (e) => {
+    console.log(e.button)
     if (e.touches && e.touches.length > 1
       || this.elemWrapper.length <= 1
-      || this.getDomIsArrowOrThumb(e)) {
+      || this.getDomIsArrowOrThumb(e) 
+      || e.button === 2) {
       return;
     }
     if (this.props.autoPlay) {
