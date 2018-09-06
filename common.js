@@ -26136,7 +26136,7 @@ var Element = function (_Component) {
     props.style = style;
     props.className = ('banner-anim-elem ' + (this.props.prefixCls || '')).trim();
     var bgElem = Object(__WEBPACK_IMPORTED_MODULE_13__utils__["f" /* toArrayChildren */])(this.props.children).filter(function (item) {
-      return item.type.isBannerAnimBgElement;
+      return item && item.type.isBannerAnimBgElement;
     }).map(function (item) {
       return __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(item, { show: _this2.state.show });
     });
@@ -26270,7 +26270,7 @@ var _initialiseProps = function _initialiseProps() {
 
   this.getChildren = function () {
     return Object(__WEBPACK_IMPORTED_MODULE_13__utils__["f" /* toArrayChildren */])(_this3.props.children).map(function (item) {
-      if (item.type === __WEBPACK_IMPORTED_MODULE_12__BgElement__["a" /* default */]) {
+      if (item && item.type === __WEBPACK_IMPORTED_MODULE_12__BgElement__["a" /* default */]) {
         return __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(item, { show: _this3.state.show });
       }
       return item;
