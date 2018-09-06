@@ -5000,6 +5000,9 @@ var BannerAnim = function (_Component) {
       var thumb = void 0;
 
       Object(__WEBPACK_IMPORTED_MODULE_10__utils__["f" /* toArrayChildren */])(children).forEach(function (item, i) {
+        if (!item) {
+          return;
+        }
         if (!item.key) {
           throw new Error('Please add key, key is required');
         }
