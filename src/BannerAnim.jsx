@@ -73,7 +73,7 @@ class BannerAnim extends Component {
   onTouchStart = (e) => {
     if (e.touches && e.touches.length > 1
       || this.elemWrapper.length <= 1
-      || this.getDomIsArrowOrThumb(e) 
+      || this.getDomIsArrowOrThumb(e)
       || e.button === 2) {
       return;
     }
@@ -188,6 +188,9 @@ class BannerAnim extends Component {
     let thumb;
 
     toArrayChildren(children).forEach((item, i) => {
+      if (!item) {
+        return;
+      }
       if (!item.key) {
         throw new Error('Please add key, key is required');
       }
