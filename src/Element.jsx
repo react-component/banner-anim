@@ -181,7 +181,7 @@ class Element extends Component {
 
   getChildren = () => {
     return toArrayChildren(this.props.children).map(item => {
-      if (item.type === BgElement) {
+      if (item && item.type === BgElement) {
         return React.cloneElement(item, { show: this.state.show });
       }
       return item;
@@ -256,7 +256,7 @@ class Element extends Component {
     props.style = style;
     props.className = `banner-anim-elem ${this.props.prefixCls || ''}`.trim();
     const bgElem = toArrayChildren(this.props.children).filter(item =>
-      item.type.isBannerAnimBgElement)
+      item && item.type.isBannerAnimBgElement)
       .map(item => {
         return React.cloneElement(item, { show: this.state.show });
       });
