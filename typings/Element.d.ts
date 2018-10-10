@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IEaseCallBack, IStyleAnimProps } from 'rc-tween-one/typings/AnimObject';
+import { IEaseType, IStyleAnimProps } from 'rc-tween-one/typings/AnimObject';
 import BgElement from './BgElement';
 
 export interface IDataType {
@@ -11,7 +11,7 @@ export interface IDataType {
 
 export interface IFollowType {
   delay?: number;
-  ease?: IEaseCallBack;
+  ease?: IEaseType;
   minMover?: number;
   data: IDataType;
 }

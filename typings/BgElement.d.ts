@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IEaseCallBack, IStyleAnimProps } from 'rc-tween-one/typings/AnimObject';
+import { IStyleAnimProps } from 'rc-tween-one/typings/AnimObject';
 
 export interface IProps<T> extends React.HTMLAttributes<T> {
   scrollParallax?: IStyleAnimProps;

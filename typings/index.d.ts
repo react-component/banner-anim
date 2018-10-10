@@ -4,7 +4,7 @@
 // Definitions: https://github.com/react-component/banner-anim
 import * as React from 'react';
 
-import { IEaseCallBack } from 'rc-tween-one/typings/AnimObject';
+import { IEaseType } from 'rc-tween-one/typings/AnimObject';
 
 import Arrow from './Arrow';
 import Thumb from './Thumb';
@@ -24,7 +24,7 @@ export interface IProps<T> extends Omit<React.HTMLAttributes<T>, 'onChange'> {
   type?: IType;
   duration?: number;
   delay?: number;
-  ease?: IEaseCallBack;
+  ease?: IEaseType;
   autoPlay?: boolean;
   autoPlaySpeed?: number;
   sync?: boolean;
