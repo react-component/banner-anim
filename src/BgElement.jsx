@@ -127,13 +127,14 @@ export default class BgElement extends React.Component {
   };
 
   render() {
-    const props = { ...this.props };
+    const props = { ...this.props, ...this.props.componentProps };
     [
       'videoResize',
       'scrollParallax',
       'scrollParallaxDuration',
       'show',
       'component',
+      'componentProps',
     ].forEach(key => delete props[key]);
     if (this.isVideo && this.props.videoResize) {
       const children = toArrayChildren(props.children).map((item, i) =>
@@ -160,11 +161,13 @@ BgElement.propTypes = {
   videoResize: PropTypes.bool,
   scrollParallax: PropTypes.object,
   show: PropTypes.bool,
+  componentProps: PropTypes.object,
 };
 
 BgElement.defaultProps = {
   component: 'div',
   videoResize: true,
+  componentProps: {},
 };
 
 BgElement.isBannerAnimBgElement = true;

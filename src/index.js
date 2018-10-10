@@ -1,22 +1,25 @@
 // export this package's api
 import BannerAnim from './BannerAnim';
-import arrow from './Arrow';
-import element from './Element';
-import thumb from './Thumb';
-import _animType from './anim';
-import { setAnimCompToTagComp as toTagComp, switchChildren as swichChild } from './utils';
+import Arrow from './Arrow';
+import Element from './Element';
+import Thumb from './Thumb';
+import animType from './anim';
+import { setAnimCompToTagComp, switchChildren } from './utils';
 
-BannerAnim.Arrow = arrow;
-BannerAnim.Element = element;
-BannerAnim.Thumb = thumb;
-BannerAnim.animType = _animType;
-BannerAnim.setAnimCompToTagComp = toTagComp;
-BannerAnim.switchChildren = swichChild;
+BannerAnim.Arrow = Arrow;
+BannerAnim.Element = Element;
+BannerAnim.Thumb = Thumb;
+BannerAnim.animType = animType;
+BannerAnim.setAnimCompToTagComp = setAnimCompToTagComp;
+BannerAnim.switchChildren = switchChildren;
 
 export default BannerAnim;
-export const Arrow = arrow;
-export const Element = element;
-export const Thumb = thumb;
-export const animType = _animType;
-export const setAnimCompToTagComp = toTagComp;
-export const switchChildren = swichChild;
+
+export {
+  Arrow,
+  Element,
+  Thumb,
+  animType,
+  setAnimCompToTagComp,
+  switchChildren,
+}

@@ -108,12 +108,12 @@ jump: this.banner.slickGoTo(number); number from 0;
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-| key      |     string      |      -       |  must                 |
 | leaveChildHide |   boolean |  false   | children leave switch animation. Replace the `hideProps`.| 
 | sync      |   boolean      |   false       | children and `Element` the same time animation |  
 | prefixCls |     string      |   -           |  user class |
 | followParallax | object   |  null        | follow mouse anim  |
 | component | string | 'div' | component tag        |
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
 
 #### followParallax is object
 |   name   |      type       |   default    |        description    |
@@ -127,15 +127,26 @@ jump: this.banner.slickGoTo(number); number from 0;
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-| id      |  string         | -            |  must( 0.4.0 key to id, use dom )|
 | className | string         | -            | className             |
 | scrollParallax | object | null | { y: 100 },  from bottom to top of browser, element leave display area y is 100 | 
 | videoResize | boolean | true | children is video, video follow window resize |
 | component | string | 'div' | component tag        |
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
 
-### Arrow or Thumb
+### Arrow 
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-| key      |     string      |      -       |  must                 |
+| arrowType |    'prev' \| 'next' |  -       | arrow type  |
 | prefixCls |     string      |   -           |  user class |
+| component  | string / React.Element  | `div`   | component tag  |
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
+
+### Thumb
+
+|   name   |      type       |   default    |        description    |
+|----------|-----------------|--------------|-----------------------|
+| children  |     React.Element    |      -       |  must                 |
+| prefixCls |     string      |   -           |  user class |
+| component  | string / React.Element  | `div`   | component tag  |
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 

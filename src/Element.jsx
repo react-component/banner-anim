@@ -245,7 +245,7 @@ class Element extends Component {
   }
 
   render() {
-    const props = { ...this.props };
+    const props = { ...this.props, ...this.props.componentProps };
     const style = { ...props.style };
     style.display = props.show ? 'block' : 'none';
     style.position = 'absolute';
@@ -302,9 +302,11 @@ Element.propTypes = {
   sync: PropTypes.bool,
   ratio: PropTypes.number,
   mouseMoveType: PropTypes.string,
+  componentProps: PropTypes.object,
 };
 Element.defaultProps = {
   component: 'div',
+  componentProps: {},
   callBack: noop,
   delay: 0,
 };

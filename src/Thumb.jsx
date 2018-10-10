@@ -27,7 +27,7 @@ class Thumb extends Component {
         .trim();
       return React.cloneElement(item, props);
     });
-    const props = { ...this.props };
+    const props = { ...this.props, ...this.props.componentProps };
     ['length', 'thumbClick', 'active', 'default', 'component', 'prefixCls']
       .forEach(key => delete props[key]);
     props.className = className;
@@ -47,9 +47,11 @@ Thumb.propTypes = {
   default: PropTypes.bool,
   length: PropTypes.number,
   active: PropTypes.number,
+  componentProps: PropTypes.object,
 };
 Thumb.defaultProps = {
   component: 'div',
+  componentProps: {},
   thumbClick: () => {
   },
 };
