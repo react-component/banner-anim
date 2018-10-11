@@ -28,7 +28,7 @@ class Thumb extends Component {
       return React.cloneElement(item, props);
     });
     const props = { ...this.props, ...this.props.componentProps };
-    ['length', 'thumbClick', 'active', 'default', 'component', 'prefixCls']
+    ['length', 'thumbClick', 'active', 'default', 'component', 'componentProps', 'prefixCls']
       .forEach(key => delete props[key]);
     props.className = className;
     return React.createElement(this.props.component,
