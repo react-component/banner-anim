@@ -8,44 +8,54 @@ import TestUtils from 'react-dom/test-utils';
 import '../assets/index.less';
 import '../examples/assets/index.less';
 
-const { Element } = BannerAnim;
+const { Element, Arrow, Thumb } = BannerAnim;
 const BgElement = Element.BgElement;
 describe('rc-banner-anim', () => {
   let div;
 
   function createBannerAnimInstance(props = {}) {
-    function BannerAnimExample() {
-      return (
-        <BannerAnim { ...props }>
-          <Element key="a" id="a">
-            <BgElement
-              key="bgElem"
-              className="bg"
-              style={{
-                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
-            <span>test text</span>
-          </Element>
-          <Element key="b" id="b">
-            <BgElement
-              key="bgElem"
-              className="bg"
-              style={{
-                backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
-            <span>test text</span>
-          </Element>
-        </BannerAnim>
-      );
+    class BannerAnimExample extends React.PureComponent {
+      render() {
+        const { showArrowAndThumb, ...cProps } = this.props;
+        return (
+          <BannerAnim {...cProps}>
+            <Element key="a" id="a">
+              <BgElement
+                key="bgElem"
+                className="bg"
+                style={{
+                  backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+              <span>test text</span>
+            </Element>
+            <Element key="b" id="b">
+              <BgElement
+                key="bgElem"
+                className="bg"
+                style={{
+                  backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+              <span>test text</span>
+            </Element>
+            {showArrowAndThumb && [
+              <Arrow arrowType="prev" key="prev">left</Arrow>,
+              <Arrow arrowType="next" key="next">next</Arrow>,
+              <Thumb key="thumb">
+                <div key="0"></div>
+                <div key="1"></div>
+              </Thumb>
+            ]}
+          </BannerAnim>
+        );
+      }
     }
-
-    return ReactDom.render(<BannerAnimExample />, div);
+    return ReactDom.render(<BannerAnimExample {...props} />, div);
   }
 
   beforeEach(() => {
@@ -72,6 +82,15 @@ describe('rc-banner-anim', () => {
     expect(children.length).to.be(8);
     // test text 两个点是 span
     expect(childrenSpan.length).to.be(3);
+  });
+
+  it('should render arrow and thubm', () => {
+    const instance = createBannerAnimInstance({
+      type: 'gird',
+      showArrowAndThumb: true,
+    });
+    const children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
+    expect(children.length).to.be(10);
   });
 
   it('banner animation initShow', () => {

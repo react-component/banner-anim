@@ -55,16 +55,16 @@ class BannerAnim extends Component {
     }
   }
 
-  onMouseEnter = () => {
-    this.props.onMouseEnter();
+  onMouseEnter = (e) => {
+    this.props.onMouseEnter(e);
     if (this.props.autoPlay) {
       ticker.clear(this.autoPlayId);
       this.autoPlayId = -1;
     }
   }
 
-  onMouseLeave = () => {
-    this.props.onMouseLeave();
+  onMouseLeave = (e) => {
+    this.props.onMouseLeave(e);
     if (this.props.autoPlay) {
       this.autoPlay();
     }
@@ -186,17 +186,17 @@ class BannerAnim extends Component {
     const elem = [];
     const arrow = [];
     let thumb;
+    let elementKeyNum = 0;
+    let thumbKeyNum = 0;
 
     toArrayChildren(children).forEach((item, i) => {
       if (!item) {
         return;
       }
-      if (!item.key) {
-        throw new Error('Please add key, key is required');
-      }
       const itemProps = { ...item.props };
       if (item.type.isBannerAnimElement) {
-        itemProps.key = item.key;
+        itemProps.key = item.key || `element-${elementKeyNum}`;
+        elementKeyNum += 1;
         itemProps.callBack = this.animEnd;
         itemProps.show = this.state.currentShow === i;
         itemProps.animType = this.animType;
@@ -216,9 +216,12 @@ class BannerAnim extends Component {
       } else if (item.type.isBannerAnimArrow) {
         itemProps.next = this.next;
         itemProps.prev = this.prev;
+        itemProps.key = item.key || itemProps.arrowType;
         itemProps.elemHeight = this.state.wrapperHeight;
         arrow.push(React.cloneElement(item, itemProps));
       } else if (item.type.isBannerAnimThumb) {
+        itemProps.key = item.key || `thumb-${thumbKeyNum}`;
+        thumbKeyNum += 1;
         itemProps.thumbClick = this.slickGoTo;
         itemProps.active = this.state.currentShow;
         thumb = React.cloneElement(item, itemProps);

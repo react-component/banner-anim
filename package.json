@@ -1,6 +1,6 @@
 {
   "name": "rc-banner-anim",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "banner-anim animation component for react",
   "keywords": [
     "react",
@@ -21,7 +21,8 @@
     "lib",
     "assets/*.css",
     "dist",
-    "es"
+    "es",
+    "typings"
   ],
   "licenses": "MIT",
   "main": "./lib/index",
@@ -50,6 +51,7 @@
     "coverage": "rc-test run coverage"
   },
   "devDependencies": {
+    "@types/react": "^16.0.0",
     "antd": "^3.6.0",
     "core-js": "^2.5.1",
     "expect.js": "0.3.x",
@@ -58,7 +60,8 @@
     "rc-test": "6.x",
     "rc-tools": "8.x",
     "react": "^16.4.0",
-    "react-dom": "^16.4.0"
+    "react-dom": "^16.4.0",
+    "typescript": "3.x"
   },
   "dependencies": {
     "babel-runtime": "6.x",
@@ -69,5 +72,6 @@
   },
   "pre-commit": [
     "lint"
-  ]
+  ],
+  "types": "typings/index.d.ts"
 }

@@ -12,10 +12,10 @@ class Arrow extends Component {
     className = `${className} ${this.props.prefixCls || ''}`.trim();
     className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
     className = `${className} ${this.props.arrowType}`;
-    const props = { ...this.props };
+    const props = { ...this.props, ...this.props.componentProps };
     [
       'arrowType', 'next', 'prev',
-      'elemHeight', 'component', 'default', 'prefixCls',
+      'elemHeight', 'component', 'componentProps', 'default', 'prefixCls',
     ].forEach(key => delete props[key]);
     props.className = className;
     props.onClick = this.onClick;
@@ -36,10 +36,12 @@ Arrow.propTypes = {
   next: PropTypes.func,
   prev: PropTypes.func,
   elemHeight: PropTypes.number,
+  componentProps: PropTypes.object,
 };
 Arrow.defaultProps = {
   component: 'div',
   className: 'banner-anim-arrow',
+  componentProps: {},
 };
 
 Arrow.isBannerAnimArrow = true;
