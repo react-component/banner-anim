@@ -94,12 +94,11 @@ class BannerAnim extends Component {
     if (!this.mouseStartXY || e.touches && e.touches.length > 1) {
       return;
     }
-    const currentX = e.touches === undefined ? e.clientX : e.touches[0].clientX;
-    const differX = currentX - this.mouseStartXY.startX;
-    if (!differX) {
+    const differ = this.getDiffer(e, e.touches);
+    if (!differ) {
       return;
     }
-    const ratio = differX / this.state.domRect.width * 2;
+    const ratio = differ / this.state.domRect.width * 2;
     let ratioType = this.ratioType;
     let currentShow = this.currentShow;
     if (ratio > 0) {
@@ -114,6 +113,9 @@ class BannerAnim extends Component {
       this.setState({
         currentShow,
       });
+      return;
+    }
+    if ((this.animType === animType.gridBar || this.animType === animType.grid) && e.touches) {
       return;
     }
     this.ratio = ratio;
@@ -146,14 +148,29 @@ class BannerAnim extends Component {
     if (this.props.autoPlay && this.autoPlayId === -1) {
       this.autoPlay();
     }
-    const currentX = e.changedTouches === undefined ? e.clientX : e.changedTouches[0].clientX;
-    const differX = currentX - this.mouseStartXY.startX;
+    const differ = this.getDiffer(e, e.changedTouches);
     delete this.mouseStartXY;
     this.mouseMoveType = 'end';
-    if (!differX) {
+    if (!differ) {
       this.mouseMoveType = '';
       return
     }
+    if ((this.animType === animType.gridBar || this.animType === animType.grid) && e.changedTouches) {
+      let currentShow = this.currentShow;
+      const ratio = differ / this.state.domRect.width * 2;
+      if (ratio > 0) {
+        currentShow += 1;
+      } else {
+        currentShow -= 1;
+      }
+      currentShow = currentShow >= this.elemWrapper.length ? 0 : currentShow;
+      currentShow = currentShow < 0 ? this.elemWrapper.length - 1 : currentShow;
+      this.ratio = 0;
+      this.mouseMoveType = '';
+      this.slickGoTo(currentShow, true);
+      return;
+    }
+    
     if (this.ratio > 0.3) {
       this.forceUpdate(() => {
         this.ratio = 0;
@@ -168,6 +185,16 @@ class BannerAnim extends Component {
         this.mouseMoveType = '';
       });
     }
+  }
+
+  getDiffer = (e, touches) => {
+    const currentX = touches === undefined ? e.clientX : touches[0].clientX;
+    const currentY = touches === undefined ? e.clientY : touches[0].clientY;
+    const differX = currentX - this.mouseStartXY.startX;
+    const differY = currentY - this.mouseStartXY.startY;
+    let differ = Math.max(Math.abs(differX), Math.abs(differY));
+    differ = differ === Math.abs(differX) ? differX : differY;
+    return differ;
   }
 
   getDomIsArrowOrThumb = (e) => {
@@ -284,8 +311,10 @@ class BannerAnim extends Component {
     this.autoPlayId = ticker.interval(this.next, this.props.autoPlaySpeed);
   }
 
-  animTweenStart = (show, type) => {
-    this.animType = this.getAnimType(this.props.type);
+  animTweenStart = (show, type, noGetAnimType) => {
+    if (!noGetAnimType) {
+      this.animType = this.getAnimType(this.props.type);
+    }
     this.props.onChange('before', show);
     this.setState({
       currentShow: show,
@@ -324,11 +353,11 @@ class BannerAnim extends Component {
     }
   }
 
-  slickGoTo = (i) => {
+  slickGoTo = (i, noGetAnimType) => {
     if (!this.tweenBool && i !== this.state.currentShow) {
       this.tweenBool = true;
       const type = i > this.state.currentShow ? 'next' : 'prev';
-      this.animTweenStart(i, type);
+      this.animTweenStart(i, type, noGetAnimType);
     }
   }
 

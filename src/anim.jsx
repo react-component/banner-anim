@@ -93,7 +93,7 @@ export default {
       _y = direction === 'next' ? '100%' : '-100%';
       children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
-    const moment = ratio * (animData.duration + animData.delay + gridNum * 50 + 50) || 0;
+    const moment = ratio * (animData.duration + animData.delay + gridNum * 50 - (type === 'enter' ? 50 : 0)) || 0;
     for (let i = 0; i < gridNum; i++) {
       const style = { ...props.style };
       style.width = `${girdSize + 0.1}%`;
@@ -132,7 +132,7 @@ export default {
     </div>);
     const _props = { ...elem.props };
     _props.children = animSlot;
-    return cloneElement(elem, _props);
+    return cloneElement(elem, { ..._props, animation: { x: 0, y: 0, type: 'set' } });
   },
   grid(elem, type, direction, animData, elemOffset, leaveChildHide, ratio, paused) {
     const props = { ...elem.props };
@@ -193,6 +193,6 @@ export default {
     }
     const _props = { ...elem.props };
     _props.children = animChild;
-    return cloneElement(elem, _props);
+    return cloneElement(elem, { ..._props, animation: { x: 0, y: 0, type: 'set' } });
   },
 };

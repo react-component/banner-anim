@@ -1,6 +1,6 @@
 {
   "name": "rc-banner-anim",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "banner-anim animation component for react",
   "keywords": [
     "react",
@@ -66,7 +66,7 @@
   "dependencies": {
     "babel-runtime": "6.x",
     "prop-types": "^15.5.0",
-    "rc-tween-one": "^2.2.4",
+    "rc-tween-one": "^2.2.15",
     "style-utils": "~0.1.13",
     "tween-functions": "1.x"
   },
