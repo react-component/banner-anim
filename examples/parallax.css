@@ -1859,7 +1859,7 @@ mark {
   margin-left: 4px;
 }
 .ant-btn {
-  line-height: 1.5;
+  line-height: 1.499;
   display: inline-block;
   font-weight: 400;
   text-align: center;
@@ -1897,7 +1897,6 @@ mark {
 }
 .ant-btn:not([disabled]):active {
   outline: 0;
-  transition: none;
   box-shadow: none;
 }
 .ant-btn.disabled,
@@ -2035,7 +2034,7 @@ mark {
   background-color: #1890ff;
   border-color: #1890ff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.035);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
 }
 .ant-btn-primary > a:only-child {
   color: currentColor;
@@ -2546,7 +2545,6 @@ mark {
 .ant-btn-group > .ant-btn,
 .ant-btn-group > span > .ant-btn {
   position: relative;
-  line-height: 30px;
 }
 .ant-btn-group > .ant-btn:hover,
 .ant-btn-group > span > .ant-btn:hover,
@@ -4562,7 +4560,7 @@ a.ant-btn-sm {
   background-color: #1890ff;
   border-color: #1890ff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.035);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
   padding: 0 7px;
   font-size: 14px;
   border-radius: 4px;
@@ -4582,7 +4580,6 @@ a.ant-btn-sm {
 }
 .ant-calendar .ant-calendar-ok-btn:not([disabled]):active {
   outline: 0;
-  transition: none;
   box-shadow: none;
 }
 .ant-calendar .ant-calendar-ok-btn.disabled,
@@ -11317,7 +11314,7 @@ textarea.ant-mention-wrapper .ant-mention-editor {
   list-style: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   color: rgba(0, 0, 0, 0.65);
-  background: #fff;
+  background: transparent;
   line-height: 0;
   transition: background .3s, width .2s;
   zoom: 1;
@@ -11506,7 +11503,7 @@ textarea.ant-mention-wrapper .ant-mention-editor {
   opacity: .0001;
 }
 .ant-menu-submenu > .ant-menu {
-  background-color: #fff;
+  background-color: transparent;
   border-radius: 4px;
 }
 .ant-menu-submenu > .ant-menu-submenu-title:after {
@@ -15243,12 +15240,12 @@ span.ant-radio + * {
 .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-sorters:active .ant-table-column-sorter-down:not(.on) {
   color: rgba(0, 0, 0, 0.45);
 }
-.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-align-right.ant-table-align-right.ant-table-column-has-sorters,
-.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-align-right.ant-table-align-right.ant-table-column-has-filters {
-  padding-right: 30px;
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-sorters,
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters {
+  padding-right: 30px !important;
 }
-.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-align-right.ant-table-align-right.ant-table-column-has-sorters.ant-table-column-has-filters {
-  padding-right: 54px;
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-sorters.ant-table-column-has-filters {
+  padding-right: 54px !important;
 }
 .ant-table-thead > tr > th .ant-table-column-sorters:before {
   position: absolute;
@@ -15569,7 +15566,7 @@ tr.ant-table-expanded-row,
 tr.ant-table-expanded-row:hover {
   background: #fbfbfb;
 }
-tr.ant-table-expanded-row .ant-table-wrapper {
+tr.ant-table-expanded-row td > .ant-table-wrapper {
   margin: -16px -16px -17px;
 }
 .ant-table .ant-table-row-indent + .ant-table-row-expand-icon {
@@ -15679,6 +15676,9 @@ tr.ant-table-expanded-row .ant-table-wrapper {
 .ant-table-middle > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td,
 .ant-table-middle > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td {
   padding: 12px 8px;
+}
+.ant-table-middle tr.ant-table-expanded-row td > .ant-table-wrapper {
+  margin: -12px -16px -13px;
 }
 .ant-table-small {
   border: 1px solid #e8e8e8;
@@ -15794,6 +15794,9 @@ tr.ant-table-expanded-row .ant-table-wrapper {
 .ant-table-small.ant-table-bordered .ant-table-fixed-right {
   border-left: 1px solid #e8e8e8;
   border-right: 1px solid #e8e8e8;
+}
+.ant-table-small tr.ant-table-expanded-row td > .ant-table-wrapper {
+  margin: -8px -16px -9px;
 }
 .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-nav-container {
   height: 40px;
