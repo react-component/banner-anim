@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 class Arrow extends Component {
   onClick = (e) => {
+    e.stopPropagation();
     this.props[this.props.arrowType](e);
   }
 

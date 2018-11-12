@@ -47,8 +47,8 @@ describe('rc-banner-anim', () => {
               <Arrow arrowType="prev" key="prev">left</Arrow>,
               <Arrow arrowType="next" key="next">next</Arrow>,
               <Thumb key="thumb">
-                <div key="0"></div>
-                <div key="1"></div>
+                <div key="0" />
+                <div key="1" />
               </Thumb>
             ]}
           </BannerAnim>

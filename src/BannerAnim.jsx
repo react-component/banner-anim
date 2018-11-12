@@ -22,12 +22,8 @@ class BannerAnim extends Component {
   componentDidMount() {
     this.getDomDataSetToState();
     if (window.addEventListener) {
-      window.addEventListener('touchend', this.onTouchEnd);
-      window.addEventListener('mouseup', this.onTouchEnd);
       window.addEventListener('resize', this.getDomDataSetToState);
     } else {
-      window.attachEvent('ontouchend', this.onTouchEnd);
-      window.attachEvent('onmouseup', this.onTouchEnd);
       window.attachEvent('onresize', this.getDomDataSetToState);
     }
     if (this.props.autoPlay) {
@@ -74,7 +70,7 @@ class BannerAnim extends Component {
     if (e.touches && e.touches.length > 1
       || this.elemWrapper.length <= 1
       || this.getDomIsArrowOrThumb(e)
-      || e.button === 2) {
+      || e.button === 2 || this.tweenBool) {
       return;
     }
     if (this.props.autoPlay) {
@@ -91,14 +87,14 @@ class BannerAnim extends Component {
   }
 
   onTouchMove = (e) => {
-    if (!this.mouseStartXY || e.touches && e.touches.length > 1) {
+    if (!this.mouseStartXY || e.touches && e.touches.length > 1 || this.tweenBool) {
       return;
     }
-    const differ = this.getDiffer(e, e.touches);
+    const { differ, rectName } = this.getDiffer(e, e.touches);
     if (!differ) {
       return;
     }
-    const ratio = differ / this.state.domRect.width * 2;
+    const ratio = differ / this.state.domRect[rectName] * 2;
     let ratioType = this.ratioType;
     let currentShow = this.currentShow;
     if (ratio > 0) {
@@ -129,7 +125,7 @@ class BannerAnim extends Component {
         type = 'prev';
       }
       this.ratio = Math.abs(this.ratio);
-      this.ratio = this.ratio > 1 ? 1 : this.ratio;
+      this.ratio = this.ratio > 0.99 ? 0.99 : this.ratio;
       currentShow = currentShow >= this.elemWrapper.length ? 0 : currentShow;
       currentShow = currentShow < 0 ? this.elemWrapper.length - 1 : currentShow;
       this.setState({
@@ -141,23 +137,25 @@ class BannerAnim extends Component {
 
   onTouchEnd = (e) => {
     if (!this.mouseStartXY ||
-      e.changedTouches && e.changedTouches.length > 1
+      e.changedTouches && e.changedTouches.length > 1 ||
+      this.tweenBool
     ) {
       return;
     }
     if (this.props.autoPlay && this.autoPlayId === -1) {
       this.autoPlay();
     }
-    const differ = this.getDiffer(e, e.changedTouches);
+    const { differ, rectName } = this.getDiffer(e, e.changedTouches);
     delete this.mouseStartXY;
     this.mouseMoveType = 'end';
     if (!differ) {
       this.mouseMoveType = '';
       return
     }
+    this.tweenBool = true;
     if ((this.animType === animType.gridBar || this.animType === animType.grid) && e.changedTouches) {
       let currentShow = this.currentShow;
-      const ratio = differ / this.state.domRect.width * 2;
+      const ratio = differ / this.state.domRect[rectName] * 2;
       if (ratio > 0) {
         currentShow += 1;
       } else {
@@ -170,7 +168,7 @@ class BannerAnim extends Component {
       this.slickGoTo(currentShow, true);
       return;
     }
-    
+
     if (this.ratio > 0.3) {
       this.forceUpdate(() => {
         this.ratio = 0;
@@ -194,7 +192,10 @@ class BannerAnim extends Component {
     const differY = currentY - this.mouseStartXY.startY;
     let differ = Math.max(Math.abs(differX), Math.abs(differY));
     differ = differ === Math.abs(differX) ? differX : differY;
-    return differ;
+    return {
+      differ,
+      rectName: differ === Math.abs(differX) ? 'width' : 'height',
+    };
   }
 
   getDomIsArrowOrThumb = (e) => {
