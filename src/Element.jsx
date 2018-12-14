@@ -200,7 +200,7 @@ class Element extends Component {
   animEnd = () => {
     const type = this.state.show ? 'enter' : 'leave';
     this.props.callBack(type);
-    this.setState({ show: this.props.show, mouseMoveType: null });
+    this.setState((_, props) => ({ show: props.show, mouseMoveType: null }));
   }
 
   animChildren = (props, style, bgElem) => {
