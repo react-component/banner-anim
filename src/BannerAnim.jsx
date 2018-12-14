@@ -95,13 +95,8 @@ class BannerAnim extends Component {
       return;
     }
     const ratio = differ / this.state.domRect[rectName] * 2;
-    let ratioType = this.ratioType;
+    const ratioType = ratio > 0 ? '+' : '-';
     let currentShow = this.currentShow;
-    if (ratio > 0) {
-      ratioType = '+';
-    } else {
-      ratioType = '-';
-    }
     this.mouseMoveType = 'update';
     if (this.ratioType !== ratioType) {
       this.ratioType = ratioType;
