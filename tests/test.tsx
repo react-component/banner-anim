@@ -10,13 +10,13 @@ BannerAnim.animType;
 function Demo() {
   return (
     <BannerAnim>
-      <Element sync leaveChildHide>
-        <Element.BgElement scrollParallax={{ x: 100 }}></Element.BgElement>
+      <Element sync={true} leaveChildHide={true}>
+        <Element.BgElement scrollParallax={{ x: 100 }} />
         <div>test</div>
       </Element>
       <Arrow arrowType="next">text</Arrow>
       <Arrow arrowType="prev">text</Arrow>
-      <Thumb><div></div></Thumb>
+      <Thumb><div/></Thumb>
     </BannerAnim>
   );
 }
