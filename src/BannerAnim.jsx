@@ -53,7 +53,7 @@ class BannerAnim extends Component {
 
   onMouseEnter = (e) => {
     this.props.onMouseEnter(e);
-    if (this.props.autoPlay) {
+    if (this.props.autoPlay && this.props.autoPlayEffect) {
       ticker.clear(this.autoPlayId);
       this.autoPlayId = -1;
     }
@@ -61,7 +61,7 @@ class BannerAnim extends Component {
 
   onMouseLeave = (e) => {
     this.props.onMouseLeave(e);
-    if (this.props.autoPlay) {
+    if (this.props.autoPlay && this.props.autoPlayEffect) {
       this.autoPlay();
     }
   }
@@ -407,6 +407,7 @@ BannerAnim.propTypes = {
   ease: PropTypes.string,
   autoPlay: PropTypes.bool,
   autoPlaySpeed: PropTypes.number,
+  autoPlayEffect: PropTypes.bool,
   onChange: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
@@ -423,6 +424,7 @@ BannerAnim.defaultProps = {
   arrow: true,
   thumb: true,
   autoPlaySpeed: 5000,
+  autoPlayEffect: true,
   dragPlay: true,
   onChange: () => {
   },

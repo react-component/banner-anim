@@ -95,25 +95,26 @@ jump: this.banner.slickGoTo(number); number from 0;
 | thumb    |      boolean    |      `true`    |  ^ |
 | autoPlay |      boolean    |      `false`  | auto play |
 | autoPlaySpeed |  number    |    5000       | auto play delay |
+| autoPlayEffect |  boolean    |    `true`       | auto play when mouse leave |
 | onChange |     func        |    -          | onChange(`before` or `after`, currentShowInt) |
 | prefixCls |    string      |   -           |  user class |
 | children |  react.component|   -           | `Element`(must), `Arrow`, `Thumb` |
-| sync      |   boolean      |   false       | `Element` the children and `Element` the same time animation |  
+| sync      |   boolean      |   false       | `Element` the children and `Element` the same time animation |
 | dragPlay  | boolean        |   true        | drag play next or prev |
 | component | string | 'div' | component tag        |
 
-### Element 
+### Element
 
 > children is `TweenOne`, animation type must `from`;
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
-| leaveChildHide |   boolean |  false   | children leave switch animation. Replace the `hideProps`.| 
-| sync      |   boolean      |   false       | children and `Element` the same time animation |  
+| leaveChildHide |   boolean |  false   | children leave switch animation. Replace the `hideProps`.|
+| sync      |   boolean      |   false       | children and `Element` the same time animation |
 | prefixCls |     string      |   -           |  user class |
 | followParallax | object   |  null        | follow mouse anim  |
 | component | string | 'div' | component tag        |
-| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` |
 
 #### followParallax is object
 |   name   |      type       |   default    |        description    |
@@ -128,19 +129,19 @@ jump: this.banner.slickGoTo(number); number from 0;
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | className | string         | -            | className             |
-| scrollParallax | object | null | { y: 100 },  from bottom to top of browser, element leave display area y is 100 | 
+| scrollParallax | object | null | { y: 100 },  from bottom to top of browser, element leave display area y is 100 |
 | videoResize | boolean | true | children is video, video follow window resize |
 | component | string | 'div' | component tag        |
-| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` |
 
-### Arrow 
+### Arrow
 
 |   name   |      type       |   default    |        description    |
 |----------|-----------------|--------------|-----------------------|
 | arrowType |    'prev' \| 'next' |  -       | arrow type  |
 | prefixCls |     string      |   -           |  user class |
 | component  | string / React.Element  | `div`   | component tag  |
-| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` |
 
 ### Thumb
 
@@ -149,4 +150,4 @@ jump: this.banner.slickGoTo(number); number from 0;
 | children  |     React.Element    |      -       |  must                 |
 | prefixCls |     string      |   -           |  user class |
 | component  | string / React.Element  | `div`   | component tag  |
-| componentProps | object     | null   | component is React.Element, component tag props, not add `style` | 
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` |

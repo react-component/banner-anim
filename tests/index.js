@@ -2,6 +2,7 @@ import 'core-js/es6/map';
 import 'core-js/es6/set';
 import React from 'react';
 import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
 import expect from 'expect.js';
 import BannerAnim from 'rc-banner-anim';
 import TestUtils from 'react-dom/test-utils';
@@ -15,6 +16,9 @@ describe('rc-banner-anim', () => {
 
   function createBannerAnimInstance(props = {}) {
     class BannerAnimExample extends React.PureComponent {
+      static propTypes = {
+        showArrowAndThumb: PropTypes.bool,
+      }
       render() {
         const { showArrowAndThumb, ...cProps } = this.props;
         return (
