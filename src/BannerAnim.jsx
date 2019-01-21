@@ -375,6 +375,7 @@ class BannerAnim extends Component {
       'thumbFloat',
       'sync',
       'dragPlay',
+      'autoPlayEffect',
     ].forEach(key => delete props[key]);
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
