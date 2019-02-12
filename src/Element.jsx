@@ -189,6 +189,9 @@ class Element extends Component {
   }
 
   reFollowParallax = () => {
+    if (!this.domRect) {
+      return;
+    }
     this.setTicker(this.followParallax, {
       x: this.domRect.width / 2 - this.offsetLeft,
       y: this.domRect.height / 2 - this.offsetTop,
