@@ -30288,6 +30288,9 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.reFollowParallax = function () {
+    if (!_this3.domRect) {
+      return;
+    }
     _this3.setTicker(_this3.followParallax, {
       x: _this3.domRect.width / 2 - _this3.offsetLeft,
       y: _this3.domRect.height / 2 - _this3.offsetTop
