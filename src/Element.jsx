@@ -25,13 +25,12 @@ class Element extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: this.props.show,
+      show: props.show,
     };
     this.tickerId = -1;
     this.enterMouse = null;
     this.delayTimeout = null;
-    this.show = this.state.show;
-    this.followParallax = this.props.followParallax;
+    this.followParallax = props.followParallax;
     this.transform = checkStyleName('transform');
   }
 
@@ -40,7 +39,6 @@ class Element extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const show = nextProps.show;
     if (this.tickerId !== -1) {
       ticker.clear(this.tickerId);
       this.tickerId = -1;
@@ -51,7 +49,7 @@ class Element extends Component {
     } else {
       this.followParallax = followParallax;
     }
-    this.setState({ show, mouseMoveType: nextProps.mouseMoveType });
+    this.setState({ mouseMoveType: nextProps.mouseMoveType });
   }
 
   componentDidUpdate() {
@@ -218,11 +216,11 @@ class Element extends Component {
     style.display = 'block';
 
     props.component = component;
-    this.show = this.state.show;
-    style.zIndex = this.state.show ? 1 : 0;
-    props.children = show && !sync ? bgElem : this.getChildren();
+    style.zIndex = show ? 1 : 0;
+    const type = show ? 'enter' : 'leave';
+    // 状态没改，锁定 children 
+    props.children = show && !sync && show !== this.state.show ? bgElem : this.getChildren();
     const childrenToRender = React.createElement(TweenOne, props);
-    const type = this.state.show ? 'enter' : 'leave';
     const $ratio = mouseMoveType === 'end' && ratio <= 0.3 ? 1 - ratio : ratio;
     const tag = animType(childrenToRender,
       type,
@@ -249,7 +247,8 @@ class Element extends Component {
   render() {
     const props = { ...this.props, ...this.props.componentProps };
     const style = { ...props.style };
-    style.display = props.show ? 'block' : 'none';
+    const { show } = props;
+    style.display = show ? 'block' : 'none';
     style.position = 'absolute';
     style.width = '100%';
     if (this.props.mouseMoveType !== 'end') {
@@ -260,7 +259,7 @@ class Element extends Component {
     const bgElem = toArrayChildren(this.props.children).filter(item =>
       item && item.type.isBannerAnimBgElement)
       .map(item => {
-        return React.cloneElement(item, { show: this.state.show });
+        return React.cloneElement(item, { show: props.show });
       });
     [
       `prefixCls`, `callBack`,
@@ -269,10 +268,10 @@ class Element extends Component {
       'show', 'type', 'direction', 'leaveChildHide', 'sync',
       'ratio', 'mouseMoveType'
     ].forEach(key => delete props[key]);
-    if (this.show === this.state.show && !this.state.mouseMoveType ||
+    if (this.state.show === show && !this.state.mouseMoveType ||
       this.state.mouseMoveType === 'reChild') {
       props.animation = { x: 0, y: 0, type: 'set' };
-      if (!this.state.show) {
+      if (!show) {
         this.enterMouse = null;
         return React.createElement(TweenOne, props, bgElem);
       }
