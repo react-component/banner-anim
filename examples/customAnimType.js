@@ -8,11 +8,34 @@ import ReactDOM from 'react-dom';
 import './assets/index.less';
 import '../assets/index.less';
 
+const { animType, setAnimCompToTagComp } = BannerAnim;
+
+animType.custom = (elem, type, direction, animData) => {
+  console.log(`custom animType, type:${type}`); // eslint-disable-line no-console
+  let _y;
+  const props = { ...elem.props };
+  let children = props.children;
+  if (type === 'enter') {
+    _y = direction === 'next' ? '100%' : '-100%';
+  } else {
+    _y = direction === 'next' ? '-10%' : '10%';
+    children = React.Children.toArray(children).map(setAnimCompToTagComp);
+  }
+  return React.cloneElement(elem, {
+    ...props,
+    animation: {
+      ...animData,
+      y: _y,
+      type: type === 'enter' ? 'from' : 'to',
+    },
+  }, children);
+};
+
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 function Demo() {
   return (
-    <BannerAnim prefixCls="banner-user">
+    <BannerAnim type="custom">
       <Element key="aaa"
         prefixCls="banner-user-elem"
       >
@@ -29,8 +52,8 @@ function Demo() {
           <h1 key="h1">Ant Motion Demo</h1>
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
-        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne1">
-            Ant Motion Demo.Ant Motion Demo
+        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne">
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
       <Element key="bbb"
@@ -49,8 +72,8 @@ function Demo() {
           <h1 key="h1">Ant Motion Demo</h1>
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
-        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne2">
-            Ant Motion Demo.Ant Motion Demo
+        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne">
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
     </BannerAnim>

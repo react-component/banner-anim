@@ -7,12 +7,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/index.less';
 import '../assets/index.less';
+import './assets/bgParallax.less';
 
 const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 function Demo() {
   return (
-    <BannerAnim prefixCls="banner-user">
+    <BannerAnim type="across">
       <Element key="aaa"
         prefixCls="banner-user-elem"
       >
@@ -21,16 +22,15 @@ function Demo() {
           className="bg"
           style={{
             backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
           }}
+          scrollParallax={{ y: 100 }}
         />
         <QueueAnim name="QueueAnim">
           <h1 key="h1">Ant Motion Demo</h1>
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
-        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne1">
-            Ant Motion Demo.Ant Motion Demo
+        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne">
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
       <Element key="bbb"
@@ -41,16 +41,15 @@ function Demo() {
           className="bg"
           style={{
             backgroundImage: 'url(https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
           }}
+          scrollParallax={{ y: 100 }}
         />
         <QueueAnim name="QueueAnim">
           <h1 key="h1">Ant Motion Demo</h1>
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
-        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne2">
-            Ant Motion Demo.Ant Motion Demo
+        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne">
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
     </BannerAnim>

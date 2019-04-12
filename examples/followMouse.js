@@ -12,11 +12,21 @@ const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 function Demo() {
   return (
-    <BannerAnim prefixCls="banner-user">
+    <BannerAnim type="across">
       <Element key="aaa"
         prefixCls="banner-user-elem"
+        followParallax={{
+          delay: 1000,
+          data: [
+            { id: 'bg', value: 20, bgPosition: '50%', type: ['backgroundPositionX'] },
+            { id: 'title', value: -20, type: 'x' },
+            { id: 'queue', value: 50, type: 'x' },
+            { id: 'JText', value: -30, type: 'x' },
+          ],
+        }}
       >
         <BgElement
+          id="bg"
           key="bg"
           className="bg"
           style={{
@@ -25,12 +35,12 @@ function Demo() {
             backgroundPosition: 'center',
           }}
         />
-        <QueueAnim name="QueueAnim">
-          <h1 key="h1">Ant Motion Demo</h1>
+        <QueueAnim id="queue" key="queue">
+          <h1 key="h1" id="title">Ant Motion Demo</h1>
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
-        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne1">
-            Ant Motion Demo.Ant Motion Demo
+        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} id="JText">
+          Ant Motion Demo.Ant MotionDemo
         </TweenOne>
       </Element>
       <Element key="bbb"
@@ -45,12 +55,12 @@ function Demo() {
             backgroundPosition: 'center',
           }}
         />
-        <QueueAnim name="QueueAnim">
+        <QueueAnim>
           <h1 key="h1">Ant Motion Demo</h1>
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
-        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne2">
-            Ant Motion Demo.Ant Motion Demo
+        <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }}>
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
     </BannerAnim>
