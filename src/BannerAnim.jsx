@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import ticker from 'rc-tween-one/lib/ticker';
+import { ticker } from 'rc-tween-one';
 import Arrow from './Arrow';
 import Thumb from './Thumb';
 import { toArrayChildren, dataToArray } from './utils';

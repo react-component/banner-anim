@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import Tween from 'rc-tween-one/lib/Tween';
+import { Tween } from 'rc-tween-one';
 import {
   stylesToCss,
 } from 'style-utils';
@@ -39,8 +39,8 @@ export default class BgElement extends React.Component {
       this.tween = new Tween(this.dom, [{
         ease: 'linear', // 放前面是为了在外面设置了可覆盖。
         ...this.props.scrollParallax,
-      }], { attr: 'style' });
-      this.tween.frame(0);
+      }]);
+      this.tween.init();
       this.onScroll();
       if (window.addEventListener) {
         window.addEventListener('scroll', this.onScroll);

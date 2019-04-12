@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import TweenOne from 'rc-tween-one';
-import ticker from 'rc-tween-one/lib/ticker';
+import TweenOne, { ticker } from 'rc-tween-one';
 import easeTween from 'tween-functions';
 import {
   getGsapType,
@@ -272,6 +271,7 @@ class Element extends Component {
     ].forEach(key => delete props[key]);
     if (this.show === this.state.show && !this.state.mouseMoveType ||
       this.state.mouseMoveType === 'reChild') {
+      props.animation = { x: 0, y: 0, type: 'set' };
       if (!this.state.show) {
         this.enterMouse = null;
         return React.createElement(TweenOne, props, bgElem);
