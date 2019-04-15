@@ -40,7 +40,7 @@ var BgElement = Element.BgElement;
 function Demo() {
   return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
     __WEBPACK_IMPORTED_MODULE_0_rc_banner_anim__["a" /* default */],
-    { prefixCls: 'banner-user' },
+    { prefixCls: 'banner-user', type: 'gridBar' },
     __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
       Element,
       { key: 'aaa',
