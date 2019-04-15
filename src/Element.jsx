@@ -16,7 +16,9 @@ import {
   currentScrollLeft,
   dataToArray,
   toArrayChildren,
+  setAnimCompToTagComp,
 } from './utils';
+import animType from './anim';
 
 function noop() {
 }
@@ -177,11 +179,11 @@ class Element extends Component {
   };
 
   getChildren = () => {
-    return toArrayChildren(this.props.children).map(item => {
+    return toArrayChildren(this.props.children).map((item, i) => {
       if (item && item.type === BgElement) {
         return React.cloneElement(item, { show: this.state.show });
       }
-      return item;
+      return this.useTagComp ? setAnimCompToTagComp(item, i) : item;
     });
   }
 
@@ -204,7 +206,7 @@ class Element extends Component {
   }
 
   animChildren = (props, style, bgElem) => {
-    const { elemOffset, leaveChildHide, ratio, animType, direction, mouseMoveType,
+    const { elemOffset, leaveChildHide, ratio, animType: currentAnimType, direction, mouseMoveType,
       ease, duration, delay, show, sync, component } = this.props;
     if (this.tickerId) {
       ticker.clear(this.tickerId);
@@ -218,11 +220,13 @@ class Element extends Component {
     props.component = component;
     style.zIndex = show ? 1 : 0;
     const type = show ? 'enter' : 'leave';
+    this.useTagComp = (currentAnimType === animType.gridBar || currentAnimType === animType.grid) &&
+      (show === this.state.show || (this.state.show && !show));
     // 状态没改，锁定 children 
     props.children = show && !sync && show !== this.state.show ? bgElem : this.getChildren();
     const childrenToRender = React.createElement(TweenOne, props);
     const $ratio = mouseMoveType === 'end' && ratio <= 0.3 ? 1 - ratio : ratio;
-    const tag = animType(childrenToRender,
+    const tag = currentAnimType(childrenToRender,
       type,
       direction,
       {

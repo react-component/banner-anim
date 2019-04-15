@@ -1,5 +1,5 @@
 import React, { cloneElement } from 'react';
-import { toArrayChildren, setAnimCompToTagComp, switchChildren } from './utils';
+import { toArrayChildren, switchChildren } from './utils';
 
 export default {
   across(elem, type, direction, animData, elemOffset, leaveChildHide) {
@@ -91,7 +91,6 @@ export default {
       _y = direction === 'next' ? '-100%' : '100%';
     } else {
       _y = direction === 'next' ? '100%' : '-100%';
-      children = toArrayChildren(children).map(setAnimCompToTagComp);
     }
     const moment = ratio * (animData.duration + animData.delay + gridNum * 50 - (type === 'enter' ? 50 : 0)) || 0;
     for (let i = 0; i < gridNum; i++) {
@@ -106,6 +105,7 @@ export default {
       _style.float = 'left';
       _style.position = 'relative';
       _style.left = `${-i * girdSize / 100 * elemOffset.width}px`;
+      _style.overflow = 'hidden';
       const animProps = { ...props };
       animProps.style = _style;
       const delay = (direction === 'next' ? i : gridNum - i) * 50 + (type === 'enter' ? 0 : 50) + (animData.delay || 0);
@@ -160,6 +160,7 @@ export default {
       style.height = `${gridWidth + 1}px`;
       style.left = i % gridNum * gridWidth;
       style.top = Math.floor(i / gridNum) * gridWidth;
+      style.opacity = 0;
       // clone 的样式
       const _style = { ...props.style };
       _style.width = `${elemOffset.width}px`;
@@ -167,6 +168,7 @@ export default {
       _style.position = 'relative';
       _style.left = -i % gridNum * gridWidth;
       _style.top = -Math.floor(i / gridNum) * gridWidth;
+      _style.overflow = 'hidden';
       props.style = _style;
       let delay = direction === 'next' ? i % gridNum * 50 + Math.floor(i / gridNum) * 50 :
         (gridNum - 1 - i % gridNum) * 50 + (gridNumH - 1 - Math.floor(i / gridNum)) * 50;
@@ -174,8 +176,7 @@ export default {
       const length = direction === 'next' ? gridNum * gridNumH - 1 : 0;
       const animation = {
         ...animData,
-        opacity: 0,
-        type: 'from',
+        opacity: 1,
         delay,
         onComplete: i === length ? animData.onComplete : null,
       };

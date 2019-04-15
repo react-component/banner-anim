@@ -12,7 +12,7 @@ const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 function Demo() {
   return (
-    <BannerAnim prefixCls="banner-user">
+    <BannerAnim prefixCls="banner-user" type="gridBar">
       <Element key="aaa"
         prefixCls="banner-user-elem"
       >
