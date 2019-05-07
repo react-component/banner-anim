@@ -32433,7 +32433,7 @@ var Element = function (_Component) {
       ['prefixCls', 'callBack', 'animType', 'duration', 'delay', 'ease', 'elemOffset', 'followParallax', 'show', 'type', 'direction', 'leaveChildHide', 'sync', 'ratio', 'mouseMoveType'].forEach(function (key) {
         return delete props[key];
       });
-      if (this.state.show === show && !this.state.mouseMoveType || this.state.mouseMoveType === 'reChild') {
+      if (this.state.show === show || this.state.mouseMoveType === 'reChild') {
         props.animation = { x: 0, y: 0, type: 'set' };
         if (!show) {
           this.enterMouse = null;
