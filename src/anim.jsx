@@ -86,7 +86,7 @@ export default {
     const girdSize = 100 / gridNum;
 
     let _y;
-    let children = props.children;
+    const children = props.children;
     if (type === 'enter') {
       _y = direction === 'next' ? '-100%' : '100%';
     } else {

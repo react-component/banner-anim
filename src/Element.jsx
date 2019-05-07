@@ -272,7 +272,7 @@ class Element extends Component {
       'show', 'type', 'direction', 'leaveChildHide', 'sync',
       'ratio', 'mouseMoveType'
     ].forEach(key => delete props[key]);
-    if (this.state.show === show && !this.state.mouseMoveType ||
+    if (this.state.show === show  ||
       this.state.mouseMoveType === 'reChild') {
       props.animation = { x: 0, y: 0, type: 'set' };
       if (!show) {
