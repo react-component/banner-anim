@@ -223,7 +223,8 @@ class Element extends Component {
     this.useTagComp = (currentAnimType === animType.gridBar || currentAnimType === animType.grid) &&
       (show === this.state.show || (this.state.show && !show));
     // 状态没改，锁定 children 
-    props.children = show && !sync && show !== this.state.show ? bgElem : this.getChildren();
+    props.children = !sync && ((show && show !== this.state.show) || (!show && !this.state.show)) ?
+      bgElem : this.getChildren();
     const childrenToRender = React.createElement(TweenOne, props);
     const $ratio = mouseMoveType === 'end' && ratio <= 0.3 ? 1 - ratio : ratio;
     const tag = currentAnimType(childrenToRender,
@@ -272,7 +273,7 @@ class Element extends Component {
       'show', 'type', 'direction', 'leaveChildHide', 'sync',
       'ratio', 'mouseMoveType'
     ].forEach(key => delete props[key]);
-    if (this.state.show === show  ||
+    if (this.state.show === show && !this.state.mouseMoveType ||
       this.state.mouseMoveType === 'reChild') {
       props.animation = { x: 0, y: 0, type: 'set' };
       if (!show) {

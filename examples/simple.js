@@ -12,8 +12,9 @@ const { Element } = BannerAnim;
 const BgElement = Element.BgElement;
 function Demo() {
   return (
-    <BannerAnim prefixCls="banner-user" type="gridBar">
+    <BannerAnim prefixCls="banner-user">
       <Element key="aaa"
+        name="1"
         prefixCls="banner-user-elem"
       >
         <BgElement
@@ -30,11 +31,12 @@ function Demo() {
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
         <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne1">
-            Ant Motion Demo.Ant Motion Demo
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
       <Element key="bbb"
         prefixCls="banner-user-elem"
+        name="2"
       >
         <BgElement
           key="bg"
@@ -50,7 +52,7 @@ function Demo() {
           <p key="p">Ant Motion Demo.Ant Motion Demo.Ant Motion Demo.Ant Motion Demo</p>
         </QueueAnim>
         <TweenOne animation={{ y: 50, opacity: 0, type: 'from', delay: 200 }} name="TweenOne2">
-            Ant Motion Demo.Ant Motion Demo
+          Ant Motion Demo.Ant Motion Demo
         </TweenOne>
       </Element>
     </BannerAnim>

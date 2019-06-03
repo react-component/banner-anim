@@ -95,7 +95,7 @@ class BannerAnim extends Component {
       return;
     }
     const ratio = differ / this.state.domRect[rectName] * 2;
-    const ratioType = ratio > 0 ? '+' : '-';
+    const ratioType = ratio < 0 ? '+' : '-';
     let currentShow = this.currentShow;
     this.mouseMoveType = 'update';
     if (this.ratioType !== ratioType) {
@@ -112,7 +112,7 @@ class BannerAnim extends Component {
     this.ratio = ratio;
     if (this.ratio) {
       let type;
-      if (this.ratio > 0) {
+      if (this.ratio < 0) {
         currentShow += 1;
         type = 'next';
       } else {
@@ -151,7 +151,7 @@ class BannerAnim extends Component {
     if ((this.animType === animType.gridBar || this.animType === animType.grid) && e.changedTouches) {
       let currentShow = this.currentShow;
       const ratio = differ / this.state.domRect[rectName] * 2;
-      if (ratio > 0) {
+      if (ratio < 0) {
         currentShow += 1;
       } else {
         currentShow -= 1;
@@ -189,7 +189,7 @@ class BannerAnim extends Component {
     differ = differ === Math.abs(differX) ? differX : differY;
     return {
       differ,
-      rectName: differ === Math.abs(differX) ? 'width' : 'height',
+      rectName: differ === differX ? 'width' : 'height',
     };
   }
 
