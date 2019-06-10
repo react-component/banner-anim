@@ -147,7 +147,6 @@ class BannerAnim extends Component {
       this.mouseMoveType = '';
       return
     }
-    this.tweenBool = true;
     if ((this.animType === animType.gridBar || this.animType === animType.grid) && e.changedTouches) {
       let currentShow = this.currentShow;
       const ratio = differ / this.state.domRect[rectName] * 2;
@@ -161,6 +160,7 @@ class BannerAnim extends Component {
       this.ratio = 0;
       this.mouseMoveType = '';
       this.slickGoTo(currentShow, true);
+      this.tweenBool = true;
       return;
     }
 

@@ -23,7 +23,9 @@ class Thumb extends Component {
     const childToRender = toArrayChildren(children).map((item, i) => {
       const props = { ...item.props };
       props.onClick = (e) => {
-        e.stopPropagation();
+        if (e.stopPropagation) {
+          e.stopPropagation();
+        }
         this.props.thumbClick(i);
       };
       props.className = `${props.className || ''} ${this.props.active === i ? 'active' : ''}`
