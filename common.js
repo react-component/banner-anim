@@ -4460,7 +4460,9 @@ var Arrow = function (_Component) {
     }
 
     return _ret = (_temp = (_this = __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(this, (_ref = Arrow.__proto__ || Object.getPrototypeOf(Arrow)).call.apply(_ref, [this].concat(args))), _this), _this.onClick = function (e) {
-      e.stopPropagation();
+      if (e.stopPropagation) {
+        e.stopPropagation();
+      }
       _this.props[_this.props.arrowType](e);
     }, _temp), __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(_this, _ret);
   }
@@ -4579,7 +4581,9 @@ var Thumb = function (_Component) {
       var childToRender = Object(__WEBPACK_IMPORTED_MODULE_7__utils__["f" /* toArrayChildren */])(children).map(function (item, i) {
         var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, item.props);
         props.onClick = function (e) {
-          e.stopPropagation();
+          if (e.stopPropagation) {
+            e.stopPropagation();
+          }
           _this2.props.thumbClick(i);
         };
         props.className = ((props.className || '') + ' ' + (_this2.props.active === i ? 'active' : '')).trim();
@@ -4940,7 +4944,6 @@ var BannerAnim = function (_Component) {
         _this.mouseMoveType = '';
         return;
       }
-      _this.tweenBool = true;
       if ((_this.animType === __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */].gridBar || _this.animType === __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */].grid) && e.changedTouches) {
         var currentShow = _this.currentShow;
         var ratio = differ / _this.state.domRect[rectName] * 2;
@@ -4954,6 +4957,7 @@ var BannerAnim = function (_Component) {
         _this.ratio = 0;
         _this.mouseMoveType = '';
         _this.slickGoTo(currentShow, true);
+        _this.tweenBool = true;
         return;
       }
 
