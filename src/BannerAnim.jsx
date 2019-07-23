@@ -253,12 +253,8 @@ class BannerAnim extends Component {
     if (elem.length > 1) {
       if (!arrow.length && this.props.arrow) {
         arrow.push(
-          <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default
-            elemHeight={this.state.wrapperHeight}
-          />,
-          <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default
-            elemHeight={this.state.wrapperHeight}
-          />
+          <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default />,
+          <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default />
         );
       }
       if (!thumb && this.props.thumb) {

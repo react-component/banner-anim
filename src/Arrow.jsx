@@ -18,12 +18,10 @@ class Arrow extends Component {
     const props = { ...this.props, ...this.props.componentProps };
     [
       'arrowType', 'next', 'prev',
-      'elemHeight', 'component', 'componentProps', 'default', 'prefixCls',
+      'component', 'componentProps', 'default', 'prefixCls',
     ].forEach(key => delete props[key]);
     props.className = className;
     props.onClick = this.onClick;
-    props.style = props.style || {};
-    props.style.top = `${this.props.elemHeight / 2}px`;
     return React.createElement(this.props.component, props, this.props.children);
   }
 }
@@ -38,7 +36,6 @@ Arrow.propTypes = {
   default: PropTypes.bool,
   next: PropTypes.func,
   prev: PropTypes.func,
-  elemHeight: PropTypes.number,
   componentProps: PropTypes.object,
 };
 Arrow.defaultProps = {
