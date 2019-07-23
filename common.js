@@ -4476,13 +4476,11 @@ var Arrow = function (_Component) {
       className = !this.props['default'] ? className : (className + ' ' + defaultClass).trim();
       className = className + ' ' + this.props.arrowType;
       var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props, this.props.componentProps);
-      ['arrowType', 'next', 'prev', 'elemHeight', 'component', 'componentProps', 'default', 'prefixCls'].forEach(function (key) {
+      ['arrowType', 'next', 'prev', 'component', 'componentProps', 'default', 'prefixCls'].forEach(function (key) {
         return delete props[key];
       });
       props.className = className;
       props.onClick = this.onClick;
-      props.style = props.style || {};
-      props.style.top = this.props.elemHeight / 2 + 'px';
       return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(this.props.component, props, this.props.children);
     }
   }]);
@@ -4500,7 +4498,6 @@ Arrow.propTypes = {
   'default': __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
   next: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   prev: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
-  elemHeight: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.number,
   componentProps: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.object
 };
 Arrow.defaultProps = {
@@ -5046,11 +5043,7 @@ var BannerAnim = function (_Component) {
       });
       if (elem.length > 1) {
         if (!arrow.length && _this.props.arrow) {
-          arrow.push(__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__Arrow__["a" /* default */], { arrowType: 'prev', key: 'arrowPrev', next: _this.next, prev: _this.prev, 'default': true,
-            elemHeight: _this.state.wrapperHeight
-          }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__Arrow__["a" /* default */], { arrowType: 'next', key: 'arrowNext', next: _this.next, prev: _this.prev, 'default': true,
-            elemHeight: _this.state.wrapperHeight
-          }));
+          arrow.push(__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__Arrow__["a" /* default */], { arrowType: 'prev', key: 'arrowPrev', next: _this.next, prev: _this.prev, 'default': true }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__Arrow__["a" /* default */], { arrowType: 'next', key: 'arrowNext', next: _this.next, prev: _this.prev, 'default': true }));
         }
         if (!thumb && _this.props.thumb) {
           thumb = __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_10__Thumb__["a" /* default */], { length: elem.length, key: 'thumb',
