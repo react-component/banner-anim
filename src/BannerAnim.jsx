@@ -13,7 +13,6 @@ class BannerAnim extends Component {
     this.state = {
       currentShow: this.props.initShow,
       direction: null,
-      wrapperHeight: 0,
       domRect: {},
     };
     this.tweenBool = false;
@@ -230,7 +229,7 @@ class BannerAnim extends Component {
         itemProps.elemOffset = {
           top: this.state.domRect.top,
           width: this.state.domRect.width,
-          height: this.state.wrapperHeight,
+          height: this.state.domRect.height,
         };
         itemProps.direction = this.state.direction;
         itemProps.ratio = this.ratio;
@@ -240,7 +239,7 @@ class BannerAnim extends Component {
         itemProps.next = this.next;
         itemProps.prev = this.prev;
         itemProps.key = item.key || itemProps.arrowType;
-        itemProps.elemHeight = this.state.wrapperHeight;
+        itemProps.elemHeight = this.state.domRect.height;
         arrow.push(React.cloneElement(item, itemProps));
       } else if (item.type.isBannerAnimThumb) {
         itemProps.key = item.key || `thumb-${thumbKeyNum}`;
@@ -272,26 +271,11 @@ class BannerAnim extends Component {
   getDomDataSetToState = () => {
     this.dom = ReactDOM.findDOMNode(this);
     const domRect = this.dom.getBoundingClientRect();
-    // 获取宽度与定位，setState刷新；
-    const wrapperHeight = this.getElementHeight(
-      this.dom.getElementsByClassName('banner-anim-elem'));
     this.setState({
-      wrapperHeight,
       domRect,
     });
     this.tweenBool = false;
   }
-
-  getElementHeight = (children) => {
-    let height = 0;
-    for (let i = 0; i < children.length; i++) {
-      const dom = children[i];
-      const _height = dom.getBoundingClientRect().height;
-      height = height > _height ? height : _height;
-    }
-    return height;
-  }
-
 
   getAnimType = (type) => {
     const typeArray = type ? dataToArray(type) : Object.keys(animType);
@@ -354,25 +338,23 @@ class BannerAnim extends Component {
   }
 
   render() {
-    const prefixCls = this.props.prefixCls;
-    const props = { ...this.props };
-    [
-      'type',
-      'prefixCls',
-      'component',
-      'initShow',
-      'duration',
-      'delay',
-      'ease',
-      'arrow',
-      'thumb',
-      'autoPlaySpeed',
-      'autoPlay',
-      'thumbFloat',
-      'sync',
-      'dragPlay',
-      'autoPlayEffect',
-    ].forEach(key => delete props[key]);
+    const {
+      type,
+      prefixCls,
+      component,
+      initShow,
+      duration,
+      delay,
+      ease,
+      arrow,
+      thumb,
+      autoPlaySpeed,
+      autoPlay,
+      sync,
+      dragPlay,
+      autoPlayEffect,
+      ...props
+    } = this.props;
     const childrenToRender = this.getRenderChildren(props.children);
     props.className = `${props.className} ${prefixCls || ''}`.trim();
     props.style = { ...props.style };
