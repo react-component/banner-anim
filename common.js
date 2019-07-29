@@ -4800,27 +4800,30 @@ module.exports = { "default": __webpack_require__(466), __esModule: true };
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_createClass__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rc_tween_one__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Arrow__ = __webpack_require__(236);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Thumb__ = __webpack_require__(237);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils__ = __webpack_require__(80);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__anim__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_prop_types__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Arrow__ = __webpack_require__(236);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Thumb__ = __webpack_require__(237);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__anim__ = __webpack_require__(111);
+
 
 
 
@@ -4836,17 +4839,17 @@ module.exports = { "default": __webpack_require__(466), __esModule: true };
 
 
 var BannerAnim = function (_Component) {
-  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits___default()(BannerAnim, _Component);
+  __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default()(BannerAnim, _Component);
 
   function BannerAnim(props) {
-    __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck___default()(this, BannerAnim);
+    __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default()(this, BannerAnim);
 
-    var _this = __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(this, (BannerAnim.__proto__ || Object.getPrototypeOf(BannerAnim)).call(this, props));
+    var _this = __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default()(this, (BannerAnim.__proto__ || Object.getPrototypeOf(BannerAnim)).call(this, props));
 
     _this.onMouseEnter = function (e) {
       _this.props.onMouseEnter(e);
       if (_this.props.autoPlay && _this.props.autoPlayEffect) {
-        __WEBPACK_IMPORTED_MODULE_8_rc_tween_one__["d" /* ticker */].clear(_this.autoPlayId);
+        __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["d" /* ticker */].clear(_this.autoPlayId);
         _this.autoPlayId = -1;
       }
     };
@@ -4863,7 +4866,7 @@ var BannerAnim = function (_Component) {
         return;
       }
       if (_this.props.autoPlay) {
-        __WEBPACK_IMPORTED_MODULE_8_rc_tween_one__["d" /* ticker */].clear(_this.autoPlayId);
+        __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["d" /* ticker */].clear(_this.autoPlayId);
         _this.autoPlayId = -1;
       }
       _this.animType = _this.getAnimType(_this.props.type);
@@ -4899,7 +4902,7 @@ var BannerAnim = function (_Component) {
         });
         return;
       }
-      if ((_this.animType === __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */].gridBar || _this.animType === __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */].grid) && e.touches) {
+      if ((_this.animType === __WEBPACK_IMPORTED_MODULE_13__anim__["a" /* default */].gridBar || _this.animType === __WEBPACK_IMPORTED_MODULE_13__anim__["a" /* default */].grid) && e.touches) {
         return;
       }
       _this.ratio = ratio;
@@ -4941,7 +4944,7 @@ var BannerAnim = function (_Component) {
         _this.mouseMoveType = '';
         return;
       }
-      if ((_this.animType === __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */].gridBar || _this.animType === __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */].grid) && e.changedTouches) {
+      if ((_this.animType === __WEBPACK_IMPORTED_MODULE_13__anim__["a" /* default */].gridBar || _this.animType === __WEBPACK_IMPORTED_MODULE_13__anim__["a" /* default */].grid) && e.changedTouches) {
         var currentShow = _this.currentShow;
         var ratio = differ / _this.state.domRect[rectName] * 2;
         if (ratio < 0) {
@@ -5003,11 +5006,11 @@ var BannerAnim = function (_Component) {
       var elementKeyNum = 0;
       var thumbKeyNum = 0;
 
-      Object(__WEBPACK_IMPORTED_MODULE_11__utils__["f" /* toArrayChildren */])(children).forEach(function (item, i) {
+      Object(__WEBPACK_IMPORTED_MODULE_12__utils__["f" /* toArrayChildren */])(children).forEach(function (item, i) {
         if (!item) {
           return;
         }
-        var itemProps = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, item.props);
+        var itemProps = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default()({}, item.props);
         if (item.type.isBannerAnimElement) {
           itemProps.key = item.key || 'element-' + elementKeyNum;
           elementKeyNum += 1;
@@ -5021,32 +5024,32 @@ var BannerAnim = function (_Component) {
           itemProps.elemOffset = {
             top: _this.state.domRect.top,
             width: _this.state.domRect.width,
-            height: _this.state.wrapperHeight
+            height: _this.state.domRect.height
           };
           itemProps.direction = _this.state.direction;
           itemProps.ratio = _this.ratio;
           itemProps.mouseMoveType = _this.mouseMoveType;
-          elem.push(__WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(item, itemProps));
+          elem.push(__WEBPACK_IMPORTED_MODULE_6_react___default.a.cloneElement(item, itemProps));
         } else if (item.type.isBannerAnimArrow) {
           itemProps.next = _this.next;
           itemProps.prev = _this.prev;
           itemProps.key = item.key || itemProps.arrowType;
-          itemProps.elemHeight = _this.state.wrapperHeight;
-          arrow.push(__WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(item, itemProps));
+          itemProps.elemHeight = _this.state.domRect.height;
+          arrow.push(__WEBPACK_IMPORTED_MODULE_6_react___default.a.cloneElement(item, itemProps));
         } else if (item.type.isBannerAnimThumb) {
           itemProps.key = item.key || 'thumb-' + thumbKeyNum;
           thumbKeyNum += 1;
           itemProps.thumbClick = _this.slickGoTo;
           itemProps.active = _this.state.currentShow;
-          thumb = __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(item, itemProps);
+          thumb = __WEBPACK_IMPORTED_MODULE_6_react___default.a.cloneElement(item, itemProps);
         }
       });
       if (elem.length > 1) {
         if (!arrow.length && _this.props.arrow) {
-          arrow.push(__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__Arrow__["a" /* default */], { arrowType: 'prev', key: 'arrowPrev', next: _this.next, prev: _this.prev, 'default': true }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__Arrow__["a" /* default */], { arrowType: 'next', key: 'arrowNext', next: _this.next, prev: _this.prev, 'default': true }));
+          arrow.push(__WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_10__Arrow__["a" /* default */], { arrowType: 'prev', key: 'arrowPrev', next: _this.next, prev: _this.prev, 'default': true }), __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_10__Arrow__["a" /* default */], { arrowType: 'next', key: 'arrowNext', next: _this.next, prev: _this.prev, 'default': true }));
         }
         if (!thumb && _this.props.thumb) {
-          thumb = __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_10__Thumb__["a" /* default */], { length: elem.length, key: 'thumb',
+          thumb = __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_11__Thumb__["a" /* default */], { length: elem.length, key: 'thumb',
             thumbClick: _this.slickGoTo,
             active: _this.state.currentShow,
             'default': true
@@ -5058,35 +5061,22 @@ var BannerAnim = function (_Component) {
     };
 
     _this.getDomDataSetToState = function () {
-      _this.dom = __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.findDOMNode(_this);
+      _this.dom = __WEBPACK_IMPORTED_MODULE_7_react_dom___default.a.findDOMNode(_this);
       var domRect = _this.dom.getBoundingClientRect();
-      // 获取宽度与定位，setState刷新；
-      var wrapperHeight = _this.getElementHeight(_this.dom.getElementsByClassName('banner-anim-elem'));
       _this.setState({
-        wrapperHeight: wrapperHeight,
         domRect: domRect
       });
       _this.tweenBool = false;
     };
 
-    _this.getElementHeight = function (children) {
-      var height = 0;
-      for (var i = 0; i < children.length; i++) {
-        var dom = children[i];
-        var _height = dom.getBoundingClientRect().height;
-        height = height > _height ? height : _height;
-      }
-      return height;
-    };
-
     _this.getAnimType = function (type) {
-      var typeArray = type ? Object(__WEBPACK_IMPORTED_MODULE_11__utils__["c" /* dataToArray */])(type) : Object.keys(__WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */]);
+      var typeArray = type ? Object(__WEBPACK_IMPORTED_MODULE_12__utils__["c" /* dataToArray */])(type) : Object.keys(__WEBPACK_IMPORTED_MODULE_13__anim__["a" /* default */]);
       var random = Math.round(Math.random() * (typeArray.length - 1));
-      return __WEBPACK_IMPORTED_MODULE_12__anim__["a" /* default */][typeArray[random]];
+      return __WEBPACK_IMPORTED_MODULE_13__anim__["a" /* default */][typeArray[random]];
     };
 
     _this.autoPlay = function () {
-      _this.autoPlayId = __WEBPACK_IMPORTED_MODULE_8_rc_tween_one__["d" /* ticker */].interval(_this.next, _this.props.autoPlaySpeed);
+      _this.autoPlayId = __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["d" /* ticker */].interval(_this.next, _this.props.autoPlaySpeed);
     };
 
     _this.animTweenStart = function (show, type, noGetAnimType) {
@@ -5142,14 +5132,13 @@ var BannerAnim = function (_Component) {
     _this.state = {
       currentShow: _this.props.initShow,
       direction: null,
-      wrapperHeight: 0,
       domRect: {}
     };
     _this.tweenBool = false;
     return _this;
   }
 
-  __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_createClass___default()(BannerAnim, [{
+  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default()(BannerAnim, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.getDomDataSetToState();
@@ -5171,7 +5160,7 @@ var BannerAnim = function (_Component) {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       if (this.autoPlayId) {
-        __WEBPACK_IMPORTED_MODULE_8_rc_tween_one__["d" /* ticker */].clear(this.autoPlayId);
+        __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["d" /* ticker */].clear(this.autoPlayId);
         this.autoPlayId = 0;
       }
       if (window.addEventListener) {
@@ -5187,14 +5176,26 @@ var BannerAnim = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var prefixCls = this.props.prefixCls;
-      var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
-      ['type', 'prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'thumbFloat', 'sync', 'dragPlay', 'autoPlayEffect'].forEach(function (key) {
-        return delete props[key];
-      });
+      var _props = this.props,
+          type = _props.type,
+          prefixCls = _props.prefixCls,
+          component = _props.component,
+          initShow = _props.initShow,
+          duration = _props.duration,
+          delay = _props.delay,
+          ease = _props.ease,
+          arrow = _props.arrow,
+          thumb = _props.thumb,
+          autoPlaySpeed = _props.autoPlaySpeed,
+          autoPlay = _props.autoPlay,
+          sync = _props.sync,
+          dragPlay = _props.dragPlay,
+          autoPlayEffect = _props.autoPlayEffect,
+          props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['type', 'prefixCls', 'component', 'initShow', 'duration', 'delay', 'ease', 'arrow', 'thumb', 'autoPlaySpeed', 'autoPlay', 'sync', 'dragPlay', 'autoPlayEffect']);
+
       var childrenToRender = this.getRenderChildren(props.children);
       props.className = (props.className + ' ' + (prefixCls || '')).trim();
-      props.style = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, props.style);
+      props.style = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default()({}, props.style);
       props.onMouseEnter = this.onMouseEnter;
       props.onMouseLeave = this.onMouseLeave;
       if (childrenToRender.length > 1 && this.props.dragPlay) {
@@ -5205,34 +5206,34 @@ var BannerAnim = function (_Component) {
         props.onTouchEnd = this.onTouchEnd;
         props.onMouseUp = this.onTouchEnd;
       }
-      return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(this.props.component, props, childrenToRender);
+      return __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(this.props.component, props, childrenToRender);
     }
   }]);
 
   return BannerAnim;
-}(__WEBPACK_IMPORTED_MODULE_5_react__["Component"]);
+}(__WEBPACK_IMPORTED_MODULE_6_react__["Component"]);
 
 BannerAnim.propTypes = {
-  children: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
-  style: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.object,
-  className: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.string,
-  prefixCls: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.string,
-  component: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
-  arrow: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
-  thumb: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
-  initShow: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
-  type: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
-  duration: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
-  delay: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
-  ease: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.string,
-  autoPlay: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
-  autoPlaySpeed: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
-  autoPlayEffect: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
-  onChange: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.func,
-  onMouseEnter: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.func,
-  onMouseLeave: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.func,
-  sync: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
-  dragPlay: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool
+  children: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.any,
+  style: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.object,
+  className: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.string,
+  prefixCls: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.string,
+  component: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.any,
+  arrow: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.bool,
+  thumb: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.bool,
+  initShow: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.number,
+  type: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.any,
+  duration: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.number,
+  delay: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.number,
+  ease: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.string,
+  autoPlay: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.bool,
+  autoPlaySpeed: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.number,
+  autoPlayEffect: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.bool,
+  onChange: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.func,
+  onMouseEnter: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.func,
+  onMouseLeave: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.func,
+  sync: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.bool,
+  dragPlay: __WEBPACK_IMPORTED_MODULE_8_prop_types___default.a.bool
 };
 BannerAnim.defaultProps = {
   component: 'div',
