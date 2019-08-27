@@ -8,12 +8,25 @@ import { toArrayChildren, dataToArray } from './utils';
 import animType from './anim';
 
 class BannerAnim extends Component {
+
+  static getDerivedStateFromProps(props, { prevProps, $self }) {
+    const nextState = {
+      prevProps: props,
+    };
+    if (prevProps && props !== prevProps) {
+      $self.tweenBool = false;
+    }
+    return nextState;// eslint-disable-line
+  }
+
+
   constructor(props) {
     super(props);
     this.state = {
       currentShow: this.props.initShow,
       direction: null,
       domRect: {},
+      $self: this,// eslint-disable-line
     };
     this.tweenBool = false;
   }
@@ -28,10 +41,6 @@ class BannerAnim extends Component {
     if (this.props.autoPlay) {
       this.autoPlay();
     }
-  }
-
-  componentWillReceiveProps() {
-    this.tweenBool = false;
   }
 
   componentWillUnmount() {

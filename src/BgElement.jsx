@@ -13,6 +13,26 @@ import {
 import animType from './anim';
 
 export default class BgElement extends React.Component {
+  static getDerivedStateFromProps(props, { prevProps, $self }) {
+    const nextState = {
+      prevProps: props,
+    };
+    if (prevProps && props !== prevProps) {
+      if (props.show) {
+        // 取 dom 在 render 之后；
+        setTimeout(() => {
+          if ($self.video && prevProps.videoResize && $self.videoLoad) {
+            $self.onResize();
+          }
+          if (prevProps.scrollParallax) {
+            $self.onScroll();
+          }
+        })
+      }
+    }
+    return nextState;
+  }
+
   constructor(props) {
     super(props);
     this.isVideo = toArrayChildren(this.props.children).some(item => item.type === 'video');
@@ -26,6 +46,9 @@ export default class BgElement extends React.Component {
     }
     this.video = null;
     this.videoLoad = false;
+    this.state = {
+      $self: this,
+    };
   }
 
   componentDidMount() {
@@ -47,20 +70,6 @@ export default class BgElement extends React.Component {
       } else {
         window.attachEvent('onscroll', this.onScroll);
       }
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.show) {
-      // 取 dom 在 render 之后；
-      setTimeout(() => {
-        if (this.video && this.props.videoResize && this.videoLoad) {
-          this.onResize();
-        }
-        if (this.props.scrollParallax) {
-          this.onScroll();
-        }
-      })
     }
   }
 

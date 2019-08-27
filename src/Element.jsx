@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
+import { polyfill } from 'react-lifecycles-compat';
 import TweenOne, { ticker } from 'rc-tween-one';
 import easeTween from 'tween-functions';
 import {
@@ -24,10 +25,31 @@ function noop() {
 }
 
 class Element extends Component {
+  static getDerivedStateFromProps(props, { prevProps, $self }) {
+    const nextState = {
+      prevProps: props,
+    };
+    if (prevProps && props !== prevProps) {
+      if ($self.tickerId !== -1) {
+        ticker.clear($self.tickerId);
+        $self.tickerId = -1;
+      }
+      const followParallax = props.followParallax;
+      if ($self.followParallax && !followParallax) {
+        $self.reFollowParallax();
+      } else {
+        $self.followParallax = followParallax;
+      }
+      nextState.mouseMoveType = props.mouseMoveType;
+    }
+    return nextState;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       show: props.show,
+      $self: this,
     };
     this.tickerId = -1;
     this.enterMouse = null;
@@ -38,20 +60,6 @@ class Element extends Component {
 
   componentDidMount() {
     this.dom = ReactDOM.findDOMNode(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.tickerId !== -1) {
-      ticker.clear(this.tickerId);
-      this.tickerId = -1;
-    }
-    const followParallax = nextProps.followParallax;
-    if (this.followParallax && !followParallax) {
-      this.reFollowParallax();
-    } else {
-      this.followParallax = followParallax;
-    }
-    this.setState({ mouseMoveType: nextProps.mouseMoveType });
   }
 
   componentDidUpdate() {
@@ -318,6 +326,6 @@ Element.defaultProps = {
   delay: 0,
 };
 
-Element.BgElement = BgElement;
+Element.BgElement = polyfill(BgElement);
 Element.isBannerAnimElement = true;
-export default Element;
+export default polyfill(Element);
