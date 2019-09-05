@@ -24,6 +24,9 @@ export function setAnimCompToTagComp(item, i) {
     return null;
   }
   const itemProps = item.props;
+  if (!itemProps.component) {
+    return item;
+  }
   const props = {};
   props.key = item.key || i;
   // dom global attributes
