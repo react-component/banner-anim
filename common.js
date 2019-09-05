@@ -1306,6 +1306,9 @@ function setAnimCompToTagComp(item, i) {
     return null;
   }
   var itemProps = item.props;
+  if (!itemProps.component) {
+    return item;
+  }
   var props = {};
   props.key = item.key || i;
   // dom global attributes
