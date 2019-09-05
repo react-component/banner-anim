@@ -35,14 +35,14 @@ export default class BgElement extends React.Component {
 
   constructor(props) {
     super(props);
-    this.isVideo = toArrayChildren(this.props.children).some(item => item.type === 'video');
+    this.isVideo = toArrayChildren(props.children).some(item => item.type === 'video');
     if (this.isVideo) {
       // 如果是 video，删除 grid 系列，位置发生变化，重加载了 video;
       delete animType.grid;
       delete animType.gridBar;
     }
-    if (this.props.scrollParallax) {
-      this.scrollParallaxDuration = this.props.scrollParallax.duration || 450;
+    if (props.scrollParallax) {
+      this.scrollParallaxDuration = props.scrollParallax.duration || 450;
     }
     this.video = null;
     this.videoLoad = false;
@@ -136,17 +136,17 @@ export default class BgElement extends React.Component {
   };
 
   render() {
-    const props = { ...this.props, ...this.props.componentProps };
-    [
-      'videoResize',
-      'scrollParallax',
-      'scrollParallaxDuration',
-      'show',
-      'component',
-      'componentProps',
-    ].forEach(key => delete props[key]);
-    if (this.isVideo && this.props.videoResize) {
-      const children = toArrayChildren(props.children).map((item, i) =>
+    const {
+      videoResize,
+      scrollParallax,
+      show,
+      component,
+      componentProps,
+      children: child,
+      ...props
+    } = this.props;
+    if (this.isVideo && videoResize) {
+      const children = toArrayChildren(child).map((item, i) =>
         React.cloneElement(item, {
           ...item.props, key: item.key || `bg-video-${i}`, ref: (c) => {
             this.video = c;
@@ -158,7 +158,7 @@ export default class BgElement extends React.Component {
       );
       props.children = children.length === 1 ? children[0] : children;
     }
-    return React.createElement(this.props.component, props);
+    return React.createElement(this.props.component, { ...props, ...componentProps });
   }
 }
 

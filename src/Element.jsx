@@ -258,43 +258,57 @@ class Element extends Component {
   }
 
   render() {
-    const props = { ...this.props, ...this.props.componentProps };
-    const style = { ...props.style };
-    const { show } = props;
+    const {
+      prefixCls,
+      callBack,
+      animType: propsAnimType,
+      duration,
+      delay,
+      ease,
+      elemOffset,
+      followParallax,
+      show,
+      type,
+      direction,
+      leaveChildHide,
+      sync,
+      ratio,
+      mouseMoveType,
+      children,
+      style: propsStyle,
+      componentProps,
+      ...props
+    } = this.props;
+    const { show: currentShow, mouseMoveType: currentMouseMoveType } = this.state;
+    const style = { ...propsStyle };
     style.display = show ? 'block' : 'none';
     style.position = 'absolute';
     style.width = '100%';
-    if (this.props.mouseMoveType !== 'end') {
+    if (mouseMoveType !== 'end') {
       style[this.transform] = '';
     }
     props.style = style;
-    props.className = `banner-anim-elem ${this.props.prefixCls || ''}`.trim();
-    const bgElem = toArrayChildren(this.props.children).filter(item =>
+    props.className = `banner-anim-elem ${prefixCls || ''}`.trim();
+    const bgElem = toArrayChildren(children).filter(item =>
       item && item.type.isBannerAnimBgElement)
       .map(item => {
         return React.cloneElement(item, { show: props.show });
       });
-    [
-      `prefixCls`, `callBack`,
-      `animType`, `duration`, `delay`, `ease`,
-      `elemOffset`, 'followParallax',
-      'show', 'type', 'direction', 'leaveChildHide', 'sync',
-      'ratio', 'mouseMoveType'
-    ].forEach(key => delete props[key]);
-    if (this.state.show === show && !this.state.mouseMoveType ||
-      this.state.mouseMoveType === 'reChild') {
+    if (currentShow === show && !currentMouseMoveType ||
+      currentMouseMoveType === 'reChild') {
       props.animation = { x: 0, y: 0, type: 'set' };
       if (!show) {
         this.enterMouse = null;
         return React.createElement(TweenOne, props, bgElem);
       }
-      if (this.props.followParallax) {
+      if (followParallax) {
         props.onMouseMove = this.getFollowMouseMove();
       }
       return React.createElement(TweenOne, props,
-        this.props.mouseMoveType === 'update' ? bgElem : this.getChildren());
+        mouseMoveType === 'update' ? bgElem : this.getChildren());
     }
-    return this.animChildren(props, style, bgElem);
+    const $props = { ...props, ...componentProps };
+    return this.animChildren($props, style, bgElem);
   }
 }
 

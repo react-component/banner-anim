@@ -248,7 +248,6 @@ class BannerAnim extends Component {
         itemProps.next = this.next;
         itemProps.prev = this.prev;
         itemProps.key = item.key || itemProps.arrowType;
-        itemProps.elemHeight = this.state.domRect.height;
         arrow.push(React.cloneElement(item, itemProps));
       } else if (item.type.isBannerAnimThumb) {
         itemProps.key = item.key || `thumb-${thumbKeyNum}`;
@@ -261,15 +260,15 @@ class BannerAnim extends Component {
     if (elem.length > 1) {
       if (!arrow.length && this.props.arrow) {
         arrow.push(
-          <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} default />,
-          <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} default />
+          <Arrow arrowType="prev" key="arrowPrev" next={this.next} prev={this.prev} defaultBool />,
+          <Arrow arrowType="next" key="arrowNext" next={this.next} prev={this.prev} defaultBool />
         );
       }
       if (!thumb && this.props.thumb) {
         thumb = (<Thumb length={elem.length} key="thumb"
           thumbClick={this.slickGoTo}
           active={this.state.currentShow}
-          default
+          defaultBool
         />);
       }
     }

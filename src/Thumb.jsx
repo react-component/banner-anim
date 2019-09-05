@@ -12,32 +12,41 @@ class Thumb extends Component {
   }
 
   render() {
+    const { 
+      length, 
+      thumbClick,
+      active,
+      defaultBool,
+      component,
+      componentProps,
+      prefixCls,
+      children: propsChildren,
+      ...props
+    } = this.props;
     let className = 'banner-anim-thumb';
     const defaultClass = `${className}-default`;
-    className = `${className} ${this.props.prefixCls || ''}`.trim();
-    className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
-    const children = this.props.default ? this.getDefaultThumb() : this.props.children;
-    if (this.props.length && toArrayChildren(children).length !== this.props.length) {
+    className = `${className} ${prefixCls || ''}`.trim();
+    className = !defaultBool ? className : `${className} ${defaultClass}`.trim();
+    const children = defaultBool ? this.getDefaultThumb() : propsChildren;
+    if (length && toArrayChildren(children).length !== length) {
       console.warn('The thumbnail length and the images length different.'); // eslint-disable-line
     }
     const childToRender = toArrayChildren(children).map((item, i) => {
-      const props = { ...item.props };
-      props.onClick = (e) => {
+      const itemProps = { ...item.props };
+      itemProps.onClick = (e) => {
         if (e.stopPropagation) {
           e.stopPropagation();
         }
-        this.props.thumbClick(i);
+        thumbClick(i);
       };
-      props.className = `${props.className || ''} ${this.props.active === i ? 'active' : ''}`
+      itemProps.className = `${itemProps.className || ''} ${active === i ? 'active' : ''}`
         .trim();
-      return React.cloneElement(item, props);
+      return React.cloneElement(item, itemProps);
     });
-    const props = { ...this.props, ...this.props.componentProps };
-    ['length', 'thumbClick', 'active', 'default', 'component', 'componentProps', 'prefixCls']
-      .forEach(key => delete props[key]);
-    props.className = className;
-    return React.createElement(this.props.component,
-      props,
+    const $props = { ...props, ...componentProps, className };
+
+    return React.createElement(component,
+      $props,
       childToRender
     );
   }
@@ -49,7 +58,7 @@ Thumb.propTypes = {
   prefixCls: PropTypes.string,
   component: PropTypes.any,
   thumbClick: PropTypes.func,
-  default: PropTypes.bool,
+  defaultBool: PropTypes.bool,
   length: PropTypes.number,
   active: PropTypes.number,
   componentProps: PropTypes.object,

@@ -10,19 +10,29 @@ class Arrow extends Component {
   }
 
   render() {
-    let className = this.props.className;
+    const {
+      arrowType,
+      next,
+      prev,
+      component,
+      componentProps,
+      defaultBool,
+      prefixCls,
+      children,
+      ...props
+    } = this.props;
+    let { className } = this.props;
     const defaultClass = `${className}-default`;
-    className = `${className} ${this.props.prefixCls || ''}`.trim();
-    className = !this.props.default ? className : `${className} ${defaultClass}`.trim();
-    className = `${className} ${this.props.arrowType}`;
-    const props = { ...this.props, ...this.props.componentProps };
-    [
-      'arrowType', 'next', 'prev',
-      'component', 'componentProps', 'default', 'prefixCls',
-    ].forEach(key => delete props[key]);
-    props.className = className;
-    props.onClick = this.onClick;
-    return React.createElement(this.props.component, props, this.props.children);
+    className = `${className} ${prefixCls || ''}`.trim();
+    className = !defaultBool ? className : `${className} ${defaultClass}`.trim();
+    className = `${className} ${arrowType}`;
+    const $props = {
+      ...props,
+      ...componentProps,
+      className,
+      onClick: this.onClick,
+    };
+    return React.createElement(component, $props, children);
   }
 }
 
@@ -33,7 +43,7 @@ Arrow.propTypes = {
   prefixCls: PropTypes.string,
   component: PropTypes.any,
   arrowType: PropTypes.string,
-  default: PropTypes.bool,
+  defaultBool: PropTypes.bool,
   next: PropTypes.func,
   prev: PropTypes.func,
   componentProps: PropTypes.object,
