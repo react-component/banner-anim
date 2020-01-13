@@ -37690,11 +37690,10 @@ var BgElement = function (_React$Component) {
           show = _props.show,
           component = _props.component,
           componentProps = _props.componentProps,
-          child = _props.children,
-          props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['videoResize', 'scrollParallax', 'show', 'component', 'componentProps', 'children']);
+          props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['videoResize', 'scrollParallax', 'show', 'component', 'componentProps']);
 
       if (this.isVideo && videoResize) {
-        var children = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["f" /* toArrayChildren */])(child).map(function (item, i) {
+        var children = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["f" /* toArrayChildren */])(props.children).map(function (item, i) {
           return __WEBPACK_IMPORTED_MODULE_6_react___default.a.cloneElement(item, __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default()({}, item.props, { key: item.key || 'bg-video-' + i, ref: function ref(c) {
               _this2.video = c;
               if (typeof item.ref === 'function') {
