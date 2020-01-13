@@ -142,11 +142,10 @@ export default class BgElement extends React.Component {
       show,
       component,
       componentProps,
-      children: child,
       ...props
     } = this.props;
     if (this.isVideo && videoResize) {
-      const children = toArrayChildren(child).map((item, i) =>
+      const children = toArrayChildren(props.children).map((item, i) =>
         React.cloneElement(item, {
           ...item.props, key: item.key || `bg-video-${i}`, ref: (c) => {
             this.video = c;
