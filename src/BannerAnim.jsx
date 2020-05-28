@@ -35,8 +35,12 @@ class BannerAnim extends Component {
     this.getDomDataSetToState();
     if (window.addEventListener) {
       window.addEventListener('resize', this.getDomDataSetToState);
+      window.addEventListener('touchend', this.onTouchEnd);
+      window.addEventListener('mouseup', this.onTouchEnd);
     } else {
       window.attachEvent('onresize', this.getDomDataSetToState);
+      window.attachEvent('ontouchend', this.onTouchEnd);
+      window.attachEvent('onmouseup', this.onTouchEnd);
     }
     if (this.props.autoPlay) {
       this.autoPlay();
@@ -145,11 +149,11 @@ class BannerAnim extends Component {
     ) {
       return;
     }
+    const { differ, rectName } = this.getDiffer(e, e.changedTouches);
+    this.mouseStartXY = null;
     if (this.props.autoPlay && this.autoPlayId === -1) {
       this.autoPlay();
     }
-    const { differ, rectName } = this.getDiffer(e, e.changedTouches);
-    delete this.mouseStartXY;
     this.mouseMoveType = 'end';
     if (!differ) {
       this.mouseMoveType = '';
@@ -292,7 +296,10 @@ class BannerAnim extends Component {
   }
 
   autoPlay = () => {
-    this.autoPlayId = ticker.interval(this.next, this.props.autoPlaySpeed);
+    if (!this.mouseStartXY) {
+      ticker.clear(this.autoPlayId);
+      this.autoPlayId = ticker.interval(this.next, this.props.autoPlaySpeed);
+    }
   }
 
   animTweenStart = (show, type, noGetAnimType) => {
@@ -373,8 +380,8 @@ class BannerAnim extends Component {
       props.onMouseDown = this.onTouchStart;
       props.onTouchMove = this.onTouchMove;
       props.onMouseMove = this.onTouchMove;
-      props.onTouchEnd = this.onTouchEnd;
-      props.onMouseUp = this.onTouchEnd;
+      // props.onTouchEnd = this.onTouchEnd;
+      // props.onMouseUp = this.onTouchEnd;
     }
     return React.createElement(this.props.component, props, childrenToRender);
   }
