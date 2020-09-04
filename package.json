@@ -72,7 +72,7 @@
     "prop-types": "^15.5.0",
     "rc-tween-one": "^2.4.0",
     "react-lifecycles-compat": "^3.0.4",
-    "style-utils": "~0.2.0",
+    "style-utils": "~0.3.3",
     "tween-functions": "1.x"
   },
   "pre-commit": [
