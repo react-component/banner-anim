@@ -25,7 +25,7 @@ function noop() {
 }
 
 class Element extends Component {
-  static getDerivedStateFromProps(props, { prevProps, $self }) {
+  static getDerivedStateFromProps(props, { prevProps, $self, show, mouseMoveType }) {
     const nextState = {
       prevProps: props,
     };
@@ -40,7 +40,9 @@ class Element extends Component {
       } else {
         $self.followParallax = followParallax;
       }
-      nextState.mouseMoveType = props.mouseMoveType;
+      if (show || props.show || mouseMoveType) {
+        nextState.mouseMoveType = props.mouseMoveType;
+      }
     }
     return nextState;
   }
