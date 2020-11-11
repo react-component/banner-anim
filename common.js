@@ -5127,7 +5127,7 @@ var BannerAnim = function (_Component) {
       if (!differ) {
         return;
       }
-      var ratio = differ / _this.state.domRect[rectName] * 2;
+      var ratio = differ / _this.state.domRect[rectName];
       var ratioType = ratio < 0 ? '+' : '-';
       var currentShow = _this.currentShow;
       _this.mouseMoveType = 'update';
@@ -36445,7 +36445,9 @@ var Element = function (_Component) {
     key: 'getDerivedStateFromProps',
     value: function getDerivedStateFromProps(props, _ref) {
       var prevProps = _ref.prevProps,
-          $self = _ref.$self;
+          $self = _ref.$self,
+          show = _ref.show,
+          mouseMoveType = _ref.mouseMoveType;
 
       var nextState = {
         prevProps: props
@@ -36461,7 +36463,9 @@ var Element = function (_Component) {
         } else {
           $self.followParallax = followParallax;
         }
-        nextState.mouseMoveType = props.mouseMoveType;
+        if (show || props.show || mouseMoveType) {
+          nextState.mouseMoveType = props.mouseMoveType;
+        }
       }
       return nextState;
     }
