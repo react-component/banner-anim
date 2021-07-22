@@ -58,7 +58,7 @@
     "core-js": "^2.5.1",
     "expect.js": "0.3.x",
     "precommit-hook": "^3.0.0",
-    "rc-queue-anim": "^1.6.0",
+    "rc-queue-anim": "^2.0.0",
     "rc-test": "6.x",
     "rc-tools": "8.x",
     "react": "^16.4.0",
